@@ -1,0 +1,40 @@
+aside.app-sidebar.verde {
+    background-color: #004d00 !important;
+    color: #e6ffe6 !important;
+}
+
+aside.app-sidebar.verde .nav-link,
+aside.app-sidebar.verde .title,
+aside.app-sidebar.verde .nav-header {
+    color: #e6ffe6 !important;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+aside.app-sidebar.verde .nav-link:hover {
+    background-color: #006400 !important;
+    color: #ffffff !important;
+    border-left-color: #008000;
+}
+
+aside.app-sidebar.verde .nav-link.active {
+    background-color: #008000 !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border-left-color: #ffffff;
+}
+
+aside.app-sidebar.verde .logout-link {
+    color: #ff6347 !important;
+    opacity: 0.8;
+}
+
+aside.app-sidebar.verde .logout-link:hover {
+    opacity: 1;
+    background-color: #006400 !important;
+}
+
+.title,
+.nav-header {
+    color: #e6ffe6 !important;
+}
