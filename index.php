@@ -5,27 +5,12 @@ header("Pragma: no-cache");
 //conexion a la base de datos
 require_once 'modelo/MySQL.php';
 session_start();
+
+
 if (!isset($_SESSION['cargo'])){
-  header("location: ./controller/login.php");
+  header('location: ./controller/login.php');
   exit();
 }
-$rol= $_SESSION['cargo'];
-$nombre=$_SESSION['nombre_usuario'];
-$foto=$_SESSION['fotoPerfil'];
-$fecha=$_SESSION['fecha'];
-
-
-
-$mysql = new MySQL();
-$mysql->conectar();
-//consulta para obtener las personas
-$resultado=$mysql->efectuarConsulta("SELECT empleados.id,empleados.foto, empleados.nombre, empleados.identificacion, cargo.nombre AS cargo, departamento.nombre AS area, empleados.fecha, empleados.salario, empleados.estado, empleados.correo, empleados.telefono FROM empleados inner join cargo on empleados.cargo_id = cargo.id  inner join departamento on empleados.departamento_id = departamento.id");
-
-$consultaCargo = $mysql->efectuarConsulta("SELECT nombre FROM cargo WHERE id='$rol'");
-$cargoUsuario = $consultaCargo->fetch_assoc()['nombre'] ?? 'Sin cargo';
-
-
-
 
 
 ?>
@@ -35,7 +20,7 @@ $cargoUsuario = $consultaCargo->fetch_assoc()['nombre'] ?? 'Sin cargo';
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title> ServiPlus</title>
+    <title> SenaLibrary </title>
 
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
@@ -156,7 +141,7 @@ $cargoUsuario = $consultaCargo->fetch_assoc()['nombre'] ?? 'Sin cargo';
               </a>
             </li>
             <li class="nav-item d-none d-md-block">
-              <a href="index.php" class="nav-link">Home</a>
+              <a href="index.php" class="nav-link">Inicio</a>
             </li>
             
           </ul>
@@ -216,7 +201,7 @@ $cargoUsuario = $consultaCargo->fetch_assoc()['nombre'] ?? 'Sin cargo';
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"> ServiPlus</span>
+            <span class="title"> SenaLibrary</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
