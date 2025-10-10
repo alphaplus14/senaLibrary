@@ -1,4 +1,4 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -16,7 +16,7 @@
       <div class="row h-100 d-flex justify-content-center align-items-center">
         <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
           <h2 class="text-center mb-4">Inicio de sesión</h2>
-          <form action="../controller/login.php" method="POST">
+          <form action="../controllers/login.php" method="POST">
             <div class="mb-3">
               <label for="email" class="form-label">Email:</label>
               <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su correo electronico" required />
@@ -33,4 +33,4 @@
       </div>
     </div>
   </body>
-</html> -->
+</html>

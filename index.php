@@ -400,145 +400,92 @@ $(document).ready(function() {
 </script>
 
 <script>
-        function agregarPersonas() {
+function agregarUsuario() {
+  Swal.fire({
+    title: 'Agregar Nuevo Usuario',
+    html: `
+      <form id="formAgregarUsuario" class="text-start" action="controller/agregarUsuario.php" method="POST">
+        <div class="mb-3">
+          <label for="nombre_usuario" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
+        </div>
+        <div class="mb-3">
+          <label for="apellido_usuario" class="form-label">Apellido</label>
+          <input type="text" class="form-control" id="apellido_usuario" name="apellido_usuario" required>
+        </div>
+        <div class="mb-3">
+          <label for="email_usuario" class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control" id="email_usuario" name="email_usuario" required>
+        </div>
+        <div class="mb-3">
+          <label for="password_usuario" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="password_usuario" name="password_usuario" required>
+        </div>
+        <div class="mb-3">
+          <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
+          <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
+            <option value="" selected disabled>Seleccione un tipo</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Empleado">Empleado</option>
+            <option value="Invitado">Invitado</option>
+          </select>
+        </div>
+      </form>
+    `,
+    confirmButtonText: 'Agregar',
+    showCancelButton: true,
+    cancelButtonText: 'Cancelar',
+    focusConfirm: false,
+    preConfirm: () => {
+      const nombre = document.getElementById('nombre_usuario').value.trim();
+      const apellido = document.getElementById('apellido_usuario').value.trim();
+      const email = document.getElementById('email_usuario').value.trim();
+      const password = document.getElementById('password_usuario').value.trim();
+      const tipo = document.getElementById('tipo_usuario').value.trim();
 
-        Swal.fire({
-            title: 'Agregar Nueva Persona',
-            html: `
-                
-                <form id="formAgregarPersona" class="text-start" action="agregar.php" method="POST" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="nombre" class="form-label">Nombre completo</label>
-                        <input type="text" class="form-control" id="nombre" name="nombre" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Contraseña</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="documento" class="form-label">Número de documento</label>
-                        <input type="text" class="form-control" id="documento" name="documento" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="cargo" class="form-label">Cargo</label>
-                        <select class="form-select" id="cargo" name="cargo" required>
-                            <option value="" disabled selected>Seleccione un cargo</option>
-                            <?php
-                            $consultaCargos = $mysql->efectuarConsulta("SELECT id, nombre FROM cargo");
-                            while($fila=$consultaCargos->fetch_assoc()): ?>
-                            <option value="<?php echo $fila['id'];?>"> <?php echo $fila['nombre'];?> </option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Área o Departamento</label><br>
-                        <?php
-                        $consultaDepartamentos = $mysql->efectuarConsulta("SELECT id, nombre FROM departamento");
-                        while($fila=$consultaDepartamentos->fetch_assoc()): ?>
-                        <div class="form-check
-    form-check-inline">
-                                <input class="form-check-input" type="radio" name="area" value="<?php echo $fila['id']; ?>" required>
-                                <label class="form-check-label"><?php echo $fila['nombre']; ?></label>
-                            </div>
-                        <?php endwhile; ?>
-                    </div>
-                    <div class="mb-3">
-                        <label for="salario" class="form-label">Salario</label>
-                        <input type="number" class="form-control" id="salario" name="salario" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="fecha" class="form-label">Fecha de ingreso</label>
-                        <input type="date" class="form-control" id="fecha" name="fecha" required>   
-                    </div>
-                    <div class="mb-3">
-                        <label for="correo" class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="correo" name="correo">
-                    </div>
-                    <div class="mb-3">
-                        <label for="telefono" class="form-label">Teléfono</label>
-                        <input type="text" class="form-control" id="telefono" name="telefono">
-                    </div>
-                       <div class="mb-3">
-                        <label for="imagen" class="form-label">Foto Empleado</label>
-                        <input type="file" class="form-control" id="imagen" name="imagen" accept=".jpg,.jpeg,.png" required>    
-                    </div>
-                </form>
+      if (!nombre || !apellido || !email || !password || !tipo) {
+        Swal.showValidationMessage('Por favor, complete todos los campos.');
+        return false;
+      }
 
-            `,
-            //botones del alert
-            confirmButtonText: 'Agregar',
-            showCancelButton: true,
-            cancelButtonText: 'Cancelar',
-            focusConfirm: false,
-            preConfirm: () => {
-              
-            const nombre    = document.getElementById('nombre').value.trim();
-            const password  = document.getElementById('password').value.trim();
-            const documento = document.getElementById('documento').value.trim();
-            const cargo     = document.getElementById('cargo').value.trim();
-            const area      = document.querySelector('input[name="area"]:checked')?.value || '';
-            const salario   = document.getElementById('salario').value.trim();
-            const fecha     = document.getElementById('fecha').value.trim();
-            const correo    = document.getElementById('correo').value.trim();
-            const telefono  = document.getElementById('telefono').value.trim();
-            const imagen    = document.getElementById('imagen').files[0];
-
-            const formData = new FormData();
-            formData.append("nombre", nombre);
-            formData.append("password", password);
-            formData.append("documento", documento);
-            formData.append("cargo", cargo);
-            formData.append("area", area);
-            formData.append("salario", salario);
-            formData.append("fecha", fecha);
-            formData.append("correo", correo);
-            formData.append("telefono", telefono);
-            if (imagen) {
-                formData.append("imagen", imagen);
-            }
-                // si los campos no estan llenos no retorna nada
-                if (!nombre || !password || !documento || !cargo || !area || !salario || !fecha || !imagen) {
-                    Swal.showValidationMessage('Por favor, complete todos los campos.');
-                    return false;
-                }
-                // si todo esta bien, se retornan los valores
-                return formData;
-            }
-        }).then((result) => {
-            if (result.isConfirmed){
-                const formData = result.value; 
-                
-                $.ajax({
-    url: 'controller/agregarPersona.php',
-    type: 'POST',
-    data: formData,    
-    contentType: false,   // necesario con FormData
-    processData: false,   // necesario con FormData
-    dataType: 'json',
-    success: function(response){
-        console.log("Respuesta del servidor:", response); // ya es JSON
-
-        if (response.success) {
-            // Caso de éxito
-            Swal.fire('✅ Éxito!', response.message, 'success').then(() => {
-                location.reload();
-            });
-        } else {
-            // Caso de documento/correo repetido u otro error controlado
-            Swal.fire('⚠️ Atención', response.message, 'warning');
-        }
-    },
-    error: function(xhr, status, error){
-        console.error("Error AJAX:", error, xhr.responseText);
-        Swal.fire('❌ Error', 'El servidor no respondió correctamente.', 'error');
+      const formData = new FormData();
+      formData.append('nombre_usuario', nombre);
+      formData.append('apellido_usuario', apellido);
+      formData.append('email_usuario', email);
+      formData.append('password_usuario', password);
+      formData.append('tipo_usuario', tipo);
+      return formData;
     }
-});
-                        
-                    }
-                });
-            }
-            
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const formData = result.value;
+
+      $.ajax({
+        url: 'controller/agregarUsuario.php',
+        type: 'POST',
+        data: formData,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        success: function(response) {
+          if (response.success) {
+            Swal.fire(' Éxito', response.message, 'success').then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire(' Atención', response.message, 'warning');
+          }
+        },
+        error: function(xhr, status, error) {
+          console.error("Error AJAX:", error, xhr.responseText);
+          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
+        }
+      });
+    }
+  });
+}
 </script>
+
 <script>
 
 function editarPersona(id) {
