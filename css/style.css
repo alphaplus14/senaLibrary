@@ -1,5 +1,5 @@
 aside.app-sidebar.verde {
-    background-color: #3B82F6 !important;
+    background-color: #163465 !important;
     color: #FFFFFF !important;
 }
 
@@ -13,13 +13,13 @@ aside.app-sidebar.verde .nav-header {
 
 
 aside.app-sidebar.verde .nav-link:hover {
-    background-color: #10B981 !important;
+    background-color: #08b4cb !important;
     color: #FFFFFF !important;
     border-left-color: #F9FAFB;
 }
 
 aside.app-sidebar.verde .nav-link.active {
-    background-color: #10B981 !important;
+    background-color: #08b4cb !important;
     color: #FFFFFF !important;
     font-weight: 600;
     border-left-color: #FFFFFF;
@@ -51,7 +51,7 @@ body {
 
 
 .navbar {
-    background-color: #3B82F6 !important;
+    background-color: #163465 !important;
     color: #FFFFFF !important;
 }
 
@@ -64,7 +64,7 @@ body {
 }
 
 .btn:hover {
-    background-color: #3B82F6 !important;
+    background-color: #08b4cb !important;
 }
 
 .card {

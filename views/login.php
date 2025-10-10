@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -19,7 +19,7 @@
           <form action="../controller/login.php" method="POST">
             <div class="mb-3">
               <label for="email" class="form-label">Email:</label>
-              <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Ingrese su número de identidad" required />
+              <input type="email" class="form-control" id="email" name="email" placeholder="Ingrese su correo electronico" required />
             </div>
             <div class="mb-3">
               <label for="password" class="form-label">Contraseña:</label>
@@ -33,4 +33,4 @@
       </div>
     </div>
   </body>
-</html>
+</html> -->
