@@ -71,11 +71,14 @@ nav nav-item:hover {
     background-color: #08b4cb !important;
 }
 
+.btn-success {
+    transition: all 0.2s ease-in-out;
+}
+
 .btn-success:hover {
-    background: linear-gradient(90deg, #1abc9c, #2ecc71);
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    transform: scale(1.05);
 }
 
 .card {
