@@ -1,40 +1,77 @@
-aside.app-sidebar.verde {
-    background-color: #004d00 !important;
-    color: #e6ffe6 !important;
+
+aside.app-sidebar.verde { 
+    background-color: #3B82F6 !important;
+    color: #FFFFFF !important;
 }
+
 
 aside.app-sidebar.verde .nav-link,
 aside.app-sidebar.verde .title,
 aside.app-sidebar.verde .nav-header {
-    color: #e6ffe6 !important;
+    color: #FFFFFF !important;
     border-left: 4px solid transparent;
     transition: all 0.2s ease-in-out;
 }
 
+
 aside.app-sidebar.verde .nav-link:hover {
-    background-color: #006400 !important;
-    color: #ffffff !important;
-    border-left-color: #008000;
+    background-color: #10B981 !important;
+    color: #FFFFFF !important;
+    border-left-color: #F9FAFB; 
 }
 
 aside.app-sidebar.verde .nav-link.active {
-    background-color: #008000 !important;
-    color: #ffffff !important;
+    background-color: #10B981 !important;
+    color: #FFFFFF !important;
     font-weight: 600;
-    border-left-color: #ffffff;
+    border-left-color: #FFFFFF;
 }
 
+
 aside.app-sidebar.verde .logout-link {
-    color: #ff6347 !important;
-    opacity: 0.8;
+    color: #FEE2E2 !important; 
+    opacity: 0.85;
 }
 
 aside.app-sidebar.verde .logout-link:hover {
     opacity: 1;
-    background-color: #006400 !important;
+    background-color: rgba(255,255,255,0.1) !important;
 }
+
 
 .title,
 .nav-header {
-    color: #e6ffe6 !important;
+    color: #FFFFFF !important;
+}
+
+
+body {
+    background-color: #F9FAFB;
+    color: #374151;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.navbar {
+    background-color: #3B82F6 !important;
+    color: #FFFFFF !important;
+}
+
+
+.btn {
+    background-color: #10B981 !important;
+    color: #FFFFFF !important;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #3B82F6 !important;
+}
+
+.card {
+    background-color: #FFFFFF;
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
 }

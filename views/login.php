@@ -18,7 +18,7 @@
           <h2 class="text-center mb-4">Inicio de sesión</h2>
           <form action="../controller/login.php" method="POST">
             <div class="mb-3">
-              <label for="cedula" class="form-label">N° Identificación:</label>
+              <label for="email" class="form-label">Email:</label>
               <input type="text" class="form-control" id="cedula" name="cedula" placeholder="Ingrese su número de identidad" required />
             </div>
             <div class="mb-3">
