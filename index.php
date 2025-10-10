@@ -285,7 +285,7 @@ session_start();
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
 
-                     <button type="button" class="btn btn-success" onclick="agregarPersonas()">➕ Agregar Nueva Persona </button>
+                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nueva Persona </button>
                 </div>
             </div>
             <div class="row">
