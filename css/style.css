@@ -1,9 +1,7 @@
-
-aside.app-sidebar.verde { 
+aside.app-sidebar.verde {
     background-color: #3B82F6 !important;
     color: #FFFFFF !important;
 }
-
 
 aside.app-sidebar.verde .nav-link,
 aside.app-sidebar.verde .title,
@@ -17,7 +15,7 @@ aside.app-sidebar.verde .nav-header {
 aside.app-sidebar.verde .nav-link:hover {
     background-color: #10B981 !important;
     color: #FFFFFF !important;
-    border-left-color: #F9FAFB; 
+    border-left-color: #F9FAFB;
 }
 
 aside.app-sidebar.verde .nav-link.active {
@@ -29,13 +27,13 @@ aside.app-sidebar.verde .nav-link.active {
 
 
 aside.app-sidebar.verde .logout-link {
-    color: #FEE2E2 !important; 
+    color: #FEE2E2 !important;
     opacity: 0.85;
 }
 
 aside.app-sidebar.verde .logout-link:hover {
     opacity: 1;
-    background-color: rgba(255,255,255,0.1) !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 
@@ -73,5 +71,5 @@ body {
     background-color: #FFFFFF;
     border-radius: 10px;
     border: 1px solid #E5E7EB;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
 }
