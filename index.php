@@ -156,7 +156,7 @@ session_start();
                 <li class="user-header text-bg-primary">
                   <p>
                     <?php 
-                    echo $nombre.'-'.$cargoUsuario;
+                    echo $nombre;
                     ?>
                     <small> <?php echo 'since '.$fecha; ?> </small>
                   </p>
@@ -214,7 +214,7 @@ session_start();
                   </p>
                   </a>
               
-              <?php if($rol == 2): ?>
+              
               <li class="nav-item">
                 <a href="./views/generar.php" class="nav-link">
                   <i class="bi bi-file-earmark-pdf"></i>    
@@ -233,7 +233,7 @@ session_start();
                   </p>
                 </a>
               </li>
-              <?php endif; ?>
+           
 
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
@@ -284,9 +284,8 @@ session_start();
             <!--begin::Row-->
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
-                    <?php if($rol == 2): ?>
+
                      <button type="button" class="btn btn-success" onclick="agregarPersonas()">➕ Agregar Nueva Persona </button>
-                    <?php endif; ?>
                 </div>
             </div>
             <div class="row">
@@ -307,7 +306,7 @@ session_start();
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2014-2025&nbsp;
-          <a href="https://adminlte.io" class="text-decoration-none">ServiPlus</a>.
+          <a href="https://adminlte.io" class="text-decoration-none">SenaLibrary</a>.
         </strong>
         All rights reserved.
         <!--end::Copyright-->

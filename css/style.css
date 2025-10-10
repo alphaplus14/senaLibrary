@@ -1,3 +1,7 @@
+nav .nav-link {
+    color: #FFFFFF !important;
+}
+
 aside.app-sidebar.verde {
     background-color: #163465 !important;
     color: #FFFFFF !important;
@@ -63,9 +67,10 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.btn:hover {
+nav nav-item:hover {
     background-color: #08b4cb !important;
 }
+
 
 .card {
     background-color: #FFFFFF;
