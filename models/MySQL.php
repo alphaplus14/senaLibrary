@@ -3,10 +3,10 @@
 class MySQL {
 
     // Datos de conexión
-    private $ipServidor = "localhost";
-    private $usuarioBase = "root";
-    private $contrasena = "";
-    private $nombreBaseDatos = "SenaLibraryDB";
+    private $ipServidor = "bjc8wdksbxeffnx2flqs-mysql.services.clever-cloud.com";
+    private $usuarioBase = "ugqqv9qgrswzo28y ";
+    private $contrasena = "fD6x07gofc8Ofk7qVogT";
+    private $nombreBaseDatos = "bjc8wdksbxeffnx2flqs";
 
     private $conexion;
 

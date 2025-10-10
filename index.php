@@ -3,14 +3,9 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 //conexion a la base de datos
-require_once 'modelo/MySQL.php';
+require_once 'models/MySQL.php';
 session_start();
 
-
-if (!isset($_SESSION['cargo'])){
-  header('location: ./controller/login.php');
-  exit();
-}
 
 
 ?>
@@ -305,62 +300,7 @@ if (!isset($_SESSION['cargo'])){
             </div>
             <div class="row">
               <!--begin::Col-->
-                <div class="table-responsive">
-                    <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
-                <thead class="table-success">
-                    <tr>
-                        <th>ID</th>
-                        <th>Foto</th>
-                        <th>Nombre</th>
-                        <th>Identificación</th>
-                        <th>Cargo</th>
-                        <th>Área/Departamento</th>
-                        <th>Ingreso</th>
-                        <th>Salario</th>
-                        <th>Estado</th>
-                        <th>Correo Electrónico</th>
-                        <th>Teléfono</th>
-                        <?php if($rol == 2): ?>
-                            <th>Acciones</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                <?php while($fila = $resultado->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo $fila['id']; ?></td>
-                        <td> <img src="<?php echo $fila['foto']; ?>" width="50"> </td>
-                        <td><?php echo $fila['nombre']; ?></td>
-                        <td><?php echo $fila['identificacion']; ?></td>
-                        <td><?php echo $fila['cargo']; ?></td>
-                        <td><?php echo $fila['area']; ?></td>
-                        <td><?php echo $fila['fecha']; ?></td>
-                        <td><?php echo $fila['salario']; ?></td>
-                        <td><?php echo $fila['estado']; ?></td>
-                        <td><?php echo $fila['correo']; ?></td>
-                        <td><?php echo $fila['telefono']; ?></td>
-                        <?php if($rol == 2): ?>
-                        <td>
-                          <?php if($fila['estado']=="Activo"): ?>
-                     <a class="btn btn-primary btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id']; ?>)">
-  <i class="bi bi-pencil-square"></i>
-</a>
-
- <a class="btn btn-danger btn-sm"  
-   href="javascript:void(0);" 
-   onclick="eliminarEmpleado(<?php echo $fila['id']; ?>)" 
-   title="Eliminar">
-    <i class="bi bi-trash"></i>
-</a>
-<?php endif; ?>
-
-                        </td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-                    </table>
-                </div>
+                
               <!-- /.Start col -->
             </div>
             <!-- /.row (main row) -->
