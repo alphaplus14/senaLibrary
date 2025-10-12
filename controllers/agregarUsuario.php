@@ -3,8 +3,9 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
-require_once '../modelo/MySQL.php';
+require_once '../models/MySQL.php';
 session_start();
+
 
 if (!isset($_SESSION['tipo_usuario'])) {
     header("location: ./login.php");
@@ -25,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
         }
     }
-
+//sanitizar y asignar variables
     $nombre   = htmlspecialchars(trim($_POST['nombre_usuario']), ENT_QUOTES, 'UTF-8');
     $apellido = htmlspecialchars(trim($_POST['apellido_usuario']), ENT_QUOTES, 'UTF-8');
     $email    = htmlspecialchars(trim($_POST['email_usuario']), ENT_QUOTES, 'UTF-8');

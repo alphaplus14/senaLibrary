@@ -6,6 +6,22 @@ header("Pragma: no-cache");
 require_once 'models/MySQL.php';
 session_start();
 
+if (!isset($_SESSION['tipo_usuario'])) {
+    header("location: ./login.php");
+    exit();
+}
+$mysql = new MySQL();
+$mysql->conectar();
+
+$rol= $_SESSION['tipo_usuario'];
+$nombre=$_SESSION['nombre_usuario'];
+
+
+
+$mysql = new MySQL();
+$mysql->conectar();
+//consulta para obtener los usuarios
+$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 
 
 ?>
@@ -157,8 +173,8 @@ session_start();
                   <p>
                     <?php 
                     echo $nombre;
-                    ?>
-                    <small> <?php echo 'since '.$fecha; ?> </small>
+                    ?> 
+                    <small> <?php echo $rol ;?></small>
                   </p>
                 </li>
                 <!--end::User Image-->
@@ -237,7 +253,7 @@ session_start();
 
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
-                <a href="controller/logout.php" class="nav-link">
+                <a href="controllers/logout.php" class="nav-link">
                   <i class="nav-icon bi bi-box-arrow-in-right logout-link "></i>
                   <p>
                     Cerrar Sesión
@@ -263,12 +279,12 @@ session_start();
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Lista de Empleados</h3>
+                <h3 class="mb-0">Lista de Usuarios</h3>
               </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Lista de Empleados</li>
+                  <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
                 </ol>
               </div>
             </div>
@@ -284,8 +300,9 @@ session_start();
             <!--begin::Row-->
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
-
+                <?php if ($rol == 'Administrador'): ?>
                      <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nueva Persona </button>
+                <?php endif; ?>
                 </div>
             </div>
             <div class="row">
@@ -405,11 +422,11 @@ function agregarUsuario() {
         </div>
         <div class="mb-3">
           <label for="email_usuario" class="form-label">Correo Electrónico</label>
-          <input type="email" class="form-control" id="email_usuario" name="email_usuario" required>
+          <input type="email" class="form-control" id="email_usuario" name="email_usuario"  autocomplete="username" required>
         </div>
         <div class="mb-3">
           <label for="password_usuario" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="password_usuario" name="password_usuario" required>
+          <input type="password" class="form-control" id="password_usuario" autocomplete="current-password" name="password_usuario" required>
         </div>
         <div class="mb-3">
           <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
@@ -451,7 +468,7 @@ function agregarUsuario() {
       const formData = result.value;
 
       $.ajax({
-        url: 'controller/agregarUsuario.php',
+        url: 'controllers/agregarUsuario.php',
         type: 'POST',
         data: formData,
         contentType: false,
