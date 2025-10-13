@@ -307,6 +307,49 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             </div>
             <div class="row">
               <!--begin::Col-->
+              <div class="table-responsive">
+                    <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
+                <thead class="table-success">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Correo Electrónico</th>
+                        <th>Cargo</th>
+                        <?php if($rol == "Administrador"): ?>
+                            <th>Acciones</th>
+                        <?php endif; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php while($fila = $resultado->fetch_assoc()): ?>
+                    <tr>
+                        <td><?php echo $fila['id_usuario']; ?></td>
+                        <td><?php echo $fila['nombre_usuario']; ?></td>
+                        <td><?php echo $fila['apellido_usuario']; ?></td>
+                        <td><?php echo $fila['email_usuario']; ?></td>
+                        <td><?php echo $fila['tipo_usuario']; ?></td>
+                        <?php if($rol == "Administrador"): ?>
+                        <td class="mx-auto">
+                     
+                     <a class="btn btn-primary btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_usuario']; ?>)">
+  <i class="bi bi-pencil-square"></i>
+</a>
+
+ <a class="btn btn-danger btn-sm"  
+   href="javascript:void(0);" 
+   onclick="eliminarEmpleado(<?php echo $fila['id_usuario']; ?>)" 
+   title="Eliminar">
+    <i class="bi bi-trash"></i>
+</a>
+
+                        </td>
+                        <?php endif; ?>
+                    </tr>
+                <?php endwhile; ?>
+                </tbody>
+                    </table>
+                </div>
                 
               <!-- /.Start col -->
             </div>
