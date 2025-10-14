@@ -223,42 +223,36 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             >
               <li class="nav-item">
                 <a href="./index.php" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>
+                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <span>
                     Dashboard
                     
-                  </p>
+                  </span>
                   </a>
               
               
               <li class="nav-item">
                 <a href="./views/generar.php" class="nav-link">
-                  <i class="bi bi-file-earmark-pdf"></i>    
-                  <p>
+                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
+                  <span>
                    Documentos 
-                   
-                  </p>
+                  </span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/graficos.php" class="nav-link">
-                 <i class="bi bi-bar-chart"></i>  
-                  <p>
-                    Graficos
-                   
-                  </p>
+                <a href="./views/inventario.php" class="nav-link">
+                 <i class="bi bi-box-seam me-2"> </i>
+                  <span> Inventario </span>
                 </a>
               </li>
-           
 
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
                 <a href="controllers/logout.php" class="nav-link">
-                  <i class="nav-icon bi bi-box-arrow-in-right logout-link "></i>
-                  <p>
+                  <i class="nav-icon bi bi-box-arrow-in-right logout-link"></i>
+                  <span>
                     Cerrar Sesión
-                   
-                  </p>
+                  </span>
                 </a>
                 
               </li>
@@ -301,7 +295,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                 <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nueva Persona </button>
+                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nuevo Usuario </button>
                 <?php endif; ?>
                 </div>
             </div>
@@ -330,16 +324,16 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                         <td><?php echo $fila['email_usuario']; ?></td>
                         <td><?php echo $fila['tipo_usuario']; ?></td>
                         <?php if($rol == "Administrador"): ?>
-                        <td class="mx-auto">
+                        <td class="justify-content-center d-flex gap-1">
                      
-                     <a class="btn btn-primary btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_usuario']; ?>)">
+                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_usuario']; ?>)">
   <i class="bi bi-pencil-square"></i>
 </a>
-
+ | 
  <a class="btn btn-danger btn-sm"  
    href="javascript:void(0);" 
    onclick="eliminarEmpleado(<?php echo $fila['id_usuario']; ?>)" 
-   title="Eliminar">
+   title="Eliminar"> 
     <i class="bi bi-trash"></i>
 </a>
 
@@ -536,195 +530,6 @@ function agregarUsuario() {
 }
 </script>
 
-<script>
-
-function editarPersona(id) {
-    // Primero obtenemos los datos del empleado
-    $.ajax({
-        url: 'controller/info_empleado.php',
-        type: 'POST',
-        data: { id: id },
-        dataType: 'json',
-        success: function(response) {
-            if (!response.success) {
-                Swal.fire('⚠️ Atención', response.message, 'warning');
-                return;
-            }
-
-            const empleado = response.data;
-
-            Swal.fire({
-                title: 'Editar Persona',
-                html: `
-                    <form id="formEditarPersona" class="form-control" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label class="form-label">Foto Empleado</label><br>
-                            <img src="${empleado.foto}" width="60" class="img-fluid"><br>
-                            <input type="file" class="form-control mt-2" id="imagen" name="imagen" accept=".jpg,.jpeg,.png">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Nombre completo</label>
-                            <input type="text" class="form-control" id="nombre" value="${empleado.nombre}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña Antigua</label>
-                            <input type="password" class="form-control" id="passwordOld" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña Nueva</label>
-                            <input type="password" class="form-control" id="passwordNueva" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Número de documento</label>
-                            <input type="text" class="form-control" id="documento" value="${empleado.documento}" readonly disabled>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Cargo</label>
-                            <select class="form-control" id="cargo" required></select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Área o departamento</label><br>
-                            <div id="areaContainer"></div>
-                        </div>
-
-
-                        <div class="mb-3">
-                            <label class="form-label">Fecha de ingreso</label>
-                            <input type="date" class="form-control" id="fecha" value="${empleado.fecha}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Salario base</label>
-                            <input type="number" class="form-control" id="salario" value="${empleado.salario}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Correo electrónico</label>
-                            <input type="email" class="form-control" id="correo" value="${empleado.correo}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Teléfono de contacto</label>
-                            <input type="text" class="form-control" id="telefono" value="${empleado.telefono}" required>
-                        </div>
-                    </form>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
-                focusConfirm: false,
-                // para llenar cargos y departamentos cuando se abre el modal
-                didOpen: () => {
-                    // Llenar select de los  cargos
-                    $.ajax({
-                      url: 'controller/listarCargos.php',
-                      type: 'GET',
-                      dataType: 'json',
-                      success: function(cargos) {
-                          let select = $('#cargo'); // select es un objeto jQuery
-
-                          cargos.forEach(cargo => {
-                              let option = $('<option>')
-                                  .val(cargo.id)            // value del option
-                                  .text(cargo.nombre);      // nombre de cargo
-
-                              if (cargo.id == empleado.cargo_id) {
-                                  option.prop('selected', true); // marcar como seleccionado
-                              }
-
-                              select.append(option); // agregar al select 
-                          });
-                      }
-                  });
-
-
-                    // Llenar con un controlador
-                    $.ajax({
-                      url: 'controller/listarDepartamentos.php',
-                      type: 'GET',
-                      dataType: 'json',
-                      success: function(departamentos) {
-                          let contenedor = $('#areaContainer');
-
-                          departamentos.forEach(dep => {
-                              let div = $('<div>').addClass('form-check form-check-inline');
-
-                              let input = $('<input>')
-                                  .addClass('form-check-input')
-                                  .attr('type', 'radio')
-                                  .attr('name', 'area')
-                                  .attr('value', dep.id)
-                                  .prop('required', true);
-
-                              if (dep.id == empleado.departamento_id) {
-                                  input.prop('checked', true);
-                              }
-
-                              let label = $('<label>')
-                                  .addClass('form-check-label')
-                                  .text(dep.nombre);
-
-                              div.append(input).append(label);
-                              contenedor.append(div);
-                          });
-                      }
-                  });
-
-                },
-                preConfirm: () => {
-                    const formData = new FormData();
-                    formData.append('id', id);
-                    formData.append('nombre', $('#nombre').val().trim());
-                    formData.append('passwordOld', $('#passwordOld').val().trim());
-                    formData.append('passwordNueva', $('#passwordNueva').val().trim());
-                    formData.append('cargo', $('#cargo').val());
-                    formData.append('area', $('input[name="area"]:checked').val());
-                    formData.append('salario', $('#salario').val());
-                    formData.append('fecha', $('#fecha').val());
-                    formData.append('correo', $('#correo').val().trim());
-                    formData.append('telefono', $('#telefono').val().trim());
-                    if ($('#imagen')[0].files[0]) {
-                        formData.append('imagen', $('#imagen')[0].files[0]);
-                    }
-                    return formData;
-                }
-            }).then(result => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: 'controller/editarPersona.php',
-                        type: 'POST',
-                        data: result.value,
-                        contentType: false,
-                        processData: false,
-                        dataType: 'json',
-                        success: function(res) {
-                            if (res.success) {
-                                Swal.fire('✅ Éxito', res.message, 'success').then(() => location.reload());
-                            } else {
-                                Swal.fire('⚠️ Atención', res.message, 'warning');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire('❌ Error', 'Error en el servidor', 'error');
-                            console.error(error, xhr.responseText);
-                        }
-                    });
-                }
-            });
-        },
-        error: function() {
-            Swal.fire('❌ Error', 'No se pudo cargar la información del empleado', 'error');
-        }
-    });
-}
-
-</script>
 
 <script>
 function eliminarEmpleado(id) {
