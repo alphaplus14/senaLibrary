@@ -310,9 +310,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                         <th>Apellido</th>
                         <th>Correo Electrónico</th>
                         <th>Cargo</th>
+                        <th>Estado</th>
                         <?php if($rol == "Administrador"): ?>
                             <th>Acciones</th>
                         <?php endif; ?>
+                        
                     </tr>
                 </thead>
                 <tbody>
@@ -323,6 +325,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                         <td><?php echo $fila['apellido_usuario']; ?></td>
                         <td><?php echo $fila['email_usuario']; ?></td>
                         <td><?php echo $fila['tipo_usuario']; ?></td>
+                        <td><?php echo $fila['estado']; ?></td>
                         <?php if($rol == "Administrador"): ?>
                         <td class="justify-content-center d-flex gap-1">
                      
@@ -551,7 +554,7 @@ function eliminarEmpleado(id) {
         showConfirmButton: false
       }).then(() => {
         // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "./controller/eliminar.php?id=" + id;
+        window.location.href = "./controllers/eliminar.php?id=" + id;
       });
     }
   });
