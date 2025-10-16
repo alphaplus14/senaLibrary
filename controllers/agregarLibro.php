@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mysql->conectar();
 
     // Validar campos requeridos
-    $required = ['nombre_usuario', 'apellido_usuario', 'email_usuario', 'password_usuario', 'tipo_usuario'];
+    $required = ['titulo_libro', 'autor_libro', 'ISBN_libro', 'categoria_libro', 'cantidad_libro'];
     foreach ($required as $campo) {
         if (!isset($_POST[$campo]) || empty(trim($_POST[$campo]))) {
             http_response_code(400);
@@ -27,36 +27,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 //sanitizar y asignar variables
-    $nombre   = htmlspecialchars(trim($_POST['nombre_usuario']), ENT_QUOTES, 'UTF-8');
-    $apellido = htmlspecialchars(trim($_POST['apellido_usuario']), ENT_QUOTES, 'UTF-8');
-    $email    = htmlspecialchars(trim($_POST['email_usuario']), ENT_QUOTES, 'UTF-8');
-    $password = $_POST['password_usuario'];
-    $tipo     = htmlspecialchars(trim($_POST['tipo_usuario']), ENT_QUOTES, 'UTF-8');
+    $titulo   = htmlspecialchars(trim($_POST['titulo_libro']), ENT_QUOTES, 'UTF-8');
+    $autor = htmlspecialchars(trim($_POST['autor_libro']), ENT_QUOTES, 'UTF-8');
+    $iSBN_libro   = htmlspecialchars(trim($_POST['ISBN_libro']), ENT_QUOTES, 'UTF-8');
+    $categoria    = htmlspecialchars(trim($_POST['categoria_libro']), ENT_QUOTES, 'UTF-8');
+    $cantidad_libro = htmlspecialchars(trim($_POST['cantidad_libro']), ENT_QUOTES, 'UTF-8');
 
-    // Verificar si el correo ya está registrado
-    $consultaExiste = "SELECT id_usuario FROM usuario WHERE email_usuario = '$email'";
+    // Verificar si el ISBN ya está registrado
+    $consultaExiste = "SELECT ISBN_libro FROM libro WHERE ISBN_libro = '$iSBN_libro'";
     $resultado = $mysql->efectuarConsulta($consultaExiste);
 
     if ($resultado && mysqli_num_rows($resultado) > 0) {
-        echo json_encode(['success' => false, 'message' => 'El correo ya está registrado.']);
+        echo json_encode(['success' => false, 'message' => 'El ISBN yaestá registrado.']);
         $mysql->desconectar();
         exit;
     }
 
-    // Encriptar contraseña
-    $hash = password_hash($password, PASSWORD_BCRYPT);
-
-    // Insertar usuario
+    $estado= "Disponible";
+    // Insertar libro
     $consultaInsert = "
-        INSERT INTO usuario (nombre_usuario, apellido_usuario, email_usuario, password_usuario, tipo_usuario)
-        VALUES ('$nombre', '$apellido', '$email', '$hash', '$tipo')
+        INSERT INTO libro (titulo_libro, autor_libro, ISBN_libro, categoria_libro, cantidad_libro,disponibilidad_libro)
+        VALUES ('$titulo', '$autor', '$iSBN_libro', '$categoria', '$cantidad_libro','$estado')
     ";
 
     if ($mysql->efectuarConsulta($consultaInsert)) {
-        echo json_encode(['success' => true, 'message' => 'Usuario agregado exitosamente.']);
+        echo json_encode(['success' => true, 'message' => 'Libro agregado exitosamente.']);
     } else {
         http_response_code(400);
-        echo json_encode(['success' => false, 'message' => 'Error al agregar el usuario.']);
+        echo json_encode(['success' => false, 'message' => 'Error al agregar el libro.']);
     }
 
     $mysql->desconectar();

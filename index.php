@@ -451,7 +451,7 @@ function agregarUsuario() {
   Swal.fire({
     title: 'Agregar Nuevo Usuario',
     html: `
-      <form id="formAgregarUsuario" class="text-start" action="controller/agregarUsuario.php" method="POST">
+      <form id="formAgregarUsuario" class="text-start" action="controllers/agregarUsuario.php" method="POST">
         <div class="mb-3">
           <label for="nombre_usuario" class="form-label">Nombre</label>
           <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>

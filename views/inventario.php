@@ -56,7 +56,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="../css/adminlte.css" as="style" />
+   
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -198,7 +198,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="./index.php" class="brand-link">
+          <a href="../index.php" class="brand-link">
             <!--begin::Brand Image-->
            
             <!--end::Brand Image-->
@@ -240,7 +240,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link active">
+                <a href="./inventario.php" class="nav-link active">
                  <i class="bi bi-box-seam me-2"> </i>
                   <span> Inventario </span>
                 </a>
@@ -295,7 +295,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                 <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nuevo Libro </button>
+                     <button type="button" class="btn btn-success" onclick="agregarLibro()">➕ Agregar Nuevo Libro </button>
                 <?php endif; ?>
                 </div>
             </div>
@@ -327,7 +327,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                         <td><?php echo $fila['ISBN_libro']; ?></td>
                         <td><?php echo $fila['categoria_libro']; ?></td>
                         <td><?php echo $fila['cantidad_libro']; ?></td>
-                        <td><?php echo $fila['estado']; ?></td>
+                        <td><?php echo $fila['disponibilidad_libro']; ?></td>
                         <?php if($rol == "Administrador"): ?>
                         <td class="justify-content-center d-flex gap-1">
                      
@@ -390,7 +390,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="public/js/adminlte.js"></script>
+    <script src="../public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -453,7 +453,7 @@ function agregarLibro() {
   Swal.fire({
     title: 'Agregar Nuevo Libro',
     html: `
-      <form id="formAgregarLibro" class="text-start" action="controller/agregarLibro.php" method="POST">
+      <form id="formAgregarLibro" class="text-start" action="controllers/agregarLibro.php" method="POST">
         <div class="mb-3">
           <label for="titulo_libro" class="form-label">Titulo</label>
           <input type="text" class="form-control" id="titulo_libro" name="titulo_libro" required>
@@ -491,23 +491,23 @@ function agregarLibro() {
     cancelButtonText: 'Cancelar',
     focusConfirm: false,
     preConfirm: () => {
-      const nombre = document.getElementById('titulo_libro').value.trim();
-      const apellido = document.getElementById('apellido_usuario').value.trim();
-      const email = document.getElementById('email_usuario').value.trim();
-      const password = document.getElementById('password_usuario').value.trim();
-      const tipo = document.getElementById('tipo_usuario').value.trim();
+      const titulo = document.getElementById('titulo_libro').value.trim();
+      const autor = document.getElementById('autor_libro').value.trim();
+      const ISBN = document.getElementById('ISBN').value.trim();
+      const categoria = document.getElementById('categoria_libro').value.trim();
+      const cantidad = document.getElementById('cantidad').value.trim();
 
-      if (!nombre || !apellido || !email || !password || !tipo) {
+      if (!titulo || !autor || !ISBN || !categoria || !cantidad) {
         Swal.showValidationMessage('Por favor, complete todos los campos.');
         return false;
       }
 
       const formData = new FormData();
-      formData.append('titulo_libro', nombre);
-      formData.append('apellido_usuario', apellido);
-      formData.append('email_usuario', email);
-      formData.append('password_usuario', password);
-      formData.append('tipo_usuario', tipo);
+      formData.append('titulo_libro', titulo);
+      formData.append('autor_libro', autor);
+      formData.append('ISBN_libro', ISBN);
+      formData.append('categoria_libro', categoria);
+      formData.append('cantidad_libro', cantidad);
       return formData;
     }
   }).then((result) => {
@@ -515,7 +515,7 @@ function agregarLibro() {
       const formData = result.value;
 
       $.ajax({
-        url: 'controllers/agregarUsuario.php',
+        url: '../controllers/agregarLibro.php',
         type: 'POST',
         data: formData,
         contentType: false,
