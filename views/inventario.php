@@ -455,29 +455,34 @@ function agregarLibro() {
     html: `
       <form id="formAgregarLibro" class="text-start" action="controller/agregarLibro.php" method="POST">
         <div class="mb-3">
-          <label for="nombre_usuario" class="form-label">Nombre</label>
-          <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
+          <label for="titulo_libro" class="form-label">Titulo</label>
+          <input type="text" class="form-control" id="titulo_libro" name="titulo_libro" required>
         </div>
         <div class="mb-3">
-          <label for="apellido_usuario" class="form-label">Apellido</label>
-          <input type="text" class="form-control" id="apellido_usuario" name="apellido_usuario" required>
+          <label for="autor_libro" class="form-label">Autor</label>
+          <input type="text" class="form-control" id="autor_libro" name="autor_libro" required>
         </div>
         <div class="mb-3">
-          <label for="email_usuario" class="form-label">Correo Electrónico</label>
-          <input type="email" class="form-control" id="email_usuario" name="email_usuario"  autocomplete="username" required>
+          <label for="ISBN" class="form-label">ISBN</label>
+          <input type="text" class="form-control" id="ISBN" name="ISBN" required>
         </div>
         <div class="mb-3">
-          <label for="password_usuario" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="password_usuario" autocomplete="current-password" name="password_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
-          <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
+          <label for="categoria_libro" class="form-label">Categoria</label>
+          <select class="form-select" id="categoria_libro" name="categoria_libro" required>
             <option value="" selected disabled>Seleccione un tipo</option>
-            <option value="Administrador">Administrador</option>
-            <option value="Empleado">Empleado</option>
-            <option value="Invitado">Invitado</option>
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
           </select>
+        </div>
+        <div class="mb-3">
+            <label for="cantidad" class="form-label">Cantidad</label>
+            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
         </div>
       </form>
     `,
@@ -486,7 +491,7 @@ function agregarLibro() {
     cancelButtonText: 'Cancelar',
     focusConfirm: false,
     preConfirm: () => {
-      const nombre = document.getElementById('nombre_usuario').value.trim();
+      const nombre = document.getElementById('titulo_libro').value.trim();
       const apellido = document.getElementById('apellido_usuario').value.trim();
       const email = document.getElementById('email_usuario').value.trim();
       const password = document.getElementById('password_usuario').value.trim();
@@ -498,7 +503,7 @@ function agregarLibro() {
       }
 
       const formData = new FormData();
-      formData.append('nombre_usuario', nombre);
+      formData.append('titulo_libro', nombre);
       formData.append('apellido_usuario', apellido);
       formData.append('email_usuario', email);
       formData.append('password_usuario', password);

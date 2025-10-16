@@ -46,11 +46,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Encriptar contraseña
     $hash = password_hash($password, PASSWORD_BCRYPT);
 
-    $estado= "Activo";
     // Insertar usuario
     $consultaInsert = "
-        INSERT INTO usuario (nombre_usuario, apellido_usuario, email_usuario, password_usuario, tipo_usuario,estadogi)
-        VALUES ('$nombre', '$apellido', '$email', '$hash', '$tipo', '$estado')
+        INSERT INTO usuario (nombre_usuario, apellido_usuario, email_usuario, password_usuario, tipo_usuario)
+        VALUES ('$nombre', '$apellido', '$email', '$hash', '$tipo')
     ";
 
     if ($mysql->efectuarConsulta($consultaInsert)) {
