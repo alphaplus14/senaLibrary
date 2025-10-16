@@ -3,11 +3,11 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 //conexion a la base de datos
-require_once 'models/MySQL.php';
+require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./views/login.php");
+    header("location: ./login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -21,7 +21,7 @@ $nombre=$_SESSION['nombre_usuario'];
 $mysql = new MySQL();
 $mysql->conectar();
 //consulta para obtener los usuarios
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
+$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 
 ?>
@@ -56,7 +56,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
+    <link rel="preload" href="../css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -87,10 +87,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./css/adminlte.css" />
+    <link rel="stylesheet" href="../css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- Estilo propio -->
-     <link rel="stylesheet" href="./css/style.css">
+     <link rel="stylesheet" href="../css/style.css">
 
     <!-- apexcharts -->
     <link
@@ -152,7 +152,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               </a>
             </li>
             <li class="nav-item d-none d-md-block">
-              <a href="index.php" class="nav-link">Inicio</a>
+              <a href="../index.php" class="nav-link">Inicio</a>
             </li>
             
           </ul>
@@ -222,7 +222,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               id="navigation"
             >
               <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
+                <a href="../index.php" class="nav-link">
                   <i class="nav-icon bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
@@ -240,7 +240,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
+                <a href="./views/inventario.php" class="nav-link active">
                  <i class="bi bi-box-seam me-2"> </i>
                   <span> Inventario </span>
                 </a>
@@ -248,7 +248,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
-                <a href="controllers/logout.php" class="nav-link">
+                <a href="../controllers/logout.php" class="nav-link">
                   <i class="nav-icon bi bi-box-arrow-in-right logout-link"></i>
                   <span>
                     Cerrar Sesión
@@ -273,12 +273,12 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Lista de Usuarios</h3>
-              </div>
+                <h3 class="mb-0">Inventario</h3>
+              </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
+                  <li class="breadcrumb-item"><a href="./inventario.php">Inventario</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
                 </ol>
               </div>
             </div>
@@ -295,7 +295,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                 <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nuevo Usuario </button>
+                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nuevo Libro </button>
                 <?php endif; ?>
                 </div>
             </div>
@@ -306,10 +306,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 <thead class="table-success">
                     <tr>
                         <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Correo Electrónico</th>
-                        <th>Cargo</th>
+                        <th>Titulo</th>
+                        <th>Autor</th>
+                        <th>ISBN</th>
+                        <th>Categoria</th>
+                        <th>Cantidad</th>
                         <th>Estado</th>
                         <?php if($rol == "Administrador"): ?>
                             <th>Acciones</th>
@@ -320,22 +321,23 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 <tbody>
                 <?php while($fila = $resultado->fetch_assoc()): ?>
                     <tr>
-                        <td><?php echo $fila['id_usuario']; ?></td>
-                        <td><?php echo $fila['nombre_usuario']; ?></td>
-                        <td><?php echo $fila['apellido_usuario']; ?></td>
-                        <td><?php echo $fila['email_usuario']; ?></td>
-                        <td><?php echo $fila['tipo_usuario']; ?></td>
+                        <td><?php echo $fila['id_libro']; ?></td>
+                        <td><?php echo $fila['titulo_libro']; ?></td>
+                        <td><?php echo $fila['autor_libro']; ?></td>
+                        <td><?php echo $fila['ISBN_libro']; ?></td>
+                        <td><?php echo $fila['categoria_libro']; ?></td>
+                        <td><?php echo $fila['cantidad_libro']; ?></td>
                         <td><?php echo $fila['estado']; ?></td>
                         <?php if($rol == "Administrador"): ?>
                         <td class="justify-content-center d-flex gap-1">
                      
-                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_usuario']; ?>)">
+                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_libro']; ?>)">
   <i class="bi bi-pencil-square"></i>
 </a>
  | 
  <a class="btn btn-danger btn-sm"  
    href="javascript:void(0);" 
-   onclick="eliminarEmpleado(<?php echo $fila['id_usuario']; ?>)" 
+   onclick="eliminarEmpleado(<?php echo $fila['id_libro']; ?>)" 
    title="Eliminar"> 
     <i class="bi bi-trash"></i>
 </a>
@@ -447,11 +449,11 @@ $(document).ready(function() {
 </script>
 
 <script>
-function agregarUsuario() {
+function agregarLibro() {
   Swal.fire({
-    title: 'Agregar Nuevo Usuario',
+    title: 'Agregar Nuevo Libro',
     html: `
-      <form id="formAgregarUsuario" class="text-start" action="controller/agregarUsuario.php" method="POST">
+      <form id="formAgregarLibro" class="text-start" action="controller/agregarLibro.php" method="POST">
         <div class="mb-3">
           <label for="nombre_usuario" class="form-label">Nombre</label>
           <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
@@ -527,34 +529,6 @@ function agregarUsuario() {
           console.error("Error AJAX:", error, xhr.responseText);
           Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
         }
-      });
-    }
-  });
-}
-</script>
-
-
-<script>
-function eliminarEmpleado(id) {
-  Swal.fire({
-    title: "¿Deseas eliminar el empleado?",
-    text: "No podrás revertir esto",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Sí, eliminar"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Eliminado!",
-        text: "El empleado ha sido eliminado exitosamente.",
-        icon: "success",
-        timer: 2000,      // el tiempo que se demora en cerrar el alert 
-        showConfirmButton: false
-      }).then(() => {
-        // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "./controllers/eliminar.php?id=" + id;
       });
     }
   });
