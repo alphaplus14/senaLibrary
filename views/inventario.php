@@ -337,7 +337,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
  | 
  <a class="btn btn-danger btn-sm"  
    href="javascript:void(0);" 
-   onclick="eliminarEmpleado(<?php echo $fila['id_libro']; ?>)" 
+   onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
    title="Eliminar"> 
     <i class="bi bi-trash"></i>
 </a>
@@ -539,6 +539,34 @@ function agregarLibro() {
   });
 }
 </script>
+<script>
+function eliminarLibro(id) {
+  Swal.fire({
+    title: "¿Deseas eliminar el libro?",
+    text: "No podrás revertir esto",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Eliminado!",
+        text: "El libro ha sido eliminado exitosamente.",
+        icon: "success",
+        timer: 2000,      // el tiempo que se demora en cerrar el alert 
+        showConfirmButton: false
+      }).then(() => {
+        // Redirige al controlador de eliminar  cuando cierra el alert 
+        window.location.href = "../controllers/eliminarLibro.php?id=" + id;
+      });
+    }
+  });
+}
+</script>
+
 
 
 
