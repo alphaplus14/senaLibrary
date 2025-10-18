@@ -3,11 +3,11 @@ header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 //conexion a la base de datos
-require_once 'models/MySQL.php';
+require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./views/login.php");
+    header("location: ./login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -21,7 +21,7 @@ $nombre=$_SESSION['nombre_usuario'];
 $mysql = new MySQL();
 $mysql->conectar();
 //consulta para obtener los usuarios
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
+$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 
 ?>
@@ -56,7 +56,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="./css/adminlte.css" as="style" />
+   
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -87,10 +87,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <!--end::Third Party Plugin(Bootstrap Icons)-->
 
     <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="./css/adminlte.css" />
+    <link rel="stylesheet" href="../css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- Estilo propio -->
-     <link rel="stylesheet" href="./css/style.css">
+     <link rel="stylesheet" href="../css/style.css">
 
     <!-- apexcharts -->
     <link
@@ -152,7 +152,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               </a>
             </li>
             <li class="nav-item d-none d-md-block">
-              <a href="index.php" class="nav-link">Inicio</a>
+              <a href="../index.php" class="nav-link">Inicio</a>
             </li>
             
           </ul>
@@ -198,7 +198,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="./index.php" class="brand-link">
+          <a href="../index.php" class="brand-link">
             <!--begin::Brand Image-->
            
             <!--end::Brand Image-->
@@ -222,7 +222,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               id="navigation"
             >
               <li class="nav-item">
-                <a href="./index.php" class="nav-link active">
+                <a href="../index.php" class="nav-link">
                   <i class="nav-icon bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
@@ -232,7 +232,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               
               
               <li class="nav-item">
-                <a href="./views/documentos.php" class="nav-link">
+                <a href="./documentos.php" class="nav-link active">
                   <i class="bi bi-file-earmark-pdf me-2"> </i>    
                   <span>
                    Documentos 
@@ -240,7 +240,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
+                <a href="./inventario.php" class="nav-link">
                  <i class="bi bi-box-seam me-2"> </i>
                   <span> Inventario </span>
                 </a>
@@ -248,7 +248,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
-                <a href="controllers/logout.php" class="nav-link">
+                <a href="../controllers/logout.php" class="nav-link">
                   <i class="nav-icon bi bi-box-arrow-in-right logout-link"></i>
                   <span>
                     Cerrar Sesión
@@ -273,12 +273,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Lista de Usuarios</h3>
-              </div>
+                <h3 class="mb-0">Documentos</h3>
+              </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
+                  <li class="breadcrumb-item active"><a href="./documentos.php">Documentos</a></li>
                 </ol>
               </div>
             </div>
@@ -290,68 +289,40 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
         <!--begin::App Content-->
         <div class="app-content">
           <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row mb-3 align-items-center">
-                <div class="col-md-6 d-flex gap-2">
-                <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nuevo Usuario </button>
-                <?php endif; ?>
-                </div>
+                     <div class="container mt-4">
+                <h3 class="mb-4 text-secondary border-bottom pb-2">Generar Documentos (PDF)</h3>
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            
+                            <form action="../controller/empleadoController.php" method="POST" target="_blank">
+                               
+                                <div class="row g-3 align-items-end">
+                                    
+                                    <div class="col-md-8 col-lg-9">
+                                        <label for="tipo_generacion" class="form-label fw-bold">Seleccione el Tipo de Reporte:</label>
+                                        <select class="form-select form-select-lg" id="tipo_generacion" name="tipo" required>
+                                            <option value="" disabled selected>-- Seleccione una opción --</option>
+                                            <option value="todos">Todos los Empleados (Reporte General)</option>
+                                            <option disabled>--- Por Departamento ---</option>
+                                            <option value="1">Electricidad</option>
+                                            <option value="2">Mantenimiento</option>
+                                            <option value="3">Recursos Humanos</option>
+                                            <option value="4">Contabilidad</option>
+                                            </select>
+                                    </div>
+                                    
+                                    <div class="col-md-4 col-lg-3 d-grid">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <i class="fas fa-file-pdf me-2"></i> Generar PDF
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                            </form>
+                            
+                        </div>
+                    </div>
             </div>
-            <div class="row">
-              <!--begin::Col-->
-              <div class="table-responsive">
-                    <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
-                <thead class="table-success">
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Correo Electrónico</th>
-                        <th>Cargo</th>
-                        <th>Estado</th>
-                        <?php if($rol == "Administrador"): ?>
-                            <th>Acciones</th>
-                        <?php endif; ?>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                <?php while($fila = $resultado->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo $fila['id_usuario']; ?></td>
-                        <td><?php echo $fila['nombre_usuario']; ?></td>
-                        <td><?php echo $fila['apellido_usuario']; ?></td>
-                        <td><?php echo $fila['email_usuario']; ?></td>
-                        <td><?php echo $fila['tipo_usuario']; ?></td>
-                        <td><?php echo $fila['estado']; ?></td>
-                        <?php if($rol == "Administrador"): ?>
-                        <td class="justify-content-center d-flex gap-1">
-                     
-                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_usuario']; ?>)">
-  <i class="bi bi-pencil-square"></i>
-</a>
- | 
- <a class="btn btn-danger btn-sm"  
-   href="javascript:void(0);" 
-   onclick="eliminarEmpleado(<?php echo $fila['id_usuario']; ?>)" 
-   title="Eliminar"> 
-    <i class="bi bi-trash"></i>
-</a>
-
-                        </td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-                    </table>
-                </div>
-                
-              <!-- /.Start col -->
-            </div>
-            <!-- /.row (main row) -->
-          </div>
           <!--end::Container-->
         </div>
         <!--end::App Content-->
@@ -388,7 +359,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="public/js/adminlte.js"></script>
+    <script src="../public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -446,120 +417,9 @@ $(document).ready(function() {
 });
 </script>
 
-<script>
-function agregarUsuario() {
-  Swal.fire({
-    title: 'Agregar Nuevo Usuario',
-    html: `
-      <form id="formAgregarUsuario" class="text-start" action="controllers/agregarUsuario.php" method="POST">
-        <div class="mb-3">
-          <label for="nombre_usuario" class="form-label">Nombre</label>
-          <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="apellido_usuario" class="form-label">Apellido</label>
-          <input type="text" class="form-control" id="apellido_usuario" name="apellido_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="email_usuario" class="form-label">Correo Electrónico</label>
-          <input type="email" class="form-control" id="email_usuario" name="email_usuario"  autocomplete="username" required>
-        </div>
-        <div class="mb-3">
-          <label for="password_usuario" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="password_usuario" autocomplete="current-password" name="password_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
-          <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
-            <option value="" selected disabled>Seleccione un tipo</option>
-            <option value="Administrador">Administrador</option>
-            <option value="Empleado">Empleado</option>
-            <option value="Invitado">Invitado</option>
-          </select>
-        </div>
-      </form>
-    `,
-    confirmButtonText: 'Agregar',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
-    preConfirm: () => {
-      const nombre = document.getElementById('nombre_usuario').value.trim();
-      const apellido = document.getElementById('apellido_usuario').value.trim();
-      const email = document.getElementById('email_usuario').value.trim();
-      const password = document.getElementById('password_usuario').value.trim();
-      const tipo = document.getElementById('tipo_usuario').value.trim();
-
-      if (!nombre || !apellido || !email || !password || !tipo) {
-        Swal.showValidationMessage('Por favor, complete todos los campos.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('nombre_usuario', nombre);
-      formData.append('apellido_usuario', apellido);
-      formData.append('email_usuario', email);
-      formData.append('password_usuario', password);
-      formData.append('tipo_usuario', tipo);
-      return formData;
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const formData = result.value;
-
-      $.ajax({
-        url: 'controllers/agregarUsuario.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(' Atención', response.message, 'warning');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
-        }
-      });
-    }
-  });
-}
-</script>
 
 
-<script>
-function eliminarEmpleado(id) {
-  Swal.fire({
-    title: "¿Deseas eliminar el empleado?",
-    text: "No podrás revertir esto",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Sí, eliminar"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Eliminado!",
-        text: "El empleado ha sido eliminado exitosamente.",
-        icon: "success",
-        timer: 2000,      // el tiempo que se demora en cerrar el alert 
-        showConfirmButton: false
-      }).then(() => {
-        // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "./controllers/eliminar.php?id=" + id;
-      });
-    }
-  });
-}
-</script>
+
 
 
 
