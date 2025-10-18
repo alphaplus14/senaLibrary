@@ -232,7 +232,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
               
               
               <li class="nav-item">
-                <a href="./views/generar.php" class="nav-link">
+                <a href="./Documentos.php" class="nav-link">
                   <i class="bi bi-file-earmark-pdf me-2"> </i>    
                   <span>
                    Documentos 
