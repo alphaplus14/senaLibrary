@@ -329,7 +329,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                         <?php if($rol == "Administrador"): ?>
                         <td class="justify-content-center d-flex gap-1">
                      
-                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_usuario']; ?>)">
+                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarUsuario(<?php echo $fila['id_usuario']; ?>)">
   <i class="bi bi-pencil-square"></i>
 </a>
  | 
@@ -531,6 +531,106 @@ function agregarUsuario() {
     }
   });
 }
+</script>
+
+<script>
+
+function editarUsuario(id) {
+    // Primero obtenemos los datos del empleado
+    $.ajax({
+        url: 'controller/info_usuario.php',
+        type: 'POST',
+        data: { id: id },
+        dataType: 'json',
+        success: function(response) {
+            if (!response.success) {
+                Swal.fire('⚠️ Atención', response.message, 'warning');
+                return;
+            }
+
+            const empleado = response.data;
+
+            Swal.fire({
+                title: 'Editar Usuario',
+                html: `
+                    <form id="formEditarUsuario" class="form-control" method="POST" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" value="${usuario.nombre_usuario}" required>
+                        </div>
+                         <div class="mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="apellido" value="${usuario.apellido_usuario}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña Antigua</label>
+                            <input type="password" class="form-control" id="passwordOld" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña Nueva</label>
+                            <input type="password" class="form-control" id="passwordNueva" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"> Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}" readonly disabled>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Cargo</label>
+                            <select class="form-control" id="cargo" value="${usuario.tipo_usuario}" required></select>
+                        </div>
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                focusConfirm: false,
+
+                preConfirm: () => {
+                    const formData = new FormData();
+                    formData.append('id', id);
+                    formData.append('nombre', $('#nombre').val().trim());
+                    formData.append('apellido', $('#apellido').val().trim());
+                    formData.append('passwordOld', $('#passwordOld').val().trim());
+                    formData.append('passwordNueva', $('#passwordNueva').val().trim());
+                      formData.append('apellido', $('#apellido').val().trim());
+                    formData.append('cargo', $('#cargo').val());
+                    return formData;
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'controller/editar_Usuario.php',
+                        type: 'POST',
+                        data: result.value,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function(res) {
+                            if (res.success) {
+                                Swal.fire('✅ Éxito', res.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('⚠️ Atención', res.message, 'warning');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire('❌ Error', 'Error en el servidor', 'error');
+                            console.error(error, xhr.responseText);
+                        }
+                    });
+                }
+            });
+        },
+        error: function() {
+            Swal.fire('❌ Error', 'No se pudo cargar la información del usuario', 'error');
+        }
+    });
+}
+
 </script>
 
 
