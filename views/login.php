@@ -28,6 +28,11 @@
             <div class="d-grid">
               <button type="submit" name="enviar" class="btn btn-success">Acceder</button>
             </div>
+            <div class="text-center mt-3">
+  <p>¿No tienes cuenta? 
+    <a href="registro.php" class="text-success fw-bold text-decoration-none">Regístrate aquí</a>
+  </p>
+</div>
           </form>
         </div>
       </div>
