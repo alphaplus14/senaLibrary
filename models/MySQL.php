@@ -10,7 +10,7 @@ class MySQL {
     private $ipServidor = "localhost";
     private $usuarioBase = "root";
     private $contrasena = "";
-    private $nombreBaseDatos = "bjc8wdksbxeffnx2flqs-mysql_services_clever-cloud_com";
+    private $nombreBaseDatos = "senaLibrary";
 
     private $conexion;
 

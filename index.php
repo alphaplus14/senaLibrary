@@ -272,6 +272,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
+            <!-- vista de diferentes usuarios  -->
             <div class="row">
               <?php if($rol == "Administrador"): ?>
               <div class="col-sm-6">
@@ -284,16 +285,17 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </ol>
               </div>
               <?php endif; ?>
-              
+            <?php if($rol != "Administrador"): ?>
             <div class="col-sm-6">
                 <h3 class="mb-0">Lista de Libros</h3>
-              </div>
+            </div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
                 </ol>
               </div>
+            <?php endif; ?>
             </div>
             <!--end::Row-->
           </div>
@@ -302,110 +304,103 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
-          <!--begin::Container-->
           <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row mb-3 align-items-center">
+
+            <?php if ($rol == 'Administrador'): ?>
+              <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
-                <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarUsuario()">➕ Agregar Nuevo Usuario </button>
-                <?php endif; ?>
+                  <button type="button" class="btn btn-success" onclick="agregarUsuario()">
+                    ➕ Agregar Nuevo Usuario
+                  </button>
                 </div>
-            </div>
+              </div>
+            <?php endif; ?>
+
             <div class="row">
-              <!--begin::Col-->
               <?php if($rol == "Administrador"): ?>
-              <div class="table-responsive">
-                    <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
-                <thead class="table-success">
-                    <tr>
+                <div class="table-responsive mb-5">
+                  <table id="tablaUsuarios" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-success">
+                      <tr>
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Apellido</th>
                         <th>Correo Electrónico</th>
                         <th>Cargo</th>
                         <th>Estado</th>
-                        <?php if($rol == "Administrador"): ?>
-                            <th>Acciones</th>
-                        <?php endif; ?>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                <?php while($fila = $resultado->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo $fila['id_usuario']; ?></td>
-                        <td><?php echo $fila['nombre_usuario']; ?></td>
-                        <td><?php echo $fila['apellido_usuario']; ?></td>
-                        <td><?php echo $fila['email_usuario']; ?></td>
-                        <td><?php echo $fila['tipo_usuario']; ?></td>
-                        <td><?php echo $fila['estado']; ?></td>
-                        <?php if($rol == "Administrador"): ?>
-                        <td class="justify-content-center d-flex gap-1">
-                     
-                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarUsuario(<?php echo $fila['id_usuario']; ?>)">
-  <i class="bi bi-pencil-square"></i>
-</a>
- | 
- <a class="btn btn-danger btn-sm"  
-   href="javascript:void(0);" 
-   onclick="eliminarEmpleado(<?php echo $fila['id_usuario']; ?>)" 
-   title="Eliminar"> 
-    <i class="bi bi-trash"></i>
-</a>
-
-                        </td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-                    </table>
-                </div>
-                 <?php endif; ?>
-
-                <div class="table-responsive">
-                  <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
-                    <thead class="table-success">
-                        <tr>
-                            <th>ID</th>
-                            <th>Titulo</th>
-                            <th>Autor</th>
-                            <th>ISBN</th>
-                            <th>Categoria</th>
-                            <th>Cantidad</th>
-                            <th>Estado</th>
-                            <th>Acciones </th>
-                            
-                        </tr>
+                        <th>Acciones</th>
+                      </tr>
                     </thead>
                     <tbody>
-                    <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                      <?php while($fila = $resultado->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $fila['id_libro']; ?></td>
-                            <td><?php echo $fila['titulo_libro']; ?></td>
-                            <td><?php echo $fila['autor_libro']; ?></td>
-                            <td><?php echo $fila['ISBN_libro']; ?></td>
-                            <td><?php echo $fila['categoria_libro']; ?></td>
-                            <td><?php echo $fila['cantidad_libro']; ?></td>
-                            <td><?php echo $fila['disponibilidad_libro']; ?></td>
-                            <td>
-                              <button class="btn btn-sm btn-primary btnReservar justify-content-center d-flex gap-1"
-                                      data-id="<?= $libro['id_libro'] ?>"
-                                      data-titulo="<?= htmlspecialchars($libro['titulo_libro']) ?>">
-                                <i class="bi bi-bookmark-plus"> </i> Reservar
-                              </button>
-                            </td>
+                          <td><?= $fila['id_usuario'] ?></td>
+                          <td><?= $fila['nombre_usuario'] ?></td>
+                          <td><?= $fila['apellido_usuario'] ?></td>
+                          <td><?= $fila['email_usuario'] ?></td>
+                          <td><?= $fila['tipo_usuario'] ?></td>
+                          <td><?= $fila['estado'] ?></td>
+                          <td class="text-center">
+                            <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_usuario'] ?>)">
+                              <i class="bi bi-pencil-square"></i>
+                            </a>
+                            |
+                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_usuario'] ?>)" title="Eliminar">
+                              <i class="bi bi-trash"></i>
+                            </a>
+                          </td>
                         </tr>
-                    <?php endwhile; ?>
+                      <?php endwhile; ?>
                     </tbody>
                   </table>
                 </div>
-              <!-- /.Start col -->
+              <?php endif; ?>
+
+
+              <?php if($rol != "Administrador"): ?>
+                <div class="table-responsive">
+                  <h4 class="mb-3">Catálogo de Libros</h4>
+                  <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-success">
+                      <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>ISBN</th>
+                        <th>Categoría</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                        <tr>
+                          <td><?= $fila['id_libro'] ?></td>
+                          <td><?= $fila['titulo_libro'] ?></td>
+                          <td><?= $fila['autor_libro'] ?></td>
+                          <td><?= $fila['ISBN_libro'] ?></td>
+                          <td><?= $fila['categoria_libro'] ?></td>
+                          <td><?= $fila['cantidad_libro'] ?></td>
+                          <td><?= $fila['disponibilidad_libro'] ?></td>
+                          <td class="text-center">
+                            <button class="btn btn-sm btn-primary btnReservar"
+                                    data-id="<?= $fila['id_libro'] ?>"
+                                    data-titulo="<?= htmlspecialchars($fila['titulo_libro']) ?>">
+                              <i class="bi bi-bookmark-plus"></i> Reservar
+                            </button>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    </tbody>
+                  </table>
+                </div>
+              <?php endif; ?>
+
             </div>
-            <!-- /.row (main row) -->
           </div>
-          <!--end::Container-->
         </div>
+
         <!--end::App Content-->
       </main>
       <!--end::App Main-->
@@ -486,6 +481,20 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 <script>
 $(document).ready(function() {
    $('#tablaEmpleados').DataTable({
+    language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+    },
+    pageLength: 5,
+    lengthMenu: [5, 10, 20, 50],
+    responsive: true,
+    autoWidth: true
+});
+
+});
+</script>
+<script>
+$(document).ready(function() {
+   $('#tablaLibros').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
