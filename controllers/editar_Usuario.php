@@ -5,7 +5,7 @@ header("Pragma: no-cache");
 
 session_start();
 
-if (!isset($_SESSION['cargo'])){
+if (!isset($_SESSION['tipo_usuario'])){
   echo json_encode(["success" => false, "message" => "Sesión no válida"]);
   exit();
 }
@@ -30,7 +30,7 @@ $passwordNueva = $_POST['passwordNueva'];
 
 
 
-
+//si cambia la contraseña 
 if (!empty($passwordNueva)) {
 
     //validar la contraseña vieja 
@@ -43,18 +43,18 @@ if (!empty($passwordNueva)) {
     $consulta = "UPDATE usuario
         SET nombre_usuario='$nombre',
             apellido_usuario='$apellido',
-            correo_usuario='$correo',
+            email_usuario='$correo',
             password_usuario='$passwordNuevaHash',
-            tipo_usuario='$cargo', 
+            tipo_usuario='$cargo'
         WHERE id_usuario='$id'";
 } else {
     //si no actualiza queda la misma
 
     $consulta = "UPDATE usuario 
-        SET nombre='$nombre',
+        SET nombre_usuario='$nombre',
             apellido_usuario='$apellido',
-            correo_usuario='$correo',
-            tipo_usuario='$cargo', 
+            email_usuario='$correo',
+            tipo_usuario='$cargo'
         WHERE id_usuario='$id'";
 }
 

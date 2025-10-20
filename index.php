@@ -536,7 +536,7 @@ function agregarUsuario() {
 <script>
 
 function editarUsuario(id) {
-    // Primero obtenemos los datos del empleado
+    // Primero obtenemos los datos del usuario
     $.ajax({
         url: 'controllers/info_usuario.php',
         type: 'POST',
@@ -548,7 +548,31 @@ function editarUsuario(id) {
                 return;
             }
 
-            const empleado = response.data;
+            const usuario = response.data;
+
+            //se crea variable para cargar el select con el que tiene el usuario
+            let opcionesCargo = '';
+
+            if (usuario.tipo_usuario === 'Administrador') {
+                opcionesCargo = `
+                    <option value="Administrador" selected>Administrador</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Cliente">Cliente</option>
+                `;
+            } else if (usuario.tipo_usuario === 'Empleado') {
+                opcionesCargo = `
+                    <option value="Administrador">Administrador</option>
+                    <option value="Empleado" selected>Empleado</option>
+                    <option value="Cliente">Cliente</option>
+                `;
+            } else if (usuario.tipo_usuario === 'Cliente') {
+                opcionesCargo = `
+                    <option value="Administrador">Administrador</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Cliente" selected>Cliente</option>
+                `;
+            }
+
 
             Swal.fire({
                 title: 'Editar Usuario',
@@ -576,12 +600,13 @@ function editarUsuario(id) {
 
                         <div class="mb-3">
                             <label class="form-label"> Correo Electrónico</label>
-                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}" readonly disabled>
+                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Cargo</label>
-                            <select class="form-control" id="cargo" value="${usuario.tipo_usuario}" required></select>
+                             <select class="form-control" id="cargo" required>
+                                ${opcionesCargo} // se llama la variable 
                         </div>
                     </form>
                 `,

@@ -16,11 +16,11 @@ if($consulta->num_rows>0){
      echo json_encode([
         'success' => true,
             'data' => [
-                'id' => $informacion['id'],
-                'nombre' => $informacion['nombre'],
-                'apellido' => $informacion['apellido'],
-                'correo' => $informacion['correo'],
-                'cargo' => $informacion['cargo'],
+                'id_usuario' => $informacion['id_usuario'],
+                'nombre_usuario' => $informacion['nombre_usuario'],
+                'apellido_usuario' => $informacion['apellido_usuario'],
+                'email_usuario' => $informacion['email_usuario'],
+                'tipo_usuario' => $informacion['tipo_usuario'],
                 'estado' => $informacion['estado'],
                 
             ]
