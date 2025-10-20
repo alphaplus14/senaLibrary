@@ -5,7 +5,7 @@ header("Pragma: no-cache");
 
 session_start();
 
-if (!isset($_SESSION['cargo'])){
+if (!isset($_SESSION['tipo_usuario'])){
   echo json_encode(["success" => false, "message" => "Sesión no válida"]);
   exit();
 }
@@ -30,7 +30,7 @@ $passwordNueva = $_POST['passwordNueva'];
 
 
 
-
+//si cambia la contraseña 
 if (!empty($passwordNueva)) {
 
     //validar la contraseña vieja 
@@ -40,25 +40,28 @@ if (!empty($passwordNueva)) {
     }
 //si coincide actuliza por la nueva
     $passwordNuevaHash = password_hash($passwordNueva, PASSWORD_BCRYPT);
-    $consulta = "UPDATE empleados 
-        SET nombre='$nombre',
-            password='$passwordNuevaHash',
-            cargo_id='$cargo', 
-        WHERE id='$id'";
+    $consulta = "UPDATE usuario
+        SET nombre_usuario='$nombre',
+            apellido_usuario='$apellido',
+            email_usuario='$correo',
+            password_usuario='$passwordNuevaHash',
+            tipo_usuario='$cargo'
+        WHERE id_usuario='$id'";
 } else {
     //si no actualiza queda la misma
 
-    $consulta = "UPDATE empleados 
-        SET nombre='$nombre',
-            cargo_id='$cargo', 
-            telefono='$telefono'
-        WHERE id='$id'";
+    $consulta = "UPDATE usuario 
+        SET nombre_usuario='$nombre',
+            apellido_usuario='$apellido',
+            email_usuario='$correo',
+            tipo_usuario='$cargo'
+        WHERE id_usuario='$id'";
 }
 
 $result = $mysql->efectuarConsulta($consulta);
 
 if ($result === true) {
-    echo json_encode(["success" => true, "message" => "Empleado actualizado correctamente"]);
+    echo json_encode(["success" => true, "message" => "Usuario actualizado correctamente"]);
 } else {
     echo json_encode(["success" => false, "message" => "Error al actualizar"]);
 }

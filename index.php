@@ -230,7 +230,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                   </span>
                   </a>
               
-              
+               <?php if ($rol == 'Administrador'): ?>
               <li class="nav-item">
                 <a href="./views/documentos.php" class="nav-link">
                   <i class="bi bi-file-earmark-pdf me-2"> </i>    
@@ -245,7 +245,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                   <span> Inventario </span>
                 </a>
               </li>
-
+              <?php endif; ?>
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
                 <a href="controllers/logout.php" class="nav-link">
@@ -272,6 +272,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
           <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
+              <?php if($rol == "Administrador"): ?>
               <div class="col-sm-6">
                 <h3 class="mb-0">Lista de Usuarios</h3>
               </div>
@@ -279,6 +280,17 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
+                </ol>
+              </div>
+              <?php endif; ?>
+              
+            <div class="col-sm-6">
+                <h3 class="mb-0">Lista de Libros</h3>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
                 </ol>
               </div>
             </div>
@@ -301,6 +313,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             </div>
             <div class="row">
               <!--begin::Col-->
+              <?php if($rol == "Administrador"): ?>
               <div class="table-responsive">
                     <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
                 <thead class="table-success">
@@ -347,6 +360,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 </tbody>
                     </table>
                 </div>
+                 <?php endif; ?>
                 
               <!-- /.Start col -->
             </div>
@@ -536,9 +550,9 @@ function agregarUsuario() {
 <script>
 
 function editarUsuario(id) {
-    // Primero obtenemos los datos del empleado
+    // Primero obtenemos los datos del usuario
     $.ajax({
-        url: 'controller/info_usuario.php',
+        url: 'controllers/info_usuario.php',
         type: 'POST',
         data: { id: id },
         dataType: 'json',
@@ -548,7 +562,31 @@ function editarUsuario(id) {
                 return;
             }
 
-            const empleado = response.data;
+            const usuario = response.data;
+
+            //se crea variable para cargar el select con el que tiene el usuario
+            let opcionesCargo = '';
+
+            if (usuario.tipo_usuario === 'Administrador') {
+                opcionesCargo = `
+                    <option value="Administrador" selected>Administrador</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Cliente">Cliente</option>
+                `;
+            } else if (usuario.tipo_usuario === 'Empleado') {
+                opcionesCargo = `
+                    <option value="Administrador">Administrador</option>
+                    <option value="Empleado" selected>Empleado</option>
+                    <option value="Cliente">Cliente</option>
+                `;
+            } else if (usuario.tipo_usuario === 'Cliente') {
+                opcionesCargo = `
+                    <option value="Administrador">Administrador</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Cliente" selected>Cliente</option>
+                `;
+            }
+
 
             Swal.fire({
                 title: 'Editar Usuario',
@@ -576,12 +614,13 @@ function editarUsuario(id) {
 
                         <div class="mb-3">
                             <label class="form-label"> Correo Electrónico</label>
-                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}" readonly disabled>
+                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Cargo</label>
-                            <select class="form-control" id="cargo" value="${usuario.tipo_usuario}" required></select>
+                             <select class="form-control" id="cargo" required>
+                                ${opcionesCargo} // se llama la variable 
                         </div>
                     </form>
                 `,
@@ -595,16 +634,16 @@ function editarUsuario(id) {
                     formData.append('id', id);
                     formData.append('nombre', $('#nombre').val().trim());
                     formData.append('apellido', $('#apellido').val().trim());
+                    formData.append('correo', $('#correo').val().trim());
                     formData.append('passwordOld', $('#passwordOld').val().trim());
                     formData.append('passwordNueva', $('#passwordNueva').val().trim());
-                      formData.append('apellido', $('#apellido').val().trim());
                     formData.append('cargo', $('#cargo').val());
                     return formData;
                 }
             }).then(result => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: 'controller/editar_Usuario.php',
+                        url: 'controllers/editar_Usuario.php',
                         type: 'POST',
                         data: result.value,
                         contentType: false,
