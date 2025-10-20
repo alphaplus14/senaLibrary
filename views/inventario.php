@@ -331,7 +331,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                         <?php if($rol == "Administrador"): ?>
                         <td class="justify-content-center d-flex gap-1">
                      
-                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarPersona(<?php echo $fila['id_libro']; ?>)">
+                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
   <i class="bi bi-pencil-square"></i>
 </a>
  | 
@@ -539,6 +539,200 @@ function agregarLibro() {
   });
 }
 </script>
+
+<script>
+
+function editarLibro(id) {
+    // Primero obtenemos los datos del usuario
+    $.ajax({
+        url: '../controllers/info_libro.php',
+        type: 'POST',
+        data: { id: id },
+        dataType: 'json',
+        success: function(response) {
+            if (!response.success) {
+                Swal.fire('⚠️ Atención', response.message, 'warning');
+                return;
+            }
+
+            const libro = response.data;
+
+            //se crea variable para cargar el select con el que tiene el usuario
+            let categoriaLibro = '';
+
+            if (libro.categoria_libro === 'Ficcion') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro === 'No ficcion') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro  === 'De Referencia') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro  === 'Libros de Texto') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro  === 'Tecnicos o Especializados') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro  === 'Practicos') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro  === 'Poeticos') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            } else if (libro.categoria_libro  === 'Religiosos') {
+                categoriaLibro = `
+            <option value="Ficcion">Ficcion</option>
+            <option value="No Ficcion">No Ficcion</option>
+            <option value="De Referencia"> De Referencia</option>
+            <option value="Libros de Texto"> Libros de Texto</option>
+            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
+            <option value="Practicos"> Practicos</option>
+            <option value="Poeticos"> Poeticos</option>
+            <option value="Religiosos"> Religiosos</option>
+                `;
+            }
+
+
+            Swal.fire({
+                title: 'Editar Libro',
+                html: `
+                    <form id="formEditarLibro" class="form-control" method="POST" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label class="form-label">Titulo</label>
+                            <input type="text" class="form-control" id="titulo" value="${libro.titulo_libro}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Autor</label>
+                            <input type="text" class="form-control" id="autor" value="${libro.autor_libro}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">ISBN</label>
+                            <input type="text" class="form-control" id="ISBN" value="${libro.ISBN_libro}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"> Categoria</label>
+                            <select class="form-control" id="categoria" required>
+                            ${categoriaLibro} //se llama la variable
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Cantidad</label>
+                            <input type="number" class="form-control" id="cantidad" value="${libro.cantidad_libro}" required>
+                        </div>
+
+                    </form>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                focusConfirm: false,
+
+                preConfirm: () => {
+                    const formData = new FormData();
+                    formData.append('id', id);
+                    formData.append('titulo', $('#titulo').val().trim());
+                    formData.append('autor', $('#autor').val().trim());
+                    formData.append('ISBN', $('#ISBN').val().trim());
+                    formData.append('categoria', $('#categoria').val().trim());
+                    formData.append('cantidad', $('#cantidad').val());
+                    return formData;
+                }
+            }).then(result => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '../controllers/editar_Libro.php',
+                        type: 'POST',
+                        data: result.value,
+                        contentType: false,
+                        processData: false,
+                        dataType: 'json',
+                        success: function(res) {
+                            if (res.success) {
+                                Swal.fire('✅ Éxito', res.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('⚠️ Atención', res.message, 'warning');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            Swal.fire('❌ Error', 'Error en el servidor', 'error');
+                            console.error(error, xhr.responseText);
+                        }
+                    });
+                }
+            });
+        },
+        error: function() {
+            Swal.fire('❌ Error', 'No se pudo cargar la información del usuario', 'error');
+        }
+    });
+}
+
+</script>
+
+
 <script>
 function eliminarLibro(id) {
   Swal.fire({

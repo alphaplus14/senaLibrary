@@ -61,7 +61,7 @@ if (!empty($passwordNueva)) {
 $result = $mysql->efectuarConsulta($consulta);
 
 if ($result === true) {
-    echo json_encode(["success" => true, "message" => "Empleado actualizado correctamente"]);
+    echo json_encode(["success" => true, "message" => "Usuario actualizado correctamente"]);
 } else {
     echo json_encode(["success" => false, "message" => "Error al actualizar"]);
 }
