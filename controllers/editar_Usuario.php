@@ -40,19 +40,22 @@ if (!empty($passwordNueva)) {
     }
 //si coincide actuliza por la nueva
     $passwordNuevaHash = password_hash($passwordNueva, PASSWORD_BCRYPT);
-    $consulta = "UPDATE empleados 
-        SET nombre='$nombre',
-            password='$passwordNuevaHash',
-            cargo_id='$cargo', 
-        WHERE id='$id'";
+    $consulta = "UPDATE usuario
+        SET nombre_usuario='$nombre',
+            apellido_usuario='$apellido',
+            correo_usuario='$correo',
+            password_usuario='$passwordNuevaHash',
+            tipo_usuario='$cargo', 
+        WHERE id_usuario='$id'";
 } else {
     //si no actualiza queda la misma
 
-    $consulta = "UPDATE empleados 
+    $consulta = "UPDATE usuario 
         SET nombre='$nombre',
-            cargo_id='$cargo', 
-            telefono='$telefono'
-        WHERE id='$id'";
+            apellido_usuario='$apellido',
+            correo_usuario='$correo',
+            tipo_usuario='$cargo', 
+        WHERE id_usuario='$id'";
 }
 
 $result = $mysql->efectuarConsulta($consulta);

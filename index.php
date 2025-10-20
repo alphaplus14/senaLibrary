@@ -538,7 +538,7 @@ function agregarUsuario() {
 function editarUsuario(id) {
     // Primero obtenemos los datos del empleado
     $.ajax({
-        url: 'controller/info_usuario.php',
+        url: 'controllers/info_usuario.php',
         type: 'POST',
         data: { id: id },
         dataType: 'json',
@@ -595,16 +595,16 @@ function editarUsuario(id) {
                     formData.append('id', id);
                     formData.append('nombre', $('#nombre').val().trim());
                     formData.append('apellido', $('#apellido').val().trim());
+                    formData.append('correo', $('#correo').val().trim());
                     formData.append('passwordOld', $('#passwordOld').val().trim());
                     formData.append('passwordNueva', $('#passwordNueva').val().trim());
-                      formData.append('apellido', $('#apellido').val().trim());
                     formData.append('cargo', $('#cargo').val());
                     return formData;
                 }
             }).then(result => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: 'controller/editar_Usuario.php',
+                        url: 'controllers/editar_Usuario.php',
                         type: 'POST',
                         data: result.value,
                         contentType: false,

@@ -18,9 +18,10 @@ if($consulta->num_rows>0){
             'data' => [
                 'id' => $informacion['id'],
                 'nombre' => $informacion['nombre'],
-                'cargo_id' => $informacion['cargo_id'],
-                'estado' => $informacion['estado'],
+                'apellido' => $informacion['apellido'],
                 'correo' => $informacion['correo'],
+                'cargo' => $informacion['cargo'],
+                'estado' => $informacion['estado'],
                 
             ]
         ]);
