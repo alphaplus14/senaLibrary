@@ -20,7 +20,7 @@ $nombre=$_SESSION['nombre_usuario'];
 
 $mysql = new MySQL();
 $mysql->conectar();
-//consulta para obtener los usuarios
+//consulta para obtener los libros
 $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 
@@ -301,53 +301,53 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             </div>
             <div class="row">
               <!--begin::Col-->
-              <div class="table-responsive">
-                    <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
-                <thead class="table-success">
-                    <tr>
-                        <th>ID</th>
-                        <th>Titulo</th>
-                        <th>Autor</th>
-                        <th>ISBN</th>
-                        <th>Categoria</th>
-                        <th>Cantidad</th>
-                        <th>Estado</th>
-                        <?php if($rol == "Administrador"): ?>
-                            <th>Acciones</th>
-                        <?php endif; ?>
+                <div class="table-responsive">
+                        <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-success">
+                        <tr>
+                            <th>ID</th>
+                            <th>Titulo</th>
+                            <th>Autor</th>
+                            <th>ISBN</th>
+                            <th>Categoria</th>
+                            <th>Cantidad</th>
+                            <th>Estado</th>
+                            <?php if($rol == "Administrador"): ?>
+                                <th>Acciones</th>
+                            <?php endif; ?>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php while($fila = $resultado->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo $fila['id_libro']; ?></td>
+                            <td><?php echo $fila['titulo_libro']; ?></td>
+                            <td><?php echo $fila['autor_libro']; ?></td>
+                            <td><?php echo $fila['ISBN_libro']; ?></td>
+                            <td><?php echo $fila['categoria_libro']; ?></td>
+                            <td><?php echo $fila['cantidad_libro']; ?></td>
+                            <td><?php echo $fila['disponibilidad_libro']; ?></td>
+                            <?php if($rol == "Administrador"): ?>
+                            <td class="justify-content-center d-flex gap-1">
                         
-                    </tr>
-                </thead>
-                <tbody>
-                <?php while($fila = $resultado->fetch_assoc()): ?>
-                    <tr>
-                        <td><?php echo $fila['id_libro']; ?></td>
-                        <td><?php echo $fila['titulo_libro']; ?></td>
-                        <td><?php echo $fila['autor_libro']; ?></td>
-                        <td><?php echo $fila['ISBN_libro']; ?></td>
-                        <td><?php echo $fila['categoria_libro']; ?></td>
-                        <td><?php echo $fila['cantidad_libro']; ?></td>
-                        <td><?php echo $fila['disponibilidad_libro']; ?></td>
-                        <?php if($rol == "Administrador"): ?>
-                        <td class="justify-content-center d-flex gap-1">
-                     
-                     <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
-  <i class="bi bi-pencil-square"></i>
-</a>
- | 
- <a class="btn btn-danger btn-sm"  
-   href="javascript:void(0);" 
-   onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
-   title="Eliminar"> 
-    <i class="bi bi-trash"></i>
-</a>
+                        <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
+    <i class="bi bi-pencil-square"></i>
+    </a>
+    | 
+    <a class="btn btn-danger btn-sm"  
+    href="javascript:void(0);" 
+    onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
+    title="Eliminar"> 
+        <i class="bi bi-trash"></i>
+    </a>
 
-                        </td>
-                        <?php endif; ?>
-                    </tr>
-                <?php endwhile; ?>
-                </tbody>
-                    </table>
+                            </td>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
+                        </table>
                 </div>
                 
               <!-- /.Start col -->

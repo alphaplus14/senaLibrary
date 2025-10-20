@@ -22,6 +22,7 @@ $mysql = new MySQL();
 $mysql->conectar();
 //consulta para obtener los usuarios
 $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
+$resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 
 ?>
@@ -361,7 +362,44 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                     </table>
                 </div>
                  <?php endif; ?>
-                
+
+                <div class="table-responsive">
+                  <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-success">
+                        <tr>
+                            <th>ID</th>
+                            <th>Titulo</th>
+                            <th>Autor</th>
+                            <th>ISBN</th>
+                            <th>Categoria</th>
+                            <th>Cantidad</th>
+                            <th>Estado</th>
+                            <th>Acciones </th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo $fila['id_libro']; ?></td>
+                            <td><?php echo $fila['titulo_libro']; ?></td>
+                            <td><?php echo $fila['autor_libro']; ?></td>
+                            <td><?php echo $fila['ISBN_libro']; ?></td>
+                            <td><?php echo $fila['categoria_libro']; ?></td>
+                            <td><?php echo $fila['cantidad_libro']; ?></td>
+                            <td><?php echo $fila['disponibilidad_libro']; ?></td>
+                            <td>
+                              <button class="btn btn-sm btn-primary btnReservar justify-content-center d-flex gap-1"
+                                      data-id="<?= $libro['id_libro'] ?>"
+                                      data-titulo="<?= htmlspecialchars($libro['titulo_libro']) ?>">
+                                <i class="bi bi-bookmark-plus"> </i> Reservar
+                              </button>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
+                  </table>
+                </div>
               <!-- /.Start col -->
             </div>
             <!-- /.row (main row) -->
