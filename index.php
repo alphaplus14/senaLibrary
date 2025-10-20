@@ -230,7 +230,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                   </span>
                   </a>
               
-              
+               <?php if ($rol == 'Administrador'): ?>
               <li class="nav-item">
                 <a href="./views/documentos.php" class="nav-link">
                   <i class="bi bi-file-earmark-pdf me-2"> </i>    
@@ -245,7 +245,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                   <span> Inventario </span>
                 </a>
               </li>
-
+              <?php endif; ?>
               <li class="nav-header">Log Out</li>
               <li class="nav-item">
                 <a href="controllers/logout.php" class="nav-link">
@@ -272,6 +272,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
           <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
+              <?php if($rol == "Administrador"): ?>
               <div class="col-sm-6">
                 <h3 class="mb-0">Lista de Usuarios</h3>
               </div>
@@ -279,6 +280,17 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
+                </ol>
+              </div>
+              <?php endif; ?>
+              
+            <div class="col-sm-6">
+                <h3 class="mb-0">Lista de Libros</h3>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="#">Home</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
                 </ol>
               </div>
             </div>
@@ -301,6 +313,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             </div>
             <div class="row">
               <!--begin::Col-->
+              <?php if($rol == "Administrador"): ?>
               <div class="table-responsive">
                     <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
                 <thead class="table-success">
@@ -347,6 +360,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 </tbody>
                     </table>
                 </div>
+                 <?php endif; ?>
                 
               <!-- /.Start col -->
             </div>

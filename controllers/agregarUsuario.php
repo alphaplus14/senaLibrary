@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $estado= "Activo";
     // Insertar usuario
     $consultaInsert = "
-        INSERT INTO usuario (nombre_usuario, apellido_usuario, email_usuario, password_usuario, tipo_usuario,estadogi)
+        INSERT INTO usuario (nombre_usuario, apellido_usuario, email_usuario, password_usuario, tipo_usuario,estado)
         VALUES ('$nombre', '$apellido', '$email', '$hash', '$tipo', '$estado')
     ";
 
