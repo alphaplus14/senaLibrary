@@ -28,7 +28,15 @@ $cargo         = $_POST['cargo'];
 $passwordOld   = $_POST['passwordOld']; 
 $passwordNueva = $_POST['passwordNueva'];
 
+// Verificar si el correo ya está registrado
+    $consultaExiste = "SELECT id_usuario FROM usuario WHERE email_usuario = '$email'";
+    $resultado = $mysql->efectuarConsulta($consultaExiste);
 
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        echo json_encode(['success' => false, 'message' => 'El correo ya está registrado.']);
+        $mysql->desconectar();
+        exit;
+    }
 
 //si cambia la contraseña 
 if (!empty($passwordNueva)) {

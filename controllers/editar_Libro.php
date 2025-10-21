@@ -27,6 +27,16 @@ $ISBN       = $_POST['ISBN'];
 $categoria        = $_POST['categoria'];
 $cantidad  = $_POST['cantidad']; 
 
+ // Verificar si el ISBN ya está registrado
+    $consultaExiste = "SELECT ISBN_libro FROM libro WHERE ISBN_libro = '$iSBN_libro'";
+    $resultado = $mysql->efectuarConsulta($consultaExiste);
+
+    if ($resultado && mysqli_num_rows($resultado) > 0) {
+        echo json_encode(['success' => false, 'message' => 'El ISBN yaestá registrado.']);
+        $mysql->desconectar();
+        exit;
+    }
+
 $consulta = "UPDATE libro
         SET titulo_libro='$titulo',
             autor_libro='$autor',

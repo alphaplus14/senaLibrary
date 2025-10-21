@@ -18,8 +18,35 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
 
     // Consulta del usuario
     $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario WHERE email_usuario='".$correo."'");
+    $mysql->desconectar();
 
-    if ($usuarios = mysqli_fetch_assoc($resultado)) {
+    $usuarios = mysqli_fetch_assoc($resultado);
+
+        if ($usuarios) {
+
+        // Verificar estado
+        if ($usuarios['estado'] === 'Inactivo') {
+            echo "
+            <!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+            </head>
+            <body>
+                <script>
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Usuario inactivo',
+                    text: 'No tiene permiso de acceso.'
+                }).then(() => {
+                    window.location = '../views/login.php';
+                });
+                </script>
+            </body>
+            </html>";
+            exit();
+        }
 
 
 
@@ -28,23 +55,81 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
         if (password_verify($password, $usuarios['password_usuario'])) {
         // if ($password === $usuarios['password_usuario']) {
             // Guardar sesión
-$_SESSION['usuario_id'] = $usuarios['id_usuario'];
-$_SESSION['nombre_usuario'] = $usuarios['nombre_usuario'];
-$_SESSION['apellido_usuario'] = $usuarios['apellido_usuario'];
-$_SESSION['email_usuario'] = $usuarios['email_usuario'];
-$_SESSION['tipo_usuario'] = $usuarios['tipo_usuario'];
+            $_SESSION['usuario_id'] = $usuarios['id_usuario'];
+            $_SESSION['nombre_usuario'] = $usuarios['nombre_usuario'];
+            $_SESSION['apellido_usuario'] = $usuarios['apellido_usuario'];
+            $_SESSION['email_usuario'] = $usuarios['email_usuario'];
+            $_SESSION['tipo_usuario'] = $usuarios['tipo_usuario'];
 
             // Redirigir al dashboard
-            header("Location: ../index.php");
+           echo "
+            <!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+            </head>
+            <body>
+                <script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Bienvenido',
+                    text: 'Hola, ".$usuarios['nombre_usuario']."',
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location = '../index.php';
+                });
+                </script>
+            </body>
+            </html>";
             exit();
         } else {
-            echo "Contraseña incorrecta";
+            echo "
+            <!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+            </head>
+            <body>
+                <script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Contraseña incorrecta',
+                    text: 'Por favor, inténtalo nuevamente.'
+                }).then(() => {
+                    window.location = '../views/login.php';
+                });
+                </script>
+            </body>
+            </html>";
+            exit();
         }
 
     } else {
-        echo "correo no encontrado";
+         echo "
+        <!DOCTYPE html>
+        <html lang='es'>
+        <head>
+            <meta charset='UTF-8'>
+            <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+        </head>
+        <body>
+            <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Usuario no encontrado',
+                text: 'Verifica el correo e inténtalo de nuevo.'
+            }).then(() => {
+                window.location = '../views/login.php';
+            });
+            </script>
+        </body>
+        </html>";
+        exit();
     }
-$mysql->desconectar();
+
 } else {
 
     header("Location: ../views/login.php");
