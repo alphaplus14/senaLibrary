@@ -257,16 +257,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </a>
               </li>
               <?php endif; ?>
-              <li class="nav-header">Log Out</li>
-              <li class="nav-item">
-                <a href="controllers/logout.php" class="nav-link">
-                  <i class="nav-icon bi bi-box-arrow-in-right logout-link"></i>
-                  <span>
-                    Cerrar Sesión
-                  </span>
-                </a>
-                
-              </li>
 
             </ul>
             <!--end::Sidebar Menu-->

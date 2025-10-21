@@ -162,30 +162,39 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
           <ul class="navbar-nav ms-auto">
 
             <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-             
-                <span class="d-none d-md-inline"> <?php echo $nombre; ?> </span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
-                  <p>
-                    <?php 
-                    echo $nombre;
-                    ?> 
-                    <small> <?php echo $rol ;?></small>
-                  </p>
-                </li>
-                <!--end::User Image-->
-                <!--begin::Menu Body-->
-                
-                <!--end::Menu Body-->
-                <!--begin::Menu Footer-->
-                
-                <!--end::Menu Footer-->
-              </ul>
-            </li>
+         <li class="nav-item dropdown user-menu">
+  <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+    <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
+  </a>
+
+  <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+    <!-- Cabecera del usuario -->
+    <li class="bg-primary text-white text-center rounded-top py-3">
+      <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+      <small><?php echo $rol; ?></small>
+    </li>
+
+    <!-- Separador -->
+    <li><hr class="dropdown-divider m-0"></li>
+
+    <!-- Opciones del menu -->
+    <li>
+      <a href="index.php" class="dropdown-item d-flex align-items-center py-2">
+        <i class="bi bi-person me-2 text-secondary"></i> Perfil
+      </a>
+    </li>
+
+    <!-- Separador -->
+    <li><hr class="dropdown-divider m-0"></li>
+
+    <!-- Opción de cerrar sesión -->
+    <li>
+      <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+      </a>
+    </li>
+  </ul>
+</li>
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -244,17 +253,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                  <i class="bi bi-box-seam me-2"> </i>
                   <span> Inventario </span>
                 </a>
-              </li>
-
-              <li class="nav-header">Log Out</li>
-              <li class="nav-item">
-                <a href="../controllers/logout.php" class="nav-link">
-                  <i class="nav-icon bi bi-box-arrow-in-right logout-link"></i>
-                  <span>
-                    Cerrar Sesión
-                  </span>
-                </a>
-                
               </li>
 
             </ul>
