@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $resultado = $mysql->efectuarConsulta($consultaExiste);
 
     if ($resultado && mysqli_num_rows($resultado) > 0) {
-        echo json_encode(['success' => false, 'message' => 'El ISBN yaestá registrado.']);
+        echo json_encode(['success' => false, 'message' => 'El ISBN ya está registrado.']);
         $mysql->desconectar();
         exit;
     }

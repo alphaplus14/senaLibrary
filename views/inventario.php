@@ -668,7 +668,7 @@ function editarLibro(id) {
 
                         <div class="mb-3">
                             <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="ISBN" value="${libro.ISBN_libro}" required>
+                            <input type="text" class="form-control" id="ISBN" value="${libro.ISBN_libro}" disabled>
                         </div>
 
                         <div class="mb-3">
