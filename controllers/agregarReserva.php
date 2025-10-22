@@ -5,7 +5,7 @@ header("Pragma: no-cache");
 header("Content-Type: application/json; charset=utf-8");
 session_start();
 
-if (!isset($_SESSION['tipo_usuario'])) {
+if (!isset($_SESSION['tipo_usuario'])) { 
   echo json_encode(['success' => false, 'message' => 'Sesión no válida']);
   exit();
 }
@@ -17,11 +17,6 @@ $mysql->conectar();
 $idUsuario = $_SESSION['id_usuario'];
 if (isset($_POST['id_libro'])) {
     $idLibro = intval($_POST['id_libro']);
-}
-
-if ($idLibro <= 0) {
-  echo json_encode(['success' => false, 'message' => 'Libro no válido']);
-  exit();
 }
 
 // Verificar disponibilidad del libro
