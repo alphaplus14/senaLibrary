@@ -179,7 +179,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
     <!-- Opciones del menu -->
     <li>
-      <a href="index.php" class="dropdown-item d-flex align-items-center py-2">
+      <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
         <i class="bi bi-person me-2 text-secondary"></i> Perfil
       </a>
     </li>

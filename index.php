@@ -647,8 +647,9 @@ function gestionarReserva() {
                 `);
               });
 
-              $('.btnAgregarReserva').on('click', function() {
-                const idLibro = $(this).data('id');
+              $(document).on('click', '.btnAgregarReserva', function() {
+                  const idLibro = $(this).data('id');
+                  console.log("Click detectado. ID libro:", idLibro);
                 $.ajax({
                   url: './controllers/agregarReserva.php',
                   type: 'POST',
