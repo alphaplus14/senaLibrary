@@ -1,0 +1,42 @@
+Clientes:
+•	Editar perfil personal.
+•	Cambiar contraseña.
+________________________________________
+📚 3. Gestión de Libros (Inventario)
+Búsqueda y filtros:
+________________________________________
+📖 4. Reservas de Libros
+Clientes:
+•	Reservar libros disponibles.
+•	Ver sus reservas.
+•	Cancelar reservas.
+Administradores:
+•	Ver todas las reservas.
+•	Aprobar o rechazar reservas.
+•	Ver historial de reservas.
+________________________________________
+📦 5. Préstamos de Libros
+•	Registrar préstamos (a partir de reservas aprobadas).
+•	Registrar devoluciones.
+•	Ver historial de préstamos.
+________________________________________
+📊 6. Panel de Control del Administrador
+•	Mostrar estadísticas generales:
+o	Total de libros.
+o	Total de reservas.
+o	Total de préstamos.
+•	Enlaces rápidos a módulos (usuarios, libros, reservas, préstamos).
+________________________________________
+📈 7. Generación de Informes
+PDF (usando Dompdf o FPDF):
+•	Generar informe de inventario (libros disponibles, prestados, etc.).
+•	Generar informe de préstamos (historial, más prestados, etc.).
+•	Seleccionar rango de fechas.
+Excel (usando PhpSpreadsheet):
+•	Exportar inventario a Excel.
+•	Exportar historial de préstamos a Excel.
+•	Seleccionar rango de fechas.
+________________________________________
+✉️ 8. Notificaciones
+•	Enviar correo electrónico al cliente al confirmar una reserva.
+•	Enviar correo al registrar un préstamo o devolución.
