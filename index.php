@@ -359,7 +359,12 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 
               <?php if($rol != "Administrador"): ?>
                 <div class="table-responsive">
-                  <h4 class="mb-3">Catálogo de Libros</h4>
+                  <div class="col"> 
+                    <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="gestionarReserva()">
+                              <i class="bi bi-bookmark-plus"></i> Realizar Reserva
+                    </button> 
+                </div>
+                  
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                     <thead class="table-success">
                       <tr>
@@ -370,7 +375,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                         <th>Categoría</th>
                         <th>Cantidad</th>
                         <th>Estado</th>
-                        <th>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -383,13 +387,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                           <td><?= $fila['categoria_libro'] ?></td>
                           <td><?= $fila['cantidad_libro'] ?></td>
                           <td><?= $fila['disponibilidad_libro'] ?></td>
-                          <td class="text-center">
-                            <button class="btn btn-sm btn-primary btnReservar"
-                                    data-id="<?= $fila['id_libro'] ?>"
-                                    data-titulo="<?= htmlspecialchars($fila['titulo_libro']) ?>">
-                              <i class="bi bi-bookmark-plus"></i> Reservar
-                            </button>
-                          </td>
                         </tr>
                       <?php endwhile; ?>
                     </tbody>
@@ -593,6 +590,100 @@ function agregarUsuario() {
   });
 }
 </script>
+
+<script>
+function gestionarReserva() {
+  Swal.fire({
+    title: 'Reservas',
+    html: `
+      <form id="formBusqueda" class="text-start">
+        <div class="mb-3">
+          <label for="busqueda_libro" class="form-label mb-2">Buscar por título o autor</label>
+          <div class="input-group">
+            <input type="text" class="form-control" id="busqueda_libro" 
+                   placeholder="Ejemplo: Cien años de soledad o García Márquez" required>
+            <button type="button" class="btn btn-secondary" id="btnBuscarLibro">Buscar</button>
+          </div>
+        </div>
+        <div id="resultadosBusqueda" 
+             style="max-height:250px; overflow-y:auto; display:none; margin-top:10px;"></div>
+      </form>
+    `,
+    confirmButtonText: 'Cerrar',
+    showCancelButton: false,
+    focusConfirm: false,
+    didOpen: () => {
+      $('#btnBuscarLibro').on('click', function() {
+        const texto = $('#busqueda_libro').val().trim();
+        if (texto === '') {
+          Swal.showValidationMessage('Por favor, ingresa un título o autor.');
+          return;
+        }
+
+        $.ajax({
+          url: './controllers/buscarLibro.php',
+          type: 'POST',
+          data: { texto_busqueda: texto },
+          dataType: 'json',
+          success: function(res) {
+            const resultados = $('#resultadosBusqueda');
+            resultados.empty();
+
+            if (res.encontrados && res.data.length > 0) {
+              resultados.show();
+              resultados.append('<h6>Resultados encontrados:</h6>');
+              res.data.forEach(libro => {
+                resultados.append(`
+                  <div class="border rounded p-2 mb-2 bg-light">
+                    <b>${libro.titulo_libro}</b><br>
+                    <small><b>Autor:</b> ${libro.autor_libro}</small><br>
+                    <small><b>Categoría:</b> ${libro.categoria_libro}</small><br>
+                    <small><b>Cantidad disponible:</b> ${libro.cantidad_libro}</small>
+                    <button class="btn btn-sm btn-primary mt-2 btnAgregarReserva" 
+                            data-id="${libro.id_libro}">
+                      Agregar a reserva
+                    </button>
+                  </div>
+                `);
+              });
+
+              $('.btnAgregarReserva').on('click', function() {
+                const idLibro = $(this).data('id');
+                $.ajax({
+                  url: './controllers/agregarReserva.php',
+                  type: 'POST',
+                  data: { id_libro: idLibro },
+                  dataType: 'json',
+                  success: function(r) {
+                    if (r.success) {
+                      Swal.fire('Éxito', r.message, 'success');
+                    } else {
+                      Swal.fire('Aviso', r.message, 'warning');
+                    }
+                  },
+                  error: function() {
+                    Swal.fire('Error', 'No se pudo agregar el libro a la reserva.', 'error');
+                  }
+                });
+              });
+            } else {
+              resultados.show().html(`
+                <div class="alert alert-warning text-center" role="alert">
+                  No se encontraron libros con ese título o autor.
+                </div>
+              `);
+            }
+          },
+          error: function() {
+            Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
+          }
+        });
+      });
+    }
+  });
+}
+</script>
+
 
 <script>
 

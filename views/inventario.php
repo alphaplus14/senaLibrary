@@ -189,7 +189,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
     <!-- Opción de cerrar sesión -->
     <li>
-      <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+      <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
         <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
       </a>
     </li>
