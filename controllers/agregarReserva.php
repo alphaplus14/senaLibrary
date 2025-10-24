@@ -11,73 +11,60 @@ if (!isset($_SESSION['tipo_usuario'])) {
 }
 
 require_once '../models/MySQL.php';
-$mysql = new MySQL();
-$mysql->conectar();
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['libros'])) {
+    $productos = json_decode($_POST['productos'], true);
 
-$idUsuario = $_SESSION['id_usuario'];
-if (isset($_POST['id_libro'])) {
-    $idLibro = intval($_POST['id_libro']);
-}
+     if (empty($libros)) {
+        echo json_encode(['success' => false, 'message' => 'No se enviaron libros.']);
+        exit;
+    }
 
-// Verificar disponibilidad del libro
-$consulta = $mysql->efectuarConsulta("SELECT cantidad_libro FROM libro WHERE id_libro = $idLibro");
-$fila = mysqli_fetch_assoc($consulta);
+    $mysql = new MySQL();
+    $mysql->conectar();
 
-if (!$fila || $fila['cantidad_libro'] <= 0) {
-  echo json_encode(['success' => false, 'message' => 'No hay ejemplares disponibles']);
-  $mysql->desconectar();
-  exit();
-}
+    // Crear la reserva principal
+    $idUsuario = $_SESSION['id_usuario']; 
+    $queryReserva = "INSERT INTO reserva (fk_usuario,fecha_reserva, estado_reserva) 
+                     VALUES ('$idUsuario', NOW() , 'Pendiente')";
+    $mysql->efectuarConsulta($queryReserva);
 
-// Crear una nueva reserva
-$fecha = date("Y-m-d H:i:s");
-$estado = 'Pendiente';
+    // Obtener ID generado
+    $resultId = $mysql->efectuarConsulta("SELECT MAX(id_reserva) AS id FROM reserva");
+$rowId = mysqli_fetch_assoc($resultId);
+$idReserva = $rowId['id'];
 
-$insertReserva = $mysql->efectuarConsulta("
-  INSERT INTO reserva (fk_usuario, fecha_reserva, estado_reserva)
-  VALUES ($idUsuario, '$fecha', '$estado')
-");
+    $errores = [];
 
-if (!$insertReserva) {
-  echo json_encode(['success' => false, 'message' => 'Error al crear la reserva']);
-  $mysql->desconectar();
-  exit();
-}
+    // Insertar cada libro asociado a la reserva
+    foreach ($libros as $lib) {
+        $idLibro = isset($lib['id']) ? intval($lib['id']) : 0;
 
-// Consultar el ID de la reserva creada
-$consultaId = $mysql->efectuarConsulta("
-  SELECT id_reserva 
-  FROM reserva 
-  WHERE fk_usuario = '$idUsuario' 
-  ORDER BY id_reserva DESC 
-  LIMIT 1
-");
+ 
+        if ($idLibro> 0 && $cantidad > 0) {
+           
+            $queryDetalle = "INSERT INTO reserva_has_libro (reserva_id_reserva, libro_id_libro) 
+                             VALUES ('$idReserva', '$idLibro')";
 
-if ($consultaId && $consultaId->num_rows > 0) {
-  $row = $consultaId->fetch_assoc();
-  $idReserva = $row['id_reserva'];
+            if (!$mysql->efectuarConsulta($queryDetalle)) {
+                $errores[] = "Error con el producto ID $idLibro";
+            }
 
-  // Asociar el libro con la reserva
-  $insertDetalle = $mysql->efectuarConsulta("
-    INSERT INTO reserva_has_libro (fk_reserva, fk_libro)
-    VALUES ($idReserva, $idLibro)
-  ");
+            // Restar del stock (opcional)
+            $queryStock = "UPDATE libro SET cantidad_libro = cantidad_libro - 1 WHERE id_libro = $idLibro";
+            $mysql->efectuarConsulta($queryStock);
+        }
+    }
 
-  if (!$insertDetalle) {
-    echo json_encode(['success' => false, 'message' => 'Error al vincular el libro']);
     $mysql->desconectar();
-    exit();
-  }
 
-  //Actualizar cantidad del libro
-  $mysql->efectuarConsulta("
-    UPDATE libro SET cantidad_libro = cantidad_libro - 1 WHERE id_libro = $idLibro
-  ");
-
-  echo json_encode(['success' => true, 'message' => 'Libro agregado correctamente a tu reserva.']);
+    if (count($errores) === 0) {
+        echo json_encode(['success' => true, 'message' => 'Reserva registrada correctamente', 'id_venta' => $idVenta]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Algunos libros no se registraron correctamente', 'errores' => $errores]);
+    }
 } else {
-  echo json_encode(['success' => false, 'message' => 'No se pudo obtener el ID de la reserva']);
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'Faltan datos']);
 }
-
-$mysql->desconectar();
 ?>
+
