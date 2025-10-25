@@ -23,9 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['libros'])) {
     $mysql = new MySQL();
     $mysql->conectar();
 
+    $estadoReserva="Pendiente";
     $idUsuario = $_SESSION['id_usuario']; 
     $queryReserva = "INSERT INTO reserva (fk_usuario, fecha_reserva, estado_reserva) 
-                     VALUES ('$idUsuario', NOW(), 'Pendiente')";
+                     VALUES ('$idUsuario', NOW(), '$estadoReserva')";
     $mysql->efectuarConsulta($queryReserva);
 
     // Obtener el ID de la reserva creada
@@ -37,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['libros'])) {
 
     foreach ($libros as $lib) {
         $idLibro = isset($lib['id']) ? intval($lib['id']) : 0;
+
 
         if ($idLibro > 0) {
             $queryDetalle = "INSERT INTO reserva_has_libro (reserva_id_reserva, libro_id_libro) 

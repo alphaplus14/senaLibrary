@@ -51,9 +51,7 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
 
 
         // Verificar contraseña
-        //?se comenta temporalmente el password verify para probar login con contraseña en texto plano
         if (password_verify($password, $usuarios['password_usuario'])) {
-        // if ($password === $usuarios['password_usuario']) {
             // Guardar sesión
            $_SESSION['id_usuario'] = $usuarios['id_usuario'];
             $_SESSION['nombre_usuario'] = $usuarios['nombre_usuario'];

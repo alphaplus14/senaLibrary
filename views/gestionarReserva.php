@@ -15,11 +15,13 @@ $mysql->conectar();
 
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
-
+$idUsuario=$_SESSION['id_usuario'];
 
 
 $mysql = new MySQL();
 $mysql->conectar();
+
+$resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
 
 
 ?>
@@ -293,14 +295,14 @@ $mysql->conectar();
                             <?php while($fila = $resultado->fetch_assoc()): ?>
                                 <tr>
                                 <td><?= $fila['id_reserva'] ?></td>
-                                <td><?= $fila['nombre_usuario'] ?></td>
-                                <td><?= $fila['estado'] ?></td>
+                                <td><?= $fila['fecha_reserva'] ?></td>
+                                <td><?= $fila['estado_reserva'] ?></td>
                                 <td class="text-center">
-                                    <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_usuario'] ?>)">
+                                    <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_reserva'] ?>)">
                                     <i class="bi bi-pencil-square"></i>
                                     </a>
                                     |
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_usuario'] ?>)" title="Eliminar">
+                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_reserva'] ?>)" title="Eliminar">
                                     <i class="bi bi-trash"></i>
                                     </a>
                                 </td>
