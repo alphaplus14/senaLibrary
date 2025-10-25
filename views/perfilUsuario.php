@@ -25,9 +25,12 @@ $email=$_SESSION['email_usuario'];
 $mysql = new MySQL();
 $mysql->conectar();
 
+
 ?>
 
+
 <!doctype html>
+
 <html lang="en">
   <!--begin::Head-->
   <head>
@@ -257,6 +260,45 @@ $mysql->conectar();
             <!--begin::Row-->
             <div class="row">
               <!-- /.Start col -->
+<div class="col-md-8 offset-md-2">
+  <div class="card shadow-sm">
+    <div class="card-header bg-success text-white">
+      <h5 class="mb-0">Información Personal</h5>
+    </div>
+    <div class="card-body">
+      <form method="POST" action="../controllers/EditarSesion.php">
+        <div class="mb-3">
+          <label for="nombre" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre" name="nombre" 
+                 value="<?= htmlspecialchars($nombre) ?>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="apellido" class="form-label">Apellido</label>
+          <input type="text" class="form-control" id="apellido" name="apellido" 
+                 value="<?= htmlspecialchars($apellido) ?>" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control" id="email" name="email" 
+                 value="<?= htmlspecialchars($email) ?>" required>
+        </div>
+           <div class="mb-3">
+          <label for="password" class="form-label">contraseña</label>
+  <input type="password" class="form-control" id="password" name="password" placeholder="Nueva contraseña (opcional)">
+        </div>
+
+
+        <div class="text-end">
+          <button type="button" name="actualizar" class="btn btn-success" onclick="guardarCambios()">
+            <i class="bi bi-save"></i> Guardar Cambios
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
             </div>
             <!-- /.row (main row) -->
@@ -340,6 +382,46 @@ $mysql->conectar();
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
+<script>
+function guardarCambios() {
+    // Obtener los valores del formulario
+    const nombre = document.getElementById('nombre').value;
+    const apellido = document.getElementById('apellido').value;
+    const email = document.getElementById('email').value;
+     const password = document.getElementById('password').value;
+
+    // Enviar datos con AJAX
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/controllers/EditarSesion.php", true);
+    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            // Mostrar mensaje de éxito con SweetAlert2
+            Swal.fire({
+                icon: 'success',
+                title: 'Cambios guardados',
+                text: 'Tu información ha sido actualizada correctamente.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+            // (Opcional) refrescar después de 2s para ver los cambios
+            setTimeout(() => location.reload(), 2000);
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Hubo un problema al guardar los cambios.'
+            });
+        }
+    };
+
+    // Enviar los datos al backend PHP
+    xhr.send(`actualizar=1&nombre=${encodeURIComponent(nombre)}&apellido=${encodeURIComponent(apellido)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+
+}
+</script>
 
 
   </body>

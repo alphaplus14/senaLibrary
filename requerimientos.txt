@@ -1,9 +1,5 @@
-Clientes:
-•	Editar perfil personal.
-•	Cambiar contraseña.
+
 ________________________________________
-📚 3. Gestión de Libros (Inventario)
-Búsqueda y filtros:
 ________________________________________
 📖 4. Reservas de Libros
 Clientes:

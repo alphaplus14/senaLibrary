@@ -55,7 +55,7 @@ if (isset($_POST['email']) && !empty($_POST['email']) &&
         if (password_verify($password, $usuarios['password_usuario'])) {
         // if ($password === $usuarios['password_usuario']) {
             // Guardar sesión
-            $_SESSION['usuario_id'] = $usuarios['id_usuario'];
+           $_SESSION['id_usuario'] = $usuarios['id_usuario'];
             $_SESSION['nombre_usuario'] = $usuarios['nombre_usuario'];
             $_SESSION['apellido_usuario'] = $usuarios['apellido_usuario'];
             $_SESSION['email_usuario'] = $usuarios['email_usuario'];
