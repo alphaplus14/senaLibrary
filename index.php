@@ -599,76 +599,69 @@ function agregarUsuario() {
 </script>
 <script>
 function abrirCrearReserva() {
-    Swal.fire({
-        title: 'Reserva',
-        html: `
-            <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
-            <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
-            <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
-                <thead>
-                    <tr>
-                        <th>Titulo</th>
-                        <th>Autor</th>
-                        <th>Cantidad</th>
-                        <th>Estado</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        `,
-        width: 800,
-        showCancelButton: true,
-        confirmButtonText: 'Confirmar Reserva',
-        cancelButtonText: 'Cancelar',
-        preConfirm: () => {
-        return new Promise((resolve, reject) => {
-           const libros = [];
+  Swal.fire({
+    title: 'Reserva',
+    html: `
+      <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
+      <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
+      <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
+          <thead>
+              <tr>
+                  <th>Titulo</th>
+                  <th>Autor</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
+    `,
+    width: 800,
+    showCancelButton: true,
+    confirmButtonText: 'Confirmar Reserva',
+    cancelButtonText: 'Cancelar',
+    didOpen: () => {
+      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody"); // para que busque la tabla libro dentro del modal y no del html index
+    },
+    preConfirm: () => {
+      return new Promise((resolve, reject) => {
+        const libros = [];
 
-            document.querySelectorAll('#tablaLibros tbody tr').forEach(row => {
-                const id = parseInt(row.getAttribute('data-id')); 
-                const cantidad = parseInt(row.querySelector('.cantidad').value);
-                if (id && cantidad > 0) {
-                    libros.push({ id, cantidad });
-                }
-            });
-
-            if (libros.length === 0) {
-                reject('Agrega al menos un libro.');
-                return;
-            }
-
-            $.ajax({
-                url: './controllers/agregarReserva.php',
-                type: 'POST',
-                data: {
-                    libros: JSON.stringify(libros),
-                    cantidad_libro: cantidad
-                },
-                success: function (response) {
-                    const res = JSON.parse(response);
-                    if (res.success) {
-                        resolve(res.message); // Finaliza el swal
-                    } else {
-                        reject(res.message);
-                    }
-                },
-                error: function () {
-                    reject('No se pudo agregar la reserva.');
-                }
-            });
-        }).catch(error => {
-            Swal.showValidationMessage(error);
+        Swal.getPopup().querySelectorAll('#tablaLibros tbody tr').forEach(row => { //busca dentro del sweet alert 
+          const id = parseInt(row.getAttribute('data-id'));
+          const cantidad = parseInt(row.querySelector('.cantidad').value);
+          if (id && cantidad > 0) {
+            libros.push({ id, cantidad });
+          }
         });
+
+        if (libros.length === 0) {
+          reject('Agrega al menos un libro.');
+          return;
+        }
+
+        $.ajax({
+          url: './controllers/agregarReserva.php',
+          type: 'POST',
+          data: { libros: JSON.stringify(libros) },
+          success: function (response) {
+            const res = JSON.parse(response);
+            if (res.success) resolve(res.message);
+            else reject(res.message);
+          },
+          error: function () {
+            reject('No se pudo agregar la reserva.');
+          }
+        });
+      }).catch(error => Swal.showValidationMessage(error));
     }
-}).then((result) => {
+  }).then((result) => {
     if (result.isConfirmed && result.value) {
-        Swal.fire('¡Éxito!', result.value, 'success').then(() => location.reload());
+      Swal.fire('¡Éxito!', result.value, 'success').then(() => location.reload());
     }
-});
+  });
 }
-
-
 
 // Buscar libros mientras se escribe
 function buscarLibro(texto) {
@@ -679,9 +672,9 @@ function buscarLibro(texto) {
     }
 
     $.ajax({
-        url: './controllers/buscarLibro.php', // 👈 Ajusta según la ubicación de tu archivo
+        url: './controllers/buscarLibro.php', 
         type: 'POST',
-        dataType: 'json', // 👈 jQuery convierte automáticamente el JSON
+        dataType: 'json', 
         data: { query: texto },
         success: function (libros) {
             let html = '<ul class="list-group">';
@@ -712,28 +705,44 @@ function buscarLibro(texto) {
 }
 
 
-// Agregar producto a la tabla
+// Agregar libro a la tabla
 function agregarLibro(id, titulo, autor, stock) {
-    const tabla = document.querySelector("#tablaLibros tbody");
+  const tbody = Swal.getPopup().querySelector("#tablaLibros tbody"); 
 
-    if ([...tabla.querySelectorAll("tr")].some(row => row.dataset.id === id)) return;
+  // Evitar duplicados
+if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
+  const alerta = document.createElement("div");
+  alerta.className = "alert alert-warning alert-dismissible fade show mt-2";
+  alerta.role = "alert";
+  alerta.innerHTML = `
+    <strong>Atención:</strong> Este libro ya fue agregado.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  const contenedor = document.querySelector("#sugerencias") || document.querySelector("#tablaLibrosModal");
+  contenedor.prepend(alerta); //inserta la alerta al incio 
 
-    const fila = document.createElement('tr');
-    fila.dataset.id = id;
+  setTimeout(() => alerta.remove(), 3000);
+  return;
+}
+  const fila = document.createElement('tr');
+  fila.dataset.id = id;
 
-    fila.innerHTML = `
-        <td>${titulo}</td>
-        <td>${autor}</td>
-        <td>
-            <input type="number" value="1" min="1" max="${stock}" 
-                   class="form-control form-control-sm cantidad">
-            <small class="text-muted">Stock: ${stock}</small>
-        </td>
-        <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
-    `;
-    tbody.appendChild(fila);
-    document.getElementById('sugerencias').innerHTML = '';
-    document.getElementById('busquedaProducto').value = '';
+  fila.innerHTML = `
+    <td>${titulo}</td>
+    <td>${autor}</td>
+    <td>
+      <input type="number" value="1" min="1" max="${stock}" 
+             class="form-control form-control-sm cantidad">
+      <small class="text-muted">Stock: ${stock}</small>
+    </td>
+    <td>Disponible</td>
+    <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
+  `;
+
+  tbody.appendChild(fila);
+
+  document.getElementById('sugerencias').innerHTML = '';
+  document.getElementById('busquedaProducto').value = '';
 }
 
 function validarCantidad(input) {
