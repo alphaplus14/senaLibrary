@@ -22,8 +22,6 @@ $mysql = new MySQL();
 $mysql->conectar();
 
 $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
-
-
 ?>
 
 <!doctype html>
@@ -147,12 +145,12 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
           <!--begin::Start Navbar Links-->
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                 <i class="bi bi-list"></i>
               </a>
             </li>
             <li class="nav-item d-none d-md-block">
-              <a href="index.php" class="nav-link">Inicio</a>
+              <a href="../index.php" class="nav-link">Inicio</a>
             </li>
             
           </ul>
@@ -189,7 +187,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
 
     <!-- Opción de cerrar sesión -->
     <li>
-      <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+      <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
         <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
       </a>
     </li>
@@ -240,7 +238,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
                   </a>
                <?php if ($rol == 'Invitado'): ?>
               <li class="nav-item">
-                <a href="./views/gestionarReserva.php" class="nav-link active">
+                <a href="./gestionarReserva.php" class="nav-link active">
                  <i class="bi bi-calendar-check me-2"> </i>
                   <span> Gestionar Reserva </span>
                 </a>
@@ -282,10 +280,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
             <div class="container-fluid">
                 <div class="row">
                     <div class="table-responsive mb-5">
-                        <table id="tablaUsuarios" class="table table-striped table-bordered" width="100%">
+                        <table id="tablaReserva" class="table table-striped table-bordered" width="100%">
                             <thead class="table-success">
                             <tr>
-                                <th>ID</th>
+                                <th>ID Reserva</th>
                                 <th>Fecha Reserva</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
@@ -298,13 +296,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
                                 <td><?= $fila['fecha_reserva'] ?></td>
                                 <td><?= $fila['estado_reserva'] ?></td>
                                 <td class="text-center">
-                                    <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_reserva'] ?>)">
-                                    <i class="bi bi-pencil-square"></i>
-                                    </a>
-                                    |
-                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_reserva'] ?>)" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                    </a>
+                                     <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['id_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                     
                                 </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -351,7 +344,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="public/js/adminlte.js"></script>
+    <script src="../public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -394,8 +387,123 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
+    <script>
+$(document).ready(function() {
+   $('#tablaReserva').DataTable({
+    language: {
+        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
+    },
+    pageLength: 5,
+    lengthMenu: [5, 10, 20, 50],
+    responsive: true,
+    autoWidth: true
+});
 
+});
+</script>
 
+<script>
+function verDetalle(idReserva) {
+    $.ajax({
+        url: '../controllers/detalleReserva.php',
+        type: 'POST',
+        data: { id_reserva: idReserva },
+        dataType: 'json',
+        success: function (res) {
+            if (res.success) {
+                let tabla = `
+                    <table class="table table-striped" style="width:100%; text-align:left;">
+                        <thead>
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Categoría</th>
+                                <th>Fecha Reserva</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                res.detalle.forEach(item => {
+                    tabla += `
+                        <tr>
+                            <td>${item.ISBN_libro}</td>
+                            <td>${item.titulo_libro}</td>
+                            <td>${item.autor_libro}</td>
+                            <td>${item.categoria_libro}</td>
+                            <td>${item.fecha_reserva}</td>
+                        </tr>
+                    `;
+                });
+
+                tabla += `
+                        </tbody>
+                    </table>
+                `;
+
+                Swal.fire({
+                    title: 'Detalle de la Reserva #' + idReserva,
+                    html: tabla,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-x-circle"></i> Cancelar Reserva',
+                    cancelButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    width: 850
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        cancelarReserva(idReserva);
+                    }
+                });
+            } else {
+                Swal.fire('Error', res.message, 'error');
+            }
+        },
+        error: function (xhr) {
+            console.log('Respuesta del servidor:', xhr.responseText);
+            Swal.fire('Error', 'No se pudo obtener la información.', 'error');
+        }
+    });
+}
+
+function cancelarReserva(idReserva) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción cancelará la reserva",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '../controllers/cancelarReserva.php',
+                type: 'POST',
+                data: { id_reserva: idReserva },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        Swal.fire('Cancelada', 'La reserva ha sido cancelada exitosamente', 'success')
+                        .then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    console.log('Error:', xhr.responseText);
+                    Swal.fire('Error', 'No se pudo cancelar la reserva', 'error');
+                }
+            });
+        }
+    });
+}
+</script>
   </body>
   <!--end::Body-->
 </html>

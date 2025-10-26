@@ -147,7 +147,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
           <!--begin::Start Navbar Links-->
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                 <i class="bi bi-list"></i>
               </a>
             </li>
@@ -179,7 +179,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
     <!-- Opciones del menu -->
     <li>
-      <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+      <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
         <i class="bi bi-person me-2 text-secondary"></i> Perfil
       </a>
     </li>

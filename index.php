@@ -358,44 +358,48 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </div>
               <?php endif; ?>
 
-
-              <?php if($rol != "Administrador"): ?>
-                <div class="table-responsive">
+            <?php if($rol != "Administrador"): ?>
+              <div class="table-responsive">
                   <div class="col"> 
-                    <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
-                              <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                    </button> 
-                </div>
+                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
+                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
+                      </button> 
+                  </div>
                   
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                    <thead class="table-success">
-                      <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>ISBN</th>
-                        <th>Categoría</th>
-                        <th>Cantidad</th>
-                        <th>Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                        <tr>
-                          <td><?= $fila['id_libro'] ?></td>
-                          <td><?= $fila['titulo_libro'] ?></td>
-                          <td><?= $fila['autor_libro'] ?></td>
-                          <td><?= $fila['ISBN_libro'] ?></td>
-                          <td><?= $fila['categoria_libro'] ?></td>
-                          <td><?= $fila['cantidad_libro'] ?></td>
-                          <td><?= $fila['disponibilidad_libro'] ?></td>
-                        </tr>
-                      <?php endwhile; ?>
-                    </tbody>
+                      <thead class="table-success">
+                          <tr>
+                              <th>ID</th>
+                              <th>Título</th>
+                              <th>Autor</th>
+                              <th>ISBN</th>
+                              <th>Categoría</th>
+                              <th>Cantidad</th>
+                              <th>Estado</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                              <tr>
+                                  <td><?= $fila['id_libro'] ?></td>
+                                  <td><?= $fila['titulo_libro'] ?></td>
+                                  <td><?= $fila['autor_libro'] ?></td>
+                                  <td><?= $fila['ISBN_libro'] ?></td>
+                                  <td><?= $fila['categoria_libro'] ?></td>
+                                  <td><?= $fila['cantidad_libro'] ?></td>
+                                  <td>
+                                      <?php if($fila['cantidad_libro'] == 0): ?>
+                                          <span class="badge bg-danger">No disponible</span>
+                                      <?php else: ?>
+                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                                      <?php endif; ?>
+                                  </td>
+                              </tr>
+                          <?php endwhile; ?>
+                      </tbody>
                   </table>
-                </div>
-              <?php endif; ?>
-
+              </div>
+            <?php endif; ?>
             </div>
           </div>
         </div>
