@@ -251,7 +251,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </a>
               </li>
               <?php endif; ?>
-               <?php if ($rol == 'Invitado'): ?>
+               <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">
                 <a href="./views/gestionarReserva.php" class="nav-link">
                  <i class="bi bi-calendar-check me-2"> </i>
@@ -538,10 +538,10 @@ function agregarUsuario() {
             <option value="" selected disabled>Seleccione un tipo</option>
             <option value="Administrador">Administrador</option>
             <option value="Empleado">Empleado</option>
-            <option value="Invitado">Invitado</option>
+            <option value="Cliente">Cliente</option>
           </select>
         </div>
-      </form>
+      </form>git
     `,
     confirmButtonText: 'Agregar',
     showCancelButton: true,
