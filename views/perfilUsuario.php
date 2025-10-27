@@ -284,6 +284,12 @@ $mysql->conectar();
           <input type="email" class="form-control" id="email" name="email" 
                  value="<?= htmlspecialchars($email) ?>" required>
         </div>
+        <!-- validamos la contraseña actual como obligatoria en la funcion guardarcambios -->
+        <div class="mb-3">
+  <label for="password_actual" class="form-label">Contraseña actual</label>
+  <input type="password" class="form-control" id="password_actual" name="password_actual" placeholder="Ingresa tu contraseña actual">
+</div>
+
            <div class="mb-3">
           <label for="password" class="form-label">contraseña</label>
   <input type="password" class="form-control" id="password" name="password" placeholder="Nueva contraseña (opcional)">
@@ -384,43 +390,69 @@ $mysql->conectar();
     ></script>
 <script>
 function guardarCambios() {
-    // Obtener los valores del formulario
-    const nombre = document.getElementById('nombre').value;
-    const apellido = document.getElementById('apellido').value;
-    const email = document.getElementById('email').value;
-     const password = document.getElementById('password').value;
+  // Obtener los valores del formulario
+  const nombre = document.getElementById('nombre').value.trim();
+  const apellido = document.getElementById('apellido').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const password_actual = document.getElementById('password_actual').value.trim();
 
-    // Enviar datos con AJAX
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST", "/controllers/EditarSesion.php", true);
-    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  // Validación: si intenta cambiar contraseña, debe escribir la actual
+  if (password !== "" && password_actual === "") {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Falta la contraseña actual',
+      text: 'Debes ingresar tu contraseña actual para poder cambiarla.'
+    });
+    return;
+  }
 
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            // Mostrar mensaje de éxito con SweetAlert2
-            Swal.fire({
-                icon: 'success',
-                title: 'Cambios guardados',
-                text: 'Tu información ha sido actualizada correctamente.',
-                timer: 2000,
-                showConfirmButton: false
-            });
+  // Preparar datos para enviar
+  const datos = new URLSearchParams();
+  datos.append('actualizar', '1');
+  datos.append('nombre', nombre);
+  datos.append('apellido', apellido);
+  datos.append('email', email);
+  datos.append('password', password);
+  datos.append('password_actual', password_actual);
 
-            // (Opcional) refrescar después de 2s para ver los cambios
-            setTimeout(() => location.reload(), 2000);
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Hubo un problema al guardar los cambios.'
-            });
-        }
-    };
+  // Enviar datos con AJAX
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "../controllers/EditarSesion.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-    // Enviar los datos al backend PHP
-    xhr.send(`actualizar=1&nombre=${encodeURIComponent(nombre)}&apellido=${encodeURIComponent(apellido)}&email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      if (xhr.responseText.includes("incorrecta")) {
+        // Contraseña actual incorrecta
+        Swal.fire({
+          icon: 'error',
+          title: 'Contraseña incorrecta',
+          text: 'La contraseña actual que ingresaste no es válida.'
+        });
+      } else {
+        // Todo bien
+        Swal.fire({
+          icon: 'success',
+          title: 'Cambios guardados',
+          text: 'Tu información ha sido actualizada correctamente.',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        setTimeout(() => location.reload(), 2000);
+      }
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Hubo un problema al guardar los cambios.'
+      });
+    }
+  };
 
+  xhr.send(datos.toString());
 }
+
 </script>
 
 
