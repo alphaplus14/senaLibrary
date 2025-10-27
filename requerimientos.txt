@@ -1,16 +1,5 @@
 
 ________________________________________
-________________________________________
-📖 4. Reservas de Libros
-Clientes:
-•	Reservar libros disponibles.
-•	Ver sus reservas.
-•	Cancelar reservas.
-Administradores:
-•	Ver todas las reservas.
-•	Aprobar o rechazar reservas.
-•	Ver historial de reservas.
-________________________________________
 📦 5. Préstamos de Libros
 •	Registrar préstamos (a partir de reservas aprobadas).
 •	Registrar devoluciones.

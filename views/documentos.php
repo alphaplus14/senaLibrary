@@ -137,6 +137,74 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
   </head>
   <!--end::Head-->
   <!--begin::Body-->
+  <!-- toco meterle style para que el formulario combinara con el resto de la pagina -->
+  <style>
+
+.form-documentos {
+  background-color: #f8fafc;
+  padding: 20px 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.form-documentos label {
+  font-weight: 600;
+  color: #0d1b2a;
+  margin-right: 6px;
+}
+
+.form-documentos input[type="date"],
+.form-documentos select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background-color: #ffffff;
+  color: #0f172a;
+  transition: all 0.3s ease;
+}
+
+.form-documentos input[type="date"]:focus,
+.form-documentos select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 5px rgba(37, 99, 235, 0.4);
+  outline: none;
+}
+
+/* === Botón azul con icono PDF === */
+.btn-generar {
+  background-color: #2563eb;
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-generar:hover {
+  background-color: #1e40af;
+  transform: translateY(-2px);
+}
+
+.btn-generar:active {
+  transform: translateY(0);
+}
+
+.btn-generar i {
+  font-size: 16px;
+}
+.form-documentos {
+  margin-bottom: 30px; /* puedes ajustar el valor */
+}
+</style>
   <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
@@ -287,40 +355,49 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--begin::App Content-->
         <div class="app-content">
           <!--begin::Container-->
-                     <div class="container mt-4">
-                <h3 class="mb-4 text-secondary border-bottom pb-2">Generar Documentos (PDF)</h3>
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            
-                            <form action="../controller/empleadoController.php" method="POST" target="_blank">
-                               
-                                <div class="row g-3 align-items-end">
-                                    
-                                    <div class="col-md-8 col-lg-9">
-                                        <label for="tipo_generacion" class="form-label fw-bold">Seleccione el Tipo de Reporte:</label>
-                                        <select class="form-select form-select-lg" id="tipo_generacion" name="tipo" required>
-                                            <option value="" disabled selected>-- Seleccione una opción --</option>
-                                            <option value="todos">Todos los Empleados (Reporte General)</option>
-                                            <option disabled>--- Por Departamento ---</option>
-                                            <option value="1">Electricidad</option>
-                                            <option value="2">Mantenimiento</option>
-                                            <option value="3">Recursos Humanos</option>
-                                            <option value="4">Contabilidad</option>
-                                            </select>
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-lg-3 d-grid">
-                                        <button type="submit" class="btn btn-success btn-lg">
-                                            <i class="fas fa-file-pdf me-2"></i> Generar PDF
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                            </form>
-                            
-                        </div>
-                    </div>
-            </div>
+ <?php
+$hoy = date('Y-m-d');
+$inicioMes = date('Y-m-01');
+?>
+<!-- === FORMULARIO === -->
+ <h4>GENERAR PDF DE LAS RESERVAS:</h4>
+<form action="generar_pdf_reservas.php" method="get" class="form-documentos">
+  <label for="fechaInicio">Fecha inicio:</label>
+  <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+
+  <label for="fechaFin">Fecha fin:</label>
+  <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+
+  <label for="salida">Ver:</label>
+  <select id="salida" name="salida">
+    <option value="I">Ver en el navegador</option>
+    <option value="D">Descargar</option>
+  </select>
+
+  <button type="submit" class="btn-generar">
+    <i class="fa-solid fa-file-pdf"></i> Generar PDF
+  </button>
+
+
+</button>
+ 
+</form>
+<h4>GENERAR PDF DEL INVENTARIO ACTUAL:</h4>
+<!-- === FORMULARIO DE INVENTARIO === -->
+<form action="generar_pdf_inventario.php" method="get" class="form-documentos">
+  <label for="salida">Ver:</label>
+  <select id="salida" name="salida">
+    <option value="I">Ver en el navegador</option>
+    <option value="D">Descargar</option>
+  </select>
+
+  <button type="submit" class="btn-generar">
+    <i class="fa-solid fa-boxes-stacked"></i> Inventario actual
+  </button>
+</form>
+
+
+
           <!--end::Container-->
         </div>
         <!--end::App Content-->
