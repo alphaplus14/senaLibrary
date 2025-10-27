@@ -2,14 +2,12 @@
 require_once '../models/MySQL.php';
 session_start();
 
-// Verificar sesión
 if (!isset($_SESSION['tipo_usuario'])) {
-    header('Location: ../views/login.php');
+    echo "sin_sesion";
     exit();
 }
 
-// Si llega por POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $mysql = new MySQL();
     $mysql->conectar();
 
@@ -17,39 +15,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
     $nuevoNombre = htmlspecialchars(trim($_POST['nombre']), ENT_QUOTES, 'UTF-8');
     $nuevoApellido = htmlspecialchars(trim($_POST['apellido']), ENT_QUOTES, 'UTF-8');
     $nuevoEmail = htmlspecialchars(trim($_POST['email']), ENT_QUOTES, 'UTF-8');
-// Si el usuario escribió una nueva contraseña, la encriptamos y actualizamos
-if (!empty($_POST['password'])) {
-    $nuevopassword = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $consulta = "UPDATE usuario 
-                 SET nombre_usuario = '$nuevoNombre', 
-                     apellido_usuario = '$nuevoApellido', 
-                     email_usuario = '$nuevoEmail',
-                     password_usuario = '$nuevopassword'
-                 WHERE id_usuario = '$idUsuario'";
-} else {
-    // Si no escribió una nueva contraseña, no la modificamos
-    $consulta = "UPDATE usuario 
-                 SET nombre_usuario = '$nuevoNombre', 
-                     apellido_usuario = '$nuevoApellido', 
-                     email_usuario = '$nuevoEmail'
-                 WHERE id_usuario = '$idUsuario'";
-}
 
+    // Comenzamos la base de la consulta
+    $consultaBase = "UPDATE usuario SET 
+        nombre_usuario = '$nuevoNombre',
+        apellido_usuario = '$nuevoApellido',
+        email_usuario = '$nuevoEmail'";
 
-    $resultado = $mysql->efectuarConsulta($consulta);
+    // Si el usuario quiere cambiar la contraseña
+    if (!empty($_POST['password'])) {
+        $passwordActual = $_POST['password_actual'] ?? '';
 
-    if ($resultado) {
-        // Actualizar también los datos de sesión
-        $_SESSION['nombre_usuario'] = $nuevoNombre;
-        $_SESSION['apellido_usuario'] = $nuevoApellido;
-        $_SESSION['email_usuario'] = $nuevoEmail;
+        // Verificamos la contraseña actual
+        $resultado = $mysql->efectuarConsulta("SELECT password_usuario FROM usuario WHERE id_usuario = '$idUsuario'");
+        $fila = $resultado->fetch_assoc();
+
+        if ($fila && password_verify($passwordActual, $fila['password_usuario'])) {
+            // Contraseña actual correcta → actualizar
+            $nuevaHash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $consultaBase .= ", password_usuario = '$nuevaHash'";
+        } else {
+            // Contraseña incorrecta → devolvemos respuesta
+            echo "incorrecta";
+            $mysql->desconectar();
+            exit();
+        }
     }
 
+    // Ejecutamos actualización
+    $consultaBase .= " WHERE id_usuario = '$idUsuario'";
+    $mysql->efectuarConsulta($consultaBase);
+
+    // Actualizar datos de sesión
+    $_SESSION['nombre_usuario'] = $nuevoNombre;
+    $_SESSION['apellido_usuario'] = $nuevoApellido;
+    $_SESSION['email_usuario'] = $nuevoEmail;
+
     $mysql->desconectar();
-} else {
-    header('Location: ../views/perfilUsuario.php');
+
+    // Devolver respuesta "ok" para que el JS lo maneje
+    echo "ok";
     exit();
 }
 ?>
+
 
 
