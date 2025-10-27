@@ -291,16 +291,24 @@ $mysql->conectar();
 </div>
 
            <div class="mb-3">
-          <label for="password" class="form-label">contraseña</label>
+          <label for="password" class="form-label">Nueva Contraseña</label>
   <input type="password" class="form-control" id="password" name="password" placeholder="Nueva contraseña (opcional)">
         </div>
 
 
-        <div class="text-end">
-          <button type="button" name="actualizar" class="btn btn-success" onclick="guardarCambios()">
-            <i class="bi bi-save"></i> Guardar Cambios
-          </button>
-        </div>
+<div class="d-flex justify-content-between align-items-center">
+  <button type="button" 
+          class="btn btn-link text-danger d-flex align-items-center p-0" 
+          onclick="window.location.href='../controllers/logout.php'">
+    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+  </button>
+
+  <button type="button" name="actualizar" class="btn btn-success" onclick="guardarCambios()">
+    <i class="bi bi-save"></i> Guardar Cambios
+  </button>
+</div>
+
+        
       </form>
     </div>
   </div>
