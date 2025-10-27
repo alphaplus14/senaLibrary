@@ -19,28 +19,18 @@ if (isset($_POST['texto_busqueda'])) {
     $texto = trim($_POST['texto_busqueda']);
 }
 
+$mysql = new MySQL();
+$mysql->conectar();
 
-$consulta = $mysql->efectuarConsulta("
-  SELECT id_libro,titulo_libro, autor_libro, categoria_libro, cantidad_libro
-  FROM libro
-  WHERE titulo_libro LIKE '%$texto%' OR autor_libro LIKE '%$texto%'
-");
+$query = $_POST['query'];
+$resultado = $mysql->efectuarConsulta("SELECT * FROM libro WHERE titulo_libro LIKE '%$query%'  or autor_libro LIKE '%$query%' LIMIT 10");
 
-if ($consulta && $consulta->num_rows > 0) {
-  $data = [];
-  while ($row = $consulta->fetch_assoc()) {
-    $data[] = [
-      'id_libro' => $row['id_libro'],
-      'titulo_libro' => $row['titulo_libro'],
-      'autor_libro' => $row['autor_libro'],
-      'categoria_libro' => $row['categoria_libro'],
-      'cantidad_libro' => $row['cantidad_libro']
-    ];
-  }
-  echo json_encode(['encontrados' => true, 'data' => $data]);
-} else {
-  echo json_encode(['encontrados' => false]);
+$libros= [];
+while ($row = mysqli_fetch_assoc($resultado)) {
+    $libros[] = $row;
 }
+echo json_encode($libros);
 
 $mysql->desconectar();
 ?>
+

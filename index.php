@@ -12,18 +12,15 @@ if (!isset($_SESSION['tipo_usuario'])) {
 }
 $mysql = new MySQL();
 $mysql->conectar();
-
+$idUsuario=$_SESSION['id_usuario'];
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
-
-
 
 $mysql = new MySQL();
 $mysql->conectar();
 //consulta para obtener los usuarios
 $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
-
 
 ?>
 
@@ -134,7 +131,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -196,7 +192,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
     </li>
   </ul>
 </li>
-
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -237,7 +232,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                   <i class="nav-icon bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
-                    
                   </span>
                   </a>
               
@@ -254,6 +248,14 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 <a href="./views/inventario.php" class="nav-link">
                  <i class="bi bi-box-seam me-2"> </i>
                   <span> Inventario </span>
+                </a>
+              </li>
+              <?php endif; ?>
+               <?php if ($rol == 'Invitado'): ?>
+              <li class="nav-item">
+                <a href="./views/gestionarReserva.php" class="nav-link">
+                 <i class="bi bi-calendar-check me-2"> </i>
+                  <span> Gestionar Reserva </span>
                 </a>
               </li>
               <?php endif; ?>
@@ -356,44 +358,48 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </div>
               <?php endif; ?>
 
-
-              <?php if($rol != "Administrador"): ?>
-                <div class="table-responsive">
+            <?php if($rol != "Administrador"): ?>
+              <div class="table-responsive">
                   <div class="col"> 
-                    <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="gestionarReserva()">
-                              <i class="bi bi-bookmark-plus"></i> Realizar Reserva
-                    </button> 
-                </div>
+                      <button class="btn btn-sm btn-primary btnReservar mb-4 w-100" onclick="abrirCrearReserva()">
+                          <i class="bi bi-bookmark-plus"></i> Realizar Reserva
+                      </button> 
+                  </div>
                   
                   <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
-                    <thead class="table-success">
-                      <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Autor</th>
-                        <th>ISBN</th>
-                        <th>Categoría</th>
-                        <th>Cantidad</th>
-                        <th>Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                        <tr>
-                          <td><?= $fila['id_libro'] ?></td>
-                          <td><?= $fila['titulo_libro'] ?></td>
-                          <td><?= $fila['autor_libro'] ?></td>
-                          <td><?= $fila['ISBN_libro'] ?></td>
-                          <td><?= $fila['categoria_libro'] ?></td>
-                          <td><?= $fila['cantidad_libro'] ?></td>
-                          <td><?= $fila['disponibilidad_libro'] ?></td>
-                        </tr>
-                      <?php endwhile; ?>
-                    </tbody>
+                      <thead class="table-success">
+                          <tr>
+                              <th>ID</th>
+                              <th>Título</th>
+                              <th>Autor</th>
+                              <th>ISBN</th>
+                              <th>Categoría</th>
+                              <th>Cantidad</th>
+                              <th>Estado</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
+                              <tr>
+                                  <td><?= $fila['id_libro'] ?></td>
+                                  <td><?= $fila['titulo_libro'] ?></td>
+                                  <td><?= $fila['autor_libro'] ?></td>
+                                  <td><?= $fila['ISBN_libro'] ?></td>
+                                  <td><?= $fila['categoria_libro'] ?></td>
+                                  <td><?= $fila['cantidad_libro'] ?></td>
+                                  <td>
+                                      <?php if($fila['cantidad_libro'] == 0): ?>
+                                          <span class="badge bg-danger">No disponible</span>
+                                      <?php else: ?>
+                                          <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                                      <?php endif; ?>
+                                  </td>
+                              </tr>
+                          <?php endwhile; ?>
+                      </tbody>
                   </table>
-                </div>
-              <?php endif; ?>
-
+              </div>
+            <?php endif; ?>
             </div>
           </div>
         </div>
@@ -592,102 +598,185 @@ function agregarUsuario() {
 </script>
 
 <script>
-function gestionarReserva() {
+function abrirCrearReserva() {
   Swal.fire({
-    title: 'Reservas',
+    title: 'Reserva',
     html: `
-      <form id="formBusqueda" class="text-start">
-        <div class="mb-3">
-          <label for="busqueda_libro" class="form-label mb-2">Buscar por título o autor</label>
-          <div class="input-group">
-            <input type="text" class="form-control" id="busqueda_libro" 
-                   placeholder="Ejemplo: Cien años de soledad o García Márquez" required>
-            <button type="button" class="btn btn-secondary" id="btnBuscarLibro">Buscar</button>
-          </div>
-        </div>
-        <div id="resultadosBusqueda" 
-             style="max-height:250px; overflow-y:auto; display:none; margin-top:10px;"></div>
-      </form>
+      <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
+      <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
+      <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
+          <thead>
+              <tr>
+                  <th>Titulo</th>
+                  <th>Autor</th>
+                  <th>Cantidad</th>
+                  <th>Estado</th>
+                  <th>Acción</th>
+              </tr>
+          </thead>
+          <tbody></tbody>
+      </table>
     `,
-    confirmButtonText: 'Cerrar',
-    showCancelButton: false,
-    focusConfirm: false,
+    width: 800,
+    showCancelButton: true,
+    confirmButtonText: 'Confirmar Reserva',
+    cancelButtonText: 'Cancelar',
     didOpen: () => {
-      $('#btnBuscarLibro').on('click', function() {
-        const texto = $('#busqueda_libro').val().trim();
-        if (texto === '') {
-          Swal.showValidationMessage('Por favor, ingresa un título o autor.');
+      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody"); // para que busque la tabla libro dentro del modal y no del html index
+    },
+    preConfirm: () => {
+      return new Promise((resolve, reject) => {
+        const libros = [];
+
+        Swal.getPopup().querySelectorAll('#tablaLibros tbody tr').forEach(row => { //busca dentro del sweet alert 
+          const id = parseInt(row.getAttribute('data-id'));
+          const cantidad = parseInt(row.querySelector('.cantidad').value);
+          if (id && cantidad > 0) {
+            libros.push({ id, cantidad });
+          }
+        });
+
+        if (libros.length === 0) {
+          reject('Agrega al menos un libro.');
           return;
         }
 
-        $.ajax({
-          url: './controllers/buscarLibro.php',
-          type: 'POST',
-          data: { texto_busqueda: texto },
-          dataType: 'json',
-          success: function(res) {
-            const resultados = $('#resultadosBusqueda');
-            resultados.empty();
+     $.ajax({
+  url: './controllers/agregarReserva.php',
+  type: 'POST',
+  dataType: 'json', // 🔹 muy importante
+  data: { libros: JSON.stringify(libros) },
+  success: function (res) {
+    if (res.success) resolve(res.message);
+    else reject(res.message);
+  },
+  error: function (xhr, status, error) {
+    console.error("Error AJAX:", xhr.responseText);
+    reject('No se pudo agregar la reserva.');
+  }
+});
 
-            if (res.encontrados && res.data.length > 0) {
-              resultados.show();
-              resultados.append('<h6>Resultados encontrados:</h6>');
-              res.data.forEach(libro => {
-                resultados.append(`
-                  <div class="border rounded p-2 mb-2 bg-light">
-                    <b>${libro.titulo_libro}</b><br>
-                    <small><b>Autor:</b> ${libro.autor_libro}</small><br>
-                    <small><b>Categoría:</b> ${libro.categoria_libro}</small><br>
-                    <small><b>Cantidad disponible:</b> ${libro.cantidad_libro}</small>
-                    <button class="btn btn-sm btn-primary mt-2 btnAgregarReserva" 
-                            data-id="${libro.id_libro}">
-                      Agregar a reserva
-                    </button>
-                  </div>
-                `);
-              });
-
-              $(document).on('click', '.btnAgregarReserva', function() {
-                  const idLibro = $(this).data('id');
-                  console.log("Click detectado. ID libro:", idLibro);
-                $.ajax({
-                  url: './controllers/agregarReserva.php',
-                  type: 'POST',
-                  data: { id_libro: idLibro },
-                  dataType: 'json',
-                  success: function(r) {
-                    if (r.success) {
-                      Swal.fire('Éxito', r.message, 'success');
-                    } else {
-                      Swal.fire('Aviso', r.message, 'warning');
-                    }
-                  },
-                  error: function() {
-                    Swal.fire('Error', 'No se pudo agregar el libro a la reserva.', 'error');
-                  }
-                });
-              });
-            } else {
-              resultados.show().html(`
-                <div class="alert alert-warning text-center" role="alert">
-                  No se encontraron libros con ese título o autor.
-                </div>
-              `);
-            }
-          },
-          error: function() {
-            Swal.fire('Error', 'No se pudo conectar con el servidor.', 'error');
-          }
-        });
-      });
+      }).catch(error => Swal.showValidationMessage(error));
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      Swal.fire('¡Éxito!', result.value, 'success').then(() => location.reload());
     }
   });
 }
+
+// Buscar libros mientras se escribe
+function buscarLibro(texto) {
+    // Si el texto es muy corto, limpia las sugerencias
+    if (texto.length < 2) {
+        document.getElementById('sugerencias').innerHTML = '';
+        return;
+    }
+
+    $.ajax({
+        url: './controllers/buscarLibro.php', 
+        type: 'POST',
+        dataType: 'json', 
+        data: { query: texto },
+        success: function (libros) {
+            let html = '<ul class="list-group">';
+
+            if (libros.length > 0) {
+                libros.forEach(libro => {
+                    let disponible;
+            if (libro.cantidad_libro > 0) {
+                disponible = true;
+            } else {
+                disponible = false;
+            }
+
+            // Si esta disponible
+            if (disponible) {
+                html += `
+                    <li class="list-group-item list-group-item-action"
+                        onclick="agregarLibro('${libro.id_libro}', '${libro.titulo_libro}', '${libro.autor_libro}', '${libro.cantidad_libro}')">
+                        <strong>${libro.titulo_libro}</strong> <br>
+                        <small>Autor: ${libro.autor_libro}</small><br>
+                        <span class="text-success fw-semibold">Disponible: ${libro.cantidad_libro}</span>
+                    </li>
+                `;
+            } 
+            // Si NO esta disponible
+            else {
+                html += `
+                    <li class="list-group-item disabled bg-light text-muted" style="cursor: not-allowed;">
+                        <strong>${libro.titulo_libro}</strong> <br>
+                        <small>Autor: ${libro.autor_libro}</small><br>
+                        <span class="text-danger fw-semibold">No disponible</span>
+                    </li>
+                `;
+            }
+        });
+            } else {
+                html += `<li class="list-group-item text-muted">No se encontraron libros.</li>`;
+            }
+
+            html += '</ul>';
+            document.getElementById('sugerencias').innerHTML = html;
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Error en la búsqueda:", error);
+            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar libros.</div>';
+        }
+    });
+}
+
+// Agregar libro a la tabla
+function agregarLibro(id, titulo, autor, stock) {
+  const tbody = Swal.getPopup().querySelector("#tablaLibros tbody"); 
+
+  // Evitar duplicados
+if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
+  const alerta = document.createElement("div");
+  alerta.className = "alert alert-warning alert-dismissible fade show mt-2";
+  alerta.role = "alert";
+  alerta.innerHTML = `
+    <strong>Atención:</strong> Este libro ya fue agregado.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  `;
+  const contenedor = document.querySelector("#sugerencias") || document.querySelector("#tablaLibrosModal");
+  contenedor.prepend(alerta); //inserta la alerta al incio 
+
+  setTimeout(() => alerta.remove(), 3000);
+  return;
+}
+// Verificar disponibilidad
+  let disponibilidad;
+  if (stock > 0) {
+    disponibilidad = "Disponible";
+  } else {
+    disponibilidad = "No disponible";
+  }
+
+  const fila = document.createElement('tr');
+  fila.dataset.id = id;
+
+  fila.innerHTML = `
+    <td>${titulo}</td>
+    <td>${autor}</td>
+    <td>
+      <input type="number" value="1" min="1" max="${stock}" 
+             class="form-control form-control-sm cantidad">
+      <small class="text-muted">Stock: ${stock}</small>
+    </td>
+    <td>${disponibilidad}</td>
+    <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
+  `;
+
+  tbody.appendChild(fila);
+
+  document.getElementById('sugerencias').innerHTML = '';
+  document.getElementById('busquedaProducto').value = '';
+}
+
 </script>
 
-
 <script>
-
 function editarUsuario(id) {
     // Primero obtenemos los datos del usuario
     $.ajax({
@@ -725,7 +814,6 @@ function editarUsuario(id) {
                     <option value="Cliente" selected>Cliente</option>
                 `;
             }
-
 
             Swal.fire({
                 title: 'Editar Usuario',
@@ -811,7 +899,6 @@ function editarUsuario(id) {
 
 </script>
 
-
 <script>
 function eliminarEmpleado(id) {
   Swal.fire({
@@ -838,8 +925,6 @@ function eliminarEmpleado(id) {
   });
 }
 </script>
-
-
 
   </body>
   <!--end::Body-->

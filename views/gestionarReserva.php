@@ -7,7 +7,7 @@ require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./login.php");
+    header("location: ./views/login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -15,15 +15,13 @@ $mysql->conectar();
 
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
-
+$idUsuario=$_SESSION['id_usuario'];
 
 
 $mysql = new MySQL();
 $mysql->conectar();
-//consulta para obtener los usuarios
-$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
-
+$resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
 ?>
 
 <!doctype html>
@@ -56,7 +54,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-   
+    <link rel="preload" href="../css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -162,7 +160,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
           <ul class="navbar-nav ms-auto">
 
             <!--begin::User Menu Dropdown-->
-         <li class="nav-item dropdown user-menu">
+            <li class="nav-item dropdown user-menu">
   <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
     <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
   </a>
@@ -179,7 +177,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
     <!-- Opciones del menu -->
     <li>
-      <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+      <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
         <i class="bi bi-person me-2 text-secondary"></i> Perfil
       </a>
     </li>
@@ -195,6 +193,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     </li>
   </ul>
 </li>
+
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -232,28 +231,19 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             >
               <li class="nav-item">
                 <a href="../index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <i class="bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
-                    
                   </span>
                   </a>
-              
-              
+               <?php if ($rol == 'Invitado'): ?>
               <li class="nav-item">
-                <a href="./documentos.php" class="nav-link active">
-                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
-                  <span>
-                   Documentos 
-                  </span>
+                <a href="./gestionarReserva.php" class="nav-link active">
+                 <i class="bi bi-calendar-check me-2"> </i>
+                  <span> Gestionar Reserva </span>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="./inventario.php" class="nav-link">
-                 <i class="bi bi-box-seam me-2"> </i>
-                  <span> Inventario </span>
-                </a>
-              </li>
+              <?php endif; ?>
 
             </ul>
             <!--end::Sidebar Menu-->
@@ -269,13 +259,14 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
+            <!-- vista de diferentes usuarios  -->
             <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">Documentos</h3>
+                 <div class="col-sm-6">
+                <h3 class="mb-0">Reservas</h3>
               </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item active"><a href="./documentos.php">Documentos</a></li>
+                  <li class="breadcrumb-item active"><a href="./gestionarReserva.php">Gestionar Reserva</a></li>
                 </ol>
               </div>
             </div>
@@ -286,43 +277,39 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
-          <!--begin::Container-->
-                     <div class="container mt-4">
-                <h3 class="mb-4 text-secondary border-bottom pb-2">Generar Documentos (PDF)</h3>
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            
-                            <form action="../controller/empleadoController.php" method="POST" target="_blank">
-                               
-                                <div class="row g-3 align-items-end">
-                                    
-                                    <div class="col-md-8 col-lg-9">
-                                        <label for="tipo_generacion" class="form-label fw-bold">Seleccione el Tipo de Reporte:</label>
-                                        <select class="form-select form-select-lg" id="tipo_generacion" name="tipo" required>
-                                            <option value="" disabled selected>-- Seleccione una opción --</option>
-                                            <option value="todos">Todos los Empleados (Reporte General)</option>
-                                            <option disabled>--- Por Departamento ---</option>
-                                            <option value="1">Electricidad</option>
-                                            <option value="2">Mantenimiento</option>
-                                            <option value="3">Recursos Humanos</option>
-                                            <option value="4">Contabilidad</option>
-                                            </select>
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-lg-3 d-grid">
-                                        <button type="submit" class="btn btn-success btn-lg">
-                                            <i class="fas fa-file-pdf me-2"></i> Generar PDF
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                            </form>
-                            
-                        </div>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="table-responsive mb-5">
+                        <table id="tablaReserva" class="table table-striped table-bordered" width="100%">
+                            <thead class="table-success">
+                            <tr>
+                                <th>ID Reserva</th>
+                                <th>Fecha Reserva</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php while($fila = $resultado->fetch_assoc()): ?>
+                                <tr>
+                                <td><?= $fila['id_reserva'] ?></td>
+                                <td><?= $fila['fecha_reserva'] ?></td>
+                                <td><?= $fila['estado_reserva'] ?></td>
+                                <td class="text-center">
+                                     <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['id_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                     
+                                </td>
+                                </tr>
+                            <?php endwhile; ?>
+                            </tbody>
+                        </table>
                     </div>
+                </div>
+
             </div>
-          <!--end::Container-->
+
         </div>
+
         <!--end::App Content-->
       </main>
       <!--end::App Main-->
@@ -400,9 +387,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<script>
+    <script>
 $(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
+   $('#tablaReserva').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -415,12 +402,108 @@ $(document).ready(function() {
 });
 </script>
 
+<script>
+function verDetalle(idReserva) {
+    $.ajax({
+        url: '../controllers/detalleReserva.php',
+        type: 'POST',
+        data: { id_reserva: idReserva },
+        dataType: 'json',
+        success: function (res) {
+            if (res.success) {
+                let tabla = `
+                    <table class="table table-striped" style="width:100%; text-align:left;">
+                        <thead>
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Categoría</th>
+                                <th>Fecha Reserva</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
 
+                res.detalle.forEach(item => {
+                    tabla += `
+                        <tr>
+                            <td>${item.ISBN_libro}</td>
+                            <td>${item.titulo_libro}</td>
+                            <td>${item.autor_libro}</td>
+                            <td>${item.categoria_libro}</td>
+                            <td>${item.fecha_reserva}</td>
+                        </tr>
+                    `;
+                });
 
+                tabla += `
+                        </tbody>
+                    </table>
+                `;
 
+                Swal.fire({
+                    title: 'Detalle de la Reserva #' + idReserva,
+                    html: tabla,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: '<i class="bi bi-x-circle"></i> Cancelar Reserva',
+                    cancelButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    width: 850
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        cancelarReserva(idReserva);
+                    }
+                });
+            } else {
+                Swal.fire('Error', res.message, 'error');
+            }
+        },
+        error: function (xhr) {
+            console.log('Respuesta del servidor:', xhr.responseText);
+            Swal.fire('Error', 'No se pudo obtener la información.', 'error');
+        }
+    });
+}
 
-
-
+function cancelarReserva(idReserva) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "Esta acción cancelará la reserva",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '../controllers/cancelarReserva.php',
+                type: 'POST',
+                data: { id_reserva: idReserva },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        Swal.fire('Cancelada', 'La reserva ha sido cancelada exitosamente', 'success')
+                        .then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    console.log('Error:', xhr.responseText);
+                    Swal.fire('Error', 'No se pudo cancelar la reserva', 'error');
+                }
+            });
+        }
+    });
+}
+</script>
   </body>
   <!--end::Body-->
 </html>

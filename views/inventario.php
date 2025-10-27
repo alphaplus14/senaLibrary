@@ -147,7 +147,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
           <!--begin::Start Navbar Links-->
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
                 <i class="bi bi-list"></i>
               </a>
             </li>
@@ -179,7 +179,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
     <!-- Opciones del menu -->
     <li>
-      <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+      <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
         <i class="bi bi-person me-2 text-secondary"></i> Perfil
       </a>
     </li>
@@ -325,7 +325,13 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                             <td><?php echo $fila['ISBN_libro']; ?></td>
                             <td><?php echo $fila['categoria_libro']; ?></td>
                             <td><?php echo $fila['cantidad_libro']; ?></td>
-                            <td><?php echo $fila['disponibilidad_libro']; ?></td>
+                            <td>
+                              <?php if($fila['cantidad_libro'] == 0): ?>
+                                <span class="badge bg-danger">No disponible</span>
+                              <?php else: ?>
+                                <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                              <?php endif; ?>
+                            </td>
                             <?php if($rol == "Administrador"): ?>
                             <td class="justify-content-center d-flex gap-1">
                         
