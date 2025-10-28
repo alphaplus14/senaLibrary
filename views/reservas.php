@@ -7,7 +7,7 @@ require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./views/login.php");
+    header("location: ./login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -15,13 +15,15 @@ $mysql->conectar();
 
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
-$idUsuario=$_SESSION['id_usuario'];
+
 
 
 $mysql = new MySQL();
 $mysql->conectar();
+//consulta para obtener los libros
+$resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usuario, ' ', usuario.apellido_usuario) as nombre_usuario from reserva inner join usuario on reserva.fk_usuario=usuario.id_usuario where estado_reserva='Pendiente'");
 
-$resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva = 'Pendiente'");
+
 ?>
 
 <!doctype html>
@@ -54,7 +56,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-    <link rel="preload" href="../css/adminlte.css" as="style" />
+   
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -160,7 +162,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
           <ul class="navbar-nav ms-auto">
 
             <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
+         <li class="nav-item dropdown user-menu">
   <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
     <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
   </a>
@@ -193,7 +195,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
     </li>
   </ul>
 </li>
-
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -236,21 +237,26 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
                     Dashboard
                   </span>
                   </a>
-              </li>
-               <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">
-                <a href="./gestionarReserva.php" class="nav-link active">
-                 <i class="nav-icon bi bi-calendar-check me-2"> </i>
-                  <span> Gestionar Reserva </span>
+                <a href="./Documentos.php" class="nav-link">
+                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
+                  <span>
+                   Documentos 
+                  </span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./historialPrestamos.php" class="nav-link">
-                  <i class="bi bi-clock-history me-2"></i>
-                  <span> Historial </span>
+                <a href="./inventario.php" class="nav-link">
+                 <i class="bi bi-box-seam me-2"> </i>
+                  <span> Libros </span>
                 </a>
               </li>
-              <?php endif; ?>
+              <li class="nav-item">
+                <a href="./reservas.php" class="nav-link active">
+                 <i class="nav-icon bi bi-ticket-perforated me-2"> </i>
+                  <span> Reservas </span>
+                </a>
+              </li>
 
             </ul>
             <!--end::Sidebar Menu-->
@@ -266,14 +272,14 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <!-- vista de diferentes usuarios  -->
             <div class="row">
-                 <div class="col-sm-6">
+              <div class="col-sm-6">
                 <h3 class="mb-0">Reservas</h3>
               </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item active"><a href="./gestionarReserva.php">Gestionar Reserva</a></li>
+                  <li class="breadcrumb-item"><a href="./inventario.php">Reservas</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Gestion de Reservas</li>
                 </ol>
               </div>
             </div>
@@ -284,41 +290,52 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="table-responsive mb-5">
-                        <table id="tablaReserva" class="table table-striped table-bordered" width="100%">
-                            <thead class="table-success">
-                            <tr>
-                                <th>ID Reserva</th>
-                                <th>Fecha Reserva</th>
-                                <th>Estado</th>
+          <!--begin::Container-->
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <!--begin::Col-->
+                <div class="table-responsive">
+                        <table id="tablaReservas" class="table table-striped table-bordered" width="100%">
+                    <thead class="table-success">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre Cliente</th>
+                            <th>Fecha Reserva</th>
+                            <th>Estado</th>
+                            <?php if($rol == "Administrador"): ?>
                                 <th>Acciones</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <?php while($fila = $resultado->fetch_assoc()): ?>
-                                <tr>
-                                <td><?= $fila['id_reserva'] ?></td>
-                                <td><?= $fila['fecha_reserva'] ?></td>
-                                <td>
-                                  <span class="badge bg-warning text-dark"><?php echo $fila['estado_reserva']; ?></span>
-                                </td>
+                            <?php endif; ?>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <?php while($fila = $resultado->fetch_assoc()): ?>
+                        <tr>
+                            <td><?php echo $fila['id_reserva']; ?></td>
+                            <td><?php echo $fila['nombre_usuario']; ?></td>
+                            <td><?php echo $fila['fecha_reserva']; ?></td>
+                            <td>
+                                <span class="badge bg-warning text-dark"><?php echo $fila['estado_reserva']; ?></span>
+                            </td>
+                            <?php if($rol == "Administrador"): ?>
                                 <td class="text-center">
-                                     <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['id_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                    <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['id_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
                                      
                                 </td>
-                                </tr>
-                            <?php endwhile; ?>
-                            </tbody>
+                            <?php endif; ?>
+                        </tr>
+                    <?php endwhile; ?>
+                    </tbody>
                         </table>
-                    </div>
                 </div>
-
+                
+              <!-- /.Start col -->
             </div>
-
+            <!-- /.row (main row) -->
+          </div>
+          <!--end::Container-->
         </div>
-
         <!--end::App Content-->
       </main>
       <!--end::App Main-->
@@ -396,9 +413,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-    <script>
+<script>
 $(document).ready(function() {
-   $('#tablaReserva').DataTable({
+   $('#tablaReservas').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -424,6 +441,7 @@ function verDetalle(idReserva) {
                     <table class="table table-striped" style="width:100%; text-align:left;">
                         <thead class="table-dark">
                             <tr>
+                                <th>Cliente</th>
                                 <th>ISBN</th>
                                 <th>Título</th>
                                 <th>Autor</th>
@@ -437,6 +455,7 @@ function verDetalle(idReserva) {
                 res.detalle.forEach(item => {
                     tabla += `
                         <tr>
+                            <td>${item.nombre_usuario}</td>
                             <td>${item.ISBN_libro}</td>
                             <td>${item.titulo_libro}</td>
                             <td>${item.autor_libro}</td>
@@ -451,34 +470,39 @@ function verDetalle(idReserva) {
                     </table>
                 `;
 
-                 // Obtener el estado de la reserva del elemento que trae del json
+                // Obtener el estado de la reserva del elemento que trae del json
                 let estadoReserva = res.detalle[0].estado_reserva;
 
-                // Si esta Pendiente, mostrar botón de cancelar
+                // Si la reserva esta Pendiente, mostrar botones
                 if (estadoReserva === 'Pendiente') {
                     Swal.fire({
                         title: '<i class="bi bi-book"></i> Detalle de la Reserva #' + idReserva,
                         html: tabla,
                         icon: 'info',
+                        showDenyButton: true,
                         showCancelButton: true,
-                        confirmButtonText: '<i class="bi bi-x-circle"></i> Cancelar Reserva',
+                        confirmButtonText: '<i class="bi bi-check-circle"></i> Aprobar Reserva',
+                        denyButtonText: '<i class="bi bi-x-circle"></i> Rechazar Reserva',
                         cancelButtonText: '<i class="bi bi-arrow-left"></i> Cerrar',
-                        confirmButtonColor: '#d33',
+                        confirmButtonColor: '#28a745',
+                        denyButtonColor: '#dc3545',
                         cancelButtonColor: '#6c757d',
                         width: 900
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            cancelarReserva(idReserva);
+                            aprobarReserva(idReserva);
+                        } else if (result.isDenied) {
+                            rechazarReserva(idReserva);
                         }
                     });
                 } else {
-                    // Si esta Aprobada, Rechazada o Cancelada, solo mostrar informacion
+                    // Si esta Cancelada, Aprobada o Rechazada, solo mostrar información
                     Swal.fire({
                         title: 'Detalle de la Reserva #' + idReserva,
                         html: tabla,
                         icon: 'info',
-                        confirmButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
-                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: '<i class="bi bi-x"></i> Cerrar',
+                        confirmButtonColor: '#6c757d',
                         width: 900
                     });
                 }
@@ -492,27 +516,33 @@ function verDetalle(idReserva) {
         }
     });
 }
-function cancelarReserva(idReserva) {
+
+function aprobarReserva(idReserva) {
     Swal.fire({
-        title: '¿Estás seguro?',
-        text: "Esta acción cancelará la reserva",
-        icon: 'warning',
+        title: '¿Aprobar reserva?',
+        text: "Esta acción aprueba la reserva",
+        icon: 'question',
         showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Sí, cancelar',
-        cancelButtonText: 'No'
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="bi bi-check-circle"></i> Si, aprobar',
+        cancelButtonText: '<i class="bi bi-x"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '../controllers/cancelarReserva.php',
+                url: '../controllers/aprobarReserva.php',
                 type: 'POST',
                 data: { id_reserva: idReserva },
                 dataType: 'json',
                 success: function(res) {
                     if (res.success) {
-                        Swal.fire('Cancelada', 'La reserva ha sido cancelada exitosamente', 'success')
-                        .then(() => {
+                        Swal.fire({
+                            title: '¡Aprobada!',
+                            text: res.message,
+                            icon: 'success',
+                            confirmButtonColor: '#28a745',
+                            confirmButtonText: '<i class="bi bi-check"></i> OK'
+                        }).then(() => {
                             location.reload();
                         });
                     } else {
@@ -521,13 +551,55 @@ function cancelarReserva(idReserva) {
                 },
                 error: function(xhr) {
                     console.log('Error:', xhr.responseText);
-                    Swal.fire('Error', 'No se pudo cancelar la reserva', 'error');
+                    Swal.fire('Error', 'No se pudo aprobar la reserva.', 'error');
+                }
+            });
+        }
+    });
+}
+
+function rechazarReserva(idReserva) {
+    Swal.fire({
+        title: '¿Rechazar reserva?',
+        text: "Esta accion no aprueba la reserva",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="bi bi-x-circle"></i> Si, rechazar',
+        cancelButtonText: '<i class="bi bi-arrow-left"></i> Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '../controllers/rechazarReserva.php',
+                type: 'POST',
+                data: { id_reserva: idReserva },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        Swal.fire({
+                            title: '¡Rechazada!',
+                            text: res.message,
+                            icon: 'success',
+                            confirmButtonColor: '#28a745',
+                            confirmButtonText: '<i class="bi bi-check"></i> OK'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error', res.message, 'error');
+                    }
+                },
+                error: function(xhr) {
+                    console.log('Error:', xhr.responseText);
+                    Swal.fire('Error', 'No se pudo rechazar la reserva.', 'error');
                 }
             });
         }
     });
 }
 </script>
+
   </body>
   <!--end::Body-->
 </html>

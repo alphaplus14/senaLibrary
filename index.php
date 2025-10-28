@@ -247,7 +247,13 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
               <li class="nav-item">
                 <a href="./views/inventario.php" class="nav-link">
                  <i class="bi bi-box-seam me-2"> </i>
-                  <span> Inventario </span>
+                  <span> Libros </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./views/reservas.php" class="nav-link">
+                 <i class="bi bi-ticket-perforated me-2"> </i>
+                  <span> Reservas </span>
                 </a>
               </li>
               <?php endif; ?>
@@ -256,6 +262,12 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 <a href="./views/gestionarReserva.php" class="nav-link">
                  <i class="bi bi-calendar-check me-2"> </i>
                   <span> Gestionar Reserva </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./views/historialPrestamos.php" class="nav-link">
+                  <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
                 </a>
               </li>
               <?php endif; ?>
@@ -341,7 +353,13 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                           <td><?= $fila['apellido_usuario'] ?></td>
                           <td><?= $fila['email_usuario'] ?></td>
                           <td><?= $fila['tipo_usuario'] ?></td>
-                          <td><?= $fila['estado'] ?></td>
+                          <td>
+                              <?php if($fila['estado'] == 'Activo'): ?>
+                                  <span class="badge bg-success"><?= $fila['estado'] ?></span>
+                              <?php else: ?>
+                                  <span class="badge bg-secondary"><?= $fila['estado'] ?></span>
+                              <?php endif; ?>
+                          </td>
                           <td class="text-center">
                             <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_usuario'] ?>)">
                               <i class="bi bi-pencil-square"></i>
@@ -483,7 +501,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
+   $('#tablaUsuarios').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -605,7 +623,7 @@ function abrirCrearReserva() {
       <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
       <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
       <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
-          <thead>
+          <thead class="table-dark">
               <tr>
                   <th>Titulo</th>
                   <th>Autor</th>
