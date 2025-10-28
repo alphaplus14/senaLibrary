@@ -248,6 +248,57 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
   min-height: 450px; 
 }
 
+.btn-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ... dentro de <style> ... */
+
+/* Modificación a .btn-group para alinear los botones */
+.btn-group {
+    display: flex;
+    gap: 15px; /* Aumenta el espacio entre botones */
+    align-items: center;
+    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
+    width: 100%; 
+}
+
+/* Ajustes al botón de Excel para que se vea igual que el de PDF */
+.btn-excel {
+    background-color: #28a745;
+    color: #fff;
+    font-weight: 600; /* Asegura el mismo peso de fuente */
+    border: none;
+    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
+    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
+    text-decoration: none;
+    display: inline-flex; /* Para alinear icono y texto */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+    /* CLAVE: Hace que el botón ocupe el espacio disponible de forma equitativa */
+    flex-grow: 1; 
+}
+
+.btn-excel:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
+.btn-group .btn-generar {
+    flex-grow: 1; 
+    margin-top: 0; /* Anula cualquier margen que pueda tener */
+    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
+}
+
+/* ... otras clases CSS ... */
 
 </style>
   <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
@@ -434,7 +485,7 @@ $inicioMes = date('Y-m-01');
 
         <div class="form-group">
           <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-file-pdf"></i>  GENERAR PDF
+            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
           </button>
         </div>
       </div>
@@ -442,28 +493,32 @@ $inicioMes = date('Y-m-01');
   </div>
 
   <!-- === PDF DE INVENTARIO === -->
-  <div class="card-documento">
+<div class="card-documento">
     <h4 class="titulo-seccion">
-      <i class="fa-solid fa-boxes-stacked"></i> PDF DEL INVENTARIO ACTUAL:
+        <i class="fa-solid fa-boxes-stacked"></i> PDF DEL INVENTARIO ACTUAL:
     </h4>
     <form action="generar_pdf_inventario.php" method="get" class="form-documentos">
-      <div class="row-form">
-        <div class="form-group">
-          <label for="salida">Ver:</label>
-          <select id="salida" name="salida">
-            <option value="I">Ver en el navegador</option>
-            <option value="D">Descargar</option>
-          </select>
-        </div>
+        <div class="row-form">
+            <div class="form-group">
+                <label for="salida_inventario">Ver:</label>
+                <select id="salida_inventario" name="salida"> <option value="I">Ver en el navegador</option>
+                    <option value="D">Descargar</option>
+                </select>
+            </div>
 
-        <div class="form-group">
+            <div class="form-group btn-group">
+
+
           <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-box-open"></i> GENERAR PDF
+            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
           </button>
+                <a href="generar_excel_inventario.php" class="btn-excel">
+                    <i class="fa-solid fa-file-excel"></i>  EXCEL
+                </a>
+            </div>
         </div>
-      </div>
     </form>
-  </div>
+</div>
 
   <!-- === PDF DE PRÉSTAMOS === -->
   <div class="card-documento">
@@ -490,16 +545,20 @@ $inicioMes = date('Y-m-01');
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group btn-group">
           <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
+            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
           </button>
+          <a href="generar_excel_prestamos.php" class="btn-excel">
+            <i class="fa-solid fa-file-excel"></i>  EXCEL
+          </a>
         </div>
       </div>
     </form>
   </div>
 
 </div>
+
 
 
 
