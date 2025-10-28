@@ -139,71 +139,116 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
   <!--begin::Body-->
   <!-- toco meterle style para que el formulario combinara con el resto de la pagina -->
   <style>
+.container-documentos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;           /* ✅ para que sea responsive */
+  gap: 30px;                 /* espacio entre columnas */
+  margin: 40px auto;
+  max-width: 1400px;
+  padding: 20px;
+}
 
-.form-documentos {
-  background-color: #f8fafc;
-  padding: 20px 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  display: inline-flex;
+.card-documento {
+  flex: 1 1 30%;             /* ✅ tres columnas iguales */
+  min-width: 320px;          /* ancho mínimo para pantallas pequeñas */
+  background-color: #ffffff;
+  padding: 30px 35px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.card-documento:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.titulo-seccion {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 25px;
+  font-size: 1.2rem;
+  display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
-.form-documentos label {
+.form-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.row-form {
+  display: flex;
+  flex-direction: column; /* ✅ Fuerza disposición vertical */
+  gap: 16px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.form-group label {
   font-weight: 600;
-  color: #0d1b2a;
-  margin-right: 6px;
+  color: #334155;
+  margin-bottom: 5px;
 }
 
-.form-documentos input[type="date"],
-.form-documentos select {
+.form-group input[type="date"],
+.form-group select {
   border: 1px solid #cbd5e1;
   border-radius: 8px;
-  padding: 6px 10px;
-  background-color: #ffffff;
+  padding: 8px 10px;
+  background-color: #f8fafc;
   color: #0f172a;
   transition: all 0.3s ease;
 }
 
-.form-documentos input[type="date"]:focus,
-.form-documentos select:focus {
+.form-group input[type="date"]:focus,
+.form-group select:focus {
   border-color: #2563eb;
-  box-shadow: 0 0 5px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
   outline: none;
 }
 
-/* === Botón azul con icono PDF === */
 .btn-generar {
-  background-color: #2563eb;
+  background-color: #b70404dd;
   color: #ffffff;
   font-weight: 600;
   border: none;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 12px 18px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
   cursor: pointer;
+  align-self: flex-start; /* alinea a la izquierda */
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn-generar:hover {
-  background-color: #1e40af;
+  background-color: #ff0000ff;
   transform: translateY(-2px);
-}
-
-.btn-generar:active {
-  transform: translateY(0);
 }
 
 .btn-generar i {
   font-size: 16px;
 }
-.form-documentos {
-  margin-bottom: 30px; /* puedes ajustar el valor */
+
+.card-documento {
+  min-height: 450px; 
 }
+
+
 </style>
   <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
@@ -355,46 +400,108 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--begin::App Content-->
         <div class="app-content">
           <!--begin::Container-->
- <?php
+<?php
 $hoy = date('Y-m-d');
 $inicioMes = date('Y-m-01');
 ?>
-<!-- === FORMULARIO === -->
- <h4>GENERAR PDF DE LAS RESERVAS:</h4>
-<form action="generar_pdf_reservas.php" method="get" class="form-documentos">
-  <label for="fechaInicio">Fecha inicio:</label>
-  <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+<!-- === FORMULARIOS DE DOCUMENTOS === -->
+<div class="container-documentos">
 
-  <label for="fechaFin">Fecha fin:</label>
-  <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+  <!-- === PDF DE RESERVAS === -->
+  <div class="card-documento">
+    <h4 class="titulo-seccion">
+      <i class="fa-solid fa-calendar-check"></i> PDF DE LAS RESERVAS:
+    </h4>
+    <form action="generar_pdf_reservas.php" method="get" class="form-documentos">
+      <div class="row-form">
+        <div class="form-group">
+          <label for="fechaInicio">Fecha inicio:</label>
+          <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+        </div>
 
-  <label for="salida">Ver:</label>
-  <select id="salida" name="salida">
-    <option value="I">Ver en el navegador</option>
-    <option value="D">Descargar</option>
-  </select>
+        <div class="form-group">
+          <label for="fechaFin">Fecha fin:</label>
+          <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+        </div>
 
-  <button type="submit" class="btn-generar">
-    <i class="fa-solid fa-file-pdf"></i> Generar PDF
-  </button>
+        <div class="form-group">
+          <label for="salida">Ver:</label>
+          <select id="salida" name="salida">
+            <option value="I">Ver en el navegador</option>
+            <option value="D">Descargar</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn-generar">
+            <i class="fa-solid fa-file-pdf"></i>  GENERAR PDF
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- === PDF DE INVENTARIO === -->
+  <div class="card-documento">
+    <h4 class="titulo-seccion">
+      <i class="fa-solid fa-boxes-stacked"></i> PDF DEL INVENTARIO ACTUAL:
+    </h4>
+    <form action="generar_pdf_inventario.php" method="get" class="form-documentos">
+      <div class="row-form">
+        <div class="form-group">
+          <label for="salida">Ver:</label>
+          <select id="salida" name="salida">
+            <option value="I">Ver en el navegador</option>
+            <option value="D">Descargar</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn-generar">
+            <i class="fa-solid fa-box-open"></i> GENERAR PDF
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- === PDF DE PRÉSTAMOS === -->
+  <div class="card-documento">
+    <h4 class="titulo-seccion">
+      <i class="fa-solid fa-handshake"></i> PDF DE LOS PRÉSTAMOS:
+    </h4>
+    <form action="generar_pdf_prestamos.php" method="get" class="form-documentos">
+      <div class="row-form">
+        <div class="form-group">
+          <label for="fechaInicio">Fecha inicio:</label>
+          <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="fechaFin">Fecha fin:</label>
+          <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="salida">Ver:</label>
+          <select id="salida" name="salida">
+            <option value="I">Ver en el navegador</option>
+            <option value="D">Descargar</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <button type="submit" class="btn-generar">
+            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
 
 
-</button>
- 
-</form>
-<h4>GENERAR PDF DEL INVENTARIO ACTUAL:</h4>
-<!-- === FORMULARIO DE INVENTARIO === -->
-<form action="generar_pdf_inventario.php" method="get" class="form-documentos">
-  <label for="salida">Ver:</label>
-  <select id="salida" name="salida">
-    <option value="I">Ver en el navegador</option>
-    <option value="D">Descargar</option>
-  </select>
-
-  <button type="submit" class="btn-generar">
-    <i class="fa-solid fa-boxes-stacked"></i> Inventario actual
-  </button>
-</form>
 
 
 
