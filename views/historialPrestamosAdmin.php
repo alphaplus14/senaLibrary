@@ -16,14 +16,10 @@ $mysql->conectar();
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
-
-
 $mysql = new MySQL();
 $mysql->conectar();
-//consulta para obtener los usuarios
-$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
-
-
+//consulta para obtener los libros
+$resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva");
 ?>
 
 <!doctype html>
@@ -241,8 +237,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
               
               
               <li class="nav-item">
-                <a href="./documentos.php" class="nav-link active">
-                  <i class="nav-icon bi bi-file-earmark-pdf me-2"> </i>    
+                <a href="./Documentos.php" class="nav-link">
+                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
                   <span>
                    Documentos 
                   </span>
@@ -251,7 +247,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
               <li class="nav-item">
                 <a href="./inventario.php" class="nav-link">
                  <i class="bi bi-box-seam me-2"> </i>
-                  <span> Libros</span>
+                  <span> Libros </span>
                 </a>
               </li>
               <li class="nav-item">
@@ -261,8 +257,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-clock-history me-2"></i>
+                <a href="./historialPrestamosAdmin.php" class="nav-link active">
+                 <i class="nav-icon bi bi-clock-history me-2"></i>
                   <span> Historial </span>
                 </a>
               </li>
@@ -282,11 +278,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Documentos</h3>
+                <h3 class="mb-0">Historial</h3>
               </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item active"><a href="./documentos.php">Documentos</a></li>
+                  <li class="breadcrumb-item"><a href="./inventario.php">Historial Prestamos</a></li>
                 </ol>
               </div>
             </div>
@@ -298,40 +294,68 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--begin::App Content-->
         <div class="app-content">
           <!--begin::Container-->
-                     <div class="container mt-4">
-                <h3 class="mb-4 text-secondary border-bottom pb-2">Generar Documentos (PDF)</h3>
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            
-                            <form action="../controller/empleadoController.php" method="POST" target="_blank">
-                               
-                                <div class="row g-3 align-items-end">
-                                    
-                                    <div class="col-md-8 col-lg-9">
-                                        <label for="tipo_generacion" class="form-label fw-bold">Seleccione el Tipo de Reporte:</label>
-                                        <select class="form-select form-select-lg" id="tipo_generacion" name="tipo" required>
-                                            <option value="" disabled selected>-- Seleccione una opción --</option>
-                                            <option value="todos">Todos los Empleados (Reporte General)</option>
-                                            <option disabled>--- Por Departamento ---</option>
-                                            <option value="1">Electricidad</option>
-                                            <option value="2">Mantenimiento</option>
-                                            <option value="3">Recursos Humanos</option>
-                                            <option value="4">Contabilidad</option>
-                                            </select>
-                                    </div>
-                                    
-                                    <div class="col-md-4 col-lg-3 d-grid">
-                                        <button type="submit" class="btn btn-success btn-lg">
-                                            <i class="fas fa-file-pdf me-2"></i> Generar PDF
-                                        </button>
-                                    </div>
-                                </div>
-                                
-                            </form>
-                            
-                        </div>
+          <div class="container-fluid">
+            <!--begin::Row-->
+            <div class="row">
+              <!--begin::Col-->
+                 <div class="table-responsive mb-5">
+                        <table id="tablaPrestamos" class="table table-striped table-bordered" width="100%">
+                            <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha Prestamo </th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php while($fila = $resultado->fetch_assoc()): ?>
+                                <tr>
+                                <td><?= $fila['id_prestamo'] ?></td>
+                                <td><?= $fila['fecha_prestamo'] ?></td>
+                                <td>
+                                  <?php
+                                    $estado = $fila['estado_reserva'];
+                                    $badgeClass = '';
+                                    $icono = '';
+                                    $texto = '';
+
+                                      if ($estado == 'Aprobada') {
+                                          $badgeClass = 'bg-success text-white';
+                                          $icono = 'bi-check-circle-fill text-white';
+                                          $texto = 'Aprobada';
+                                    } elseif ($estado == 'Rechazada') {
+                                        $badgeClass = 'bg-danger';
+                                        $icono = 'bi-x-circle-fill';
+                                        $texto = 'Rechazada';
+                                    } elseif ($estado == 'Cancelada') {
+                                        $badgeClass = 'bg-secondary';
+                                        $icono = 'bi-slash-circle-fill';
+                                        $texto = 'Cancelada';
+                                    } else {
+                                        // Si llega otro valor inesperado, se muestra neutro
+                                        $badgeClass = 'bg-light text-dark border';
+                                        $icono = 'bi-question-circle';
+                                        $texto = htmlspecialchars($estado);
+                                    }
+                                  ?>
+                                  <span class="badge <?php echo $badgeClass; ?> px-2 py-2 fw-semibold">
+                                    <i class="bi <?php echo $icono; ?> me-1"></i>
+                                    <?php echo $texto; ?>
+                                  </span>
+                                </td>
+                                <td class="text-center">
+                                  <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                </td>
+                                </tr>
+                            <?php endwhile; ?>
+                            </tbody>
+                        </table>
                     </div>
+              <!-- /.Start col -->
             </div>
+            <!-- /.row (main row) -->
+          </div>
           <!--end::Container-->
         </div>
         <!--end::App Content-->
@@ -413,7 +437,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
+   $('#tablaPrestamos').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -425,13 +449,66 @@ $(document).ready(function() {
 
 });
 </script>
+<script>
+function verDetalle(idReserva) {
+    $.ajax({
+        url: '../controllers/detalleReserva.php',
+        type: 'POST',
+        data: { id_reserva: idReserva },
+        dataType: 'json',
+        success: function (res) {
+            if (res.success) {
+                let tabla = `
+                    <table class="table table-striped align-middle" style="width:100%; text-align:left;">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ISBN</th>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Categoría</th>
+                                <th>Fecha Reserva</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
 
+                res.detalle.forEach(item => {
+                    tabla += `
+                        <tr>
+                            <td>${item.ISBN_libro}</td>
+                            <td>${item.titulo_libro}</td>
+                            <td>${item.autor_libro}</td>
+                            <td>${item.categoria_libro}</td>
+                            <td>${item.fecha_reserva}</td>
+                        </tr>
+                    `;
+                });
 
-
-
-
-
-
+                tabla += `
+                        </tbody>
+                    </table>
+                `;
+                    // Mostrar alerta con detalle
+                Swal.fire({
+                    title: `<i class="bi bi-book"></i> Detalle de la Reserva #${idReserva}`,
+                    html: tabla,
+                    icon: 'info',
+                    confirmButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
+                    confirmButtonColor: '#3085d6',
+                    width: 900
+                });
+                
+            } else {
+                Swal.fire('Sin resultados', res.message || 'No se encontraron libros en esta reserva.', 'warning');
+            }
+        },
+        error: function (xhr) {
+            console.error('Respuesta del servidor:', xhr.responseText);
+            Swal.fire('Error', 'No se pudo obtener la información de la reserva.', 'error');
+        }
+    });
+}
+</script>
   </body>
   <!--end::Body-->
 </html>

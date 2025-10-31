@@ -256,6 +256,12 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                   <span> Reservas </span>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
+                </a>
+              </li>
               <?php endif; ?>
                <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">

@@ -21,7 +21,7 @@ $idUsuario=$_SESSION['id_usuario'];
 $mysql = new MySQL();
 $mysql->conectar();
 
-$resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva ");
+$resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva where reserva.fk_usuario=$idUsuario");
 ?>
 
 <!doctype html>
@@ -283,7 +283,7 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
             <div class="container-fluid">
                 <div class="row">
                     <div class="table-responsive mb-5">
-                        <table id="tablaReserva" class="table table-striped table-bordered" width="100%">
+                        <table id="tablaPrestamos" class="table table-striped table-bordered" width="100%">
                             <thead class="table-success">
                             <tr>
                                 <th>ID</th>
@@ -421,7 +421,7 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
     ></script>
     <script>
 $(document).ready(function() {
-   $('#tablaReserva').DataTable({
+   $('#tablaPrestamos').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },

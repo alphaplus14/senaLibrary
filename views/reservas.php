@@ -257,6 +257,12 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
                   <span> Reservas </span>
                 </a>
               </li>
+              <li class="nav-item">
+                <a href="./historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
+                </a>
+              </li>
 
             </ul>
             <!--end::Sidebar Menu-->

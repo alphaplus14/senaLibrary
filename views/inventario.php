@@ -260,7 +260,12 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                   <span> Reservas </span>
                 </a>
               </li>
-
+              <li class="nav-item">
+                <a href="./historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
+                </a>
+              </li>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -660,7 +665,6 @@ function editarLibro(id) {
                 `;
             }
 
-
             Swal.fire({
                 title: 'Editar Libro',
                 html: `
@@ -742,7 +746,6 @@ function editarLibro(id) {
 
 </script>
 
-
 <script>
 function eliminarLibro(id) {
   Swal.fire({
@@ -770,9 +773,6 @@ function eliminarLibro(id) {
   });
 }
 </script>
-
-
-
 
   </body>
   <!--end::Body-->
