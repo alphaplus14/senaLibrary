@@ -461,7 +461,7 @@ $inicioMes = date('Y-m-01');
   <!-- === PDF DE RESERVAS === -->
   <div class="card-documento">
     <h4 class="titulo-seccion">
-      <i class="fa-solid fa-calendar-check"></i> PDF DE LAS RESERVAS:
+      <i class="fa-solid fa-calendar-check"></i> REPORTE DE LAS RESERVAS:
     </h4>
     <form action="generar_pdf_reservas.php" method="get" class="form-documentos">
       <div class="row-form">
@@ -484,10 +484,13 @@ $inicioMes = date('Y-m-01');
         </div>
 
         <div class="form-group">
-          <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
-          </button>
+<div style="text-align: center;">
+  <button type="submit" class="btn-generar">
+    <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
+  </button>
+</div>
         </div>
+        
       </div>
     </form>
   </div>
@@ -495,7 +498,7 @@ $inicioMes = date('Y-m-01');
   <!-- === PDF DE INVENTARIO === -->
 <div class="card-documento">
     <h4 class="titulo-seccion">
-        <i class="fa-solid fa-boxes-stacked"></i> PDF DEL INVENTARIO ACTUAL:
+        <i class="fa-solid fa-boxes-stacked"></i> REPORTE DEL INVENTARIO:
     </h4>
     <form action="generar_pdf_inventario.php" method="get" class="form-documentos">
         <div class="row-form">
@@ -523,7 +526,7 @@ $inicioMes = date('Y-m-01');
   <!-- === PDF DE PRÉSTAMOS === -->
   <div class="card-documento">
     <h4 class="titulo-seccion">
-      <i class="fa-solid fa-handshake"></i> PDF DE LOS PRÉSTAMOS:
+      <i class="fa-solid fa-handshake"></i> REPORTE DE LOS PRÉSTAMOS:
     </h4>
     <form action="generar_pdf_prestamos.php" method="get" class="form-documentos">
       <div class="row-form">
