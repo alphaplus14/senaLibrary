@@ -258,8 +258,8 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
               </li>
               <li class="nav-item">
                 <a href="./views/historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-clock-history me-2"></i>
-                  <span> Historial </span>
+                 <i class="bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
                 </a>
               </li>
               <?php endif; ?>

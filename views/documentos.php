@@ -262,8 +262,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
               </li>
               <li class="nav-item">
                 <a href="./historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-clock-history me-2"></i>
-                  <span> Historial </span>
+                 <i class="bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
                 </a>
               </li>
             </ul>
@@ -411,26 +411,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<script>
-$(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
-    language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-    },
-    pageLength: 5,
-    lengthMenu: [5, 10, 20, 50],
-    responsive: true,
-    autoWidth: true
-});
-
-});
-</script>
-
-
-
-
-
-
 
   </body>
   <!--end::Body-->

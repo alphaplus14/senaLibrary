@@ -258,8 +258,8 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
               </li>
               <li class="nav-item">
                 <a href="./historialPrestamosAdmin.php" class="nav-link active">
-                 <i class="nav-icon bi bi-clock-history me-2"></i>
-                  <span> Historial </span>
+                 <i class="nav-icon bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
                 </a>
               </li>
             </ul>
@@ -278,13 +278,8 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Historial</h3>
+                <h3 class="mb-0">Prestamos</h3>
               </div>    
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="./inventario.php">Historial Prestamos</a></li>
-                </ol>
-              </div>
             </div>
             <!--end::Row-->
           </div>
@@ -305,6 +300,7 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                                 <th>ID</th>
                                 <th>Fecha Prestamo </th>
                                 <th>Estado</th>
+                                <th>Devolución</th>
                                 <th>Acciones</th>
                             </tr>
                             </thead>
@@ -344,6 +340,7 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                                     <?php echo $texto; ?>
                                   </span>
                                 </td>
+                                <td></td>
                                 <td class="text-center">
                                   <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
                                 </td>

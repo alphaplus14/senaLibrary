@@ -61,7 +61,7 @@ try {
             @$mysql->desconectar();
         }
     } catch (Throwable $e) {
-        // Ignorar si ya está cerrada
+        // Ignorar si ya esta cerrada
     }
 }
 ?>
