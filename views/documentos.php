@@ -549,9 +549,9 @@ $inicioMes = date('Y-m-01');
           <button type="submit" class="btn-generar">
             <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
           </button>
-          <a href="generar_excel_prestamos.php" class="btn-excel">
-            <i class="fa-solid fa-file-excel"></i>  EXCEL
-          </a>
+<button type="submit" formaction="generar_excel_prestamos.php" class="btn-excel">
+  <i class="fa-solid fa-file-excel"></i> EXCEL
+</button>
         </div>
       </div>
     </form>

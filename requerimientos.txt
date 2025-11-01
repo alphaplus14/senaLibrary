@@ -12,16 +12,6 @@ o	Total de reservas.
 o	Total de préstamos.
 •	Enlaces rápidos a módulos (usuarios, libros, reservas, préstamos).
 ________________________________________
-📈 7. Generación de Informes
-PDF (usando Dompdf o FPDF):
-•	Generar informe de inventario (libros disponibles, prestados, etc.).
-•	Generar informe de préstamos (historial, más prestados, etc.).
-•	Seleccionar rango de fechas.
-Excel (usando PhpSpreadsheet):
-•	Exportar inventario a Excel.
-•	Exportar historial de préstamos a Excel.
-•	Seleccionar rango de fechas.
-________________________________________
 ✉️ 8. Notificaciones
 •	Enviar correo electrónico al cliente al confirmar una reserva.
 •	Enviar correo al registrar un préstamo o devolución.
