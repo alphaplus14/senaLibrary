@@ -57,8 +57,11 @@ function obtenerInventario(PDO $conexion): array {
 // === Obtener libro más prestado ===
 function obtenerLibroMasPrestado(PDO $conexion): ?array {
     $sql = "SELECT 
+                l.id_libro AS ID,
                 l.titulo_libro AS Titulo,
                 l.autor_libro AS Autor,
+                l.categoria_libro AS Categoria,
+                l.cantidad_libro AS Cantidad,
                 COUNT(rhl.libro_id_libro) AS VecesPrestado
             FROM reserva_has_libro rhl
             JOIN libro l ON l.id_libro = rhl.libro_id_libro
@@ -83,9 +86,9 @@ try {
     $pdf->SetFont('Arial', 'B', 11);
     $pdf->SetFillColor(230, 230, 230);
     $pdf->Cell(20, 9, 'ID', 1, 0, 'C', true);
-    $pdf->Cell(70, 9, 'Título', 1, 0, 'C', true);
+    $pdf->Cell(70, 9, 'Titulo', 1, 0, 'C', true);
     $pdf->Cell(60, 9, 'Autor', 1, 0, 'C', true);
-    $pdf->Cell(45, 9, 'Categoría', 1, 0, 'C', true);
+    $pdf->Cell(45, 9, 'Categoria', 1, 0, 'C', true);
     $pdf->Cell(25, 9, 'Cant.', 1, 0, 'C', true);
     $pdf->Cell(40, 9, 'Disponibilidad', 1, 1, 'C', true);
 
@@ -104,24 +107,33 @@ try {
     }
 
 // === Sección del libro más prestado ===
-$pdf->Ln(10);
+// === Sección del libro más prestado ===
+$pdf->Ln(4); // pequeño margen entre tablas
 $pdf->SetFont('Arial', 'B', 12);
-$pdf->Cell(0, 10, utf8_decode('📚 Libro más prestado'), 0, 1, 'L');
-$pdf->Ln(3);
+$pdf->Cell(0, 8, utf8_decode('* Libro más prestado'), 0, 1, 'L');
+$pdf->Ln(2); // espacio sutil antes de la tabla
 
 if ($libroMasPrestado) {
-    // Encabezado de la tabla
-    $pdf->SetFont('Arial', 'B', 11);
-    $pdf->SetFillColor(200, 230, 255);
-    $pdf->Cell(120, 9, utf8_decode('Título'), 1, 0, 'C', true);
-    $pdf->Cell(90, 9, utf8_decode('Autor'), 1, 0, 'C', true);
-    $pdf->Cell(40, 9, utf8_decode('Veces Prestado'), 1, 1, 'C', true);
+// Encabezado de la tabla (mismos anchos que la tabla principal)
+$pdf->SetFont('Arial', 'B', 11);
+$pdf->SetFillColor(200, 230, 255);
+$pdf->Cell(20, 9, utf8_decode('ID'), 1, 0, 'C', true);
+$pdf->Cell(70, 9, utf8_decode('Titulo'), 1, 0, 'C', true);
+$pdf->Cell(60, 9, utf8_decode('Autor'), 1, 0, 'C', true);
+$pdf->Cell(45, 9, utf8_decode('Categoria'), 1, 0, 'C', true);
+$pdf->Cell(25, 9, utf8_decode('Cant.'), 1, 0, 'C', true);
+$pdf->Cell(40, 9, utf8_decode('Veces Prestado'), 1, 1, 'C', true);
 
-    // Datos del libro más prestado
-    $pdf->SetFont('Arial', '', 11);
-    $pdf->Cell(120, 8, utf8_decode($libroMasPrestado['Titulo']), 1);
-    $pdf->Cell(90, 8, utf8_decode($libroMasPrestado['Autor']), 1);
-    $pdf->Cell(40, 8, $libroMasPrestado['VecesPrestado'], 1, 1, 'C');
+// Datos del libro más prestado
+// Datos del libro más prestado
+$pdf->SetFont('Arial', '', 11);
+$pdf->Cell(20, 8, $libroMasPrestado['ID'] ?? '-', 1, 0, 'C');
+$pdf->Cell(70, 8, utf8_decode($libroMasPrestado['Titulo'] ?? '-'), 1);
+$pdf->Cell(60, 8, utf8_decode($libroMasPrestado['Autor'] ?? '-'), 1);
+$pdf->Cell(45, 8, utf8_decode($libroMasPrestado['Categoria'] ?? '-'), 1);
+$pdf->Cell(25, 8, $libroMasPrestado['Cantidad'] ?? '-', 1, 0, 'C');
+$pdf->Cell(40, 8, $libroMasPrestado['VecesPrestado'] ?? '-', 1, 1, 'C');
+
 } else {
     $pdf->SetFont('Arial', '', 11);
     $pdf->Cell(0, 8, utf8_decode('No hay registros de préstamos aún.'), 1, 1, 'C');

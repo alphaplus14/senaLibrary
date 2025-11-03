@@ -131,6 +131,189 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+
+
+
+  <style>
+.container-documentos {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;           /* ✅ para que sea responsive */
+  gap: 30px;                 /* espacio entre columnas */
+  margin: 40px auto;
+  max-width: 1400px;
+  padding: 20px;
+}
+
+.card-documento {
+  flex: 1 1 30%;             /* ✅ tres columnas iguales */
+  min-width: 320px;          /* ancho mínimo para pantallas pequeñas */
+  background-color: #ffffff;
+  padding: 30px 35px;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+
+.card-documento:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.titulo-seccion {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 25px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-documentos {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.row-form {
+  display: flex;
+  flex-direction: column; /* ✅ Fuerza disposición vertical */
+  gap: 16px;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 180px;
+}
+
+.form-group label {
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 5px;
+}
+
+.form-group input[type="date"],
+.form-group select {
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background-color: #f8fafc;
+  color: #0f172a;
+  transition: all 0.3s ease;
+}
+
+.form-group input[type="date"]:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37, 99, 235, 0.3);
+  outline: none;
+}
+
+.btn-generar {
+  background-color: #b70404dd;
+  color: #ffffff;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  align-self: flex-start; /* alinea a la izquierda */
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-generar:hover {
+  background-color: #ff0000ff;
+  transform: translateY(-2px);
+}
+
+.btn-generar i {
+  font-size: 16px;
+}
+
+.card-documento {
+  min-height: 450px; 
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ... dentro de <style> ... */
+
+/* Modificación a .btn-group para alinear los botones */
+.btn-group {
+    display: flex;
+    gap: 15px; /* Aumenta el espacio entre botones */
+    align-items: center;
+    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
+    width: 100%; 
+}
+
+/* Ajustes al botón de Excel para que se vea igual que el de PDF */
+.btn-excel {
+    background-color: #28a745;
+    color: #fff;
+    font-weight: 600; /* Asegura el mismo peso de fuente */
+    border: none;
+    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
+    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
+    text-decoration: none;
+    display: inline-flex; /* Para alinear icono y texto */
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+    /* CLAVE: Hace que el botón ocupe el espacio disponible de forma equitativa */
+    flex-grow: 1; 
+}
+
+.btn-excel:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
+.btn-group .btn-generar {
+    flex-grow: 1; 
+    margin-top: 0; /* Anula cualquier margen que pueda tener */
+    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
+}
+
+/* ... otras clases CSS ... */
+
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -403,6 +586,138 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
             </div>
           </div>
         </div>
+
+
+
+
+
+<?php
+$hoy = date('Y-m-d');
+$inicioMes = date('Y-m-01');
+?>
+<!-- === FORMULARIOS DE DOCUMENTOS === -->
+<div class="container-documentos">
+
+  <!-- === PDF DE RESERVAS === -->
+  <div class="card-documento">
+    <h4 class="titulo-seccion">
+      <i class="fa-solid fa-calendar-check"></i> REPORTE DE LAS RESERVAS:
+    </h4>
+    <form action="generar_pdf_reservas.php" method="get" class="form-documentos">
+      <div class="row-form">
+        <div class="form-group">
+          <label for="fechaInicio">Fecha inicio:</label>
+          <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="fechaFin">Fecha fin:</label>
+          <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="salida">Ver:</label>
+          <select id="salida" name="salida">
+            <option value="I">Ver en el navegador</option>
+            <option value="D">Descargar</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+<div style="text-align: center;">
+  <button type="submit" class="btn-generar">
+    <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
+  </button>
+</div>
+        </div>
+        
+      </div>
+    </form>
+  </div>
+
+  <!-- === PDF DE INVENTARIO === -->
+<div class="card-documento">
+    <h4 class="titulo-seccion">
+        <i class="fa-solid fa-boxes-stacked"></i> REPORTE DEL INVENTARIO:
+    </h4>
+    <form action="views/generar_pdf_inventario.php" method="get" class="form-documentos">
+        <div class="row-form">
+            <div class="form-group">
+                <label for="salida_inventario">Ver:</label>
+                <select id="salida_inventario" name="salida"> <option value="I">Ver en el navegador</option>
+                    <option value="D">Descargar</option>
+                </select>
+            </div>
+
+            <div class="form-group btn-group">
+
+
+          <button type="submit" class="btn-generar">
+            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
+          </button>
+                <a href="views/generar_excel_inventario.php" class="btn-excel">
+                    <i class="fa-solid fa-file-excel"></i>  EXCEL
+                </a>
+            </div>
+        </div>
+    </form>
+</div>
+
+  <!-- === PDF DE PRÉSTAMOS === -->
+  <div class="card-documento">
+    <h4 class="titulo-seccion">
+      <i class="fa-solid fa-handshake"></i> REPORTE DE LOS PRÉSTAMOS:
+    </h4>
+    <form action="views/generar_pdf_prestamos.php" method="get" class="form-documentos">
+      <div class="row-form">
+        <div class="form-group">
+          <label for="fechaInicio">Fecha inicio:</label>
+          <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="fechaFin">Fecha fin:</label>
+          <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+        </div>
+
+        <div class="form-group">
+          <label for="salida">Ver:</label>
+          <select id="salida" name="salida">
+            <option value="I">Ver en el navegador</option>
+            <option value="D">Descargar</option>
+          </select>
+        </div>
+
+        <div class="form-group btn-group">
+          <button type="submit" class="btn-generar">
+            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
+          </button>
+<button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
+  <i class="fa-solid fa-file-excel"></i> EXCEL
+</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <!--end::App Content-->
       </main>
