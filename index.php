@@ -108,6 +108,9 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
     <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+<!-- esto es para que funcione chars.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <!-- DataTables + Bootstrap -->
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -308,7 +311,9 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 
 
-
+<!-- script de los graficos -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/graficos_libro.js"></script>
 
 
 
@@ -317,6 +322,34 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
   </head>
   <!--end::Head-->
   <!--begin::Body-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
@@ -586,6 +619,12 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
             </div>
           </div>
         </div>
+
+        
+<div class="card-grafico">
+  <h4 class="titulo-seccion"><i class="fa-solid fa-book"></i> Total de libros registrados</h4>
+  <canvas id="graficoTotalLibros" width="400" height="200"></canvas>
+</div>
 
 
 

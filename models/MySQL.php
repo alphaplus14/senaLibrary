@@ -3,10 +3,6 @@
 class MySQL {
 
     // Datos de conexión
-    // private $ipServidor = "bjc8wdksbxeffnx2flqs-mysql.services.clever-cloud.com";
-    // private $usuarioBase = "ugqqv9qgrswzo28y";
-    // private $contrasena = "fD6x07gofc8Ofk7qVogT";
-    // private $nombreBaseDatos = "bjc8wdksbxeffnx2flqs";
     private $ipServidor = "localhost";
     private $usuarioBase = "root";
     private $contrasena = "";
@@ -16,7 +12,12 @@ class MySQL {
 
     // Método para conectar a la base de datos
     public function conectar() {
-        $this->conexion = mysqli_connect($this->ipServidor, $this->usuarioBase, $this->contrasena, $this->nombreBaseDatos);
+        $this->conexion = mysqli_connect(
+            $this->ipServidor,
+            $this->usuarioBase,
+            $this->contrasena,
+            $this->nombreBaseDatos
+        );
 
         // Validar si hubo un error en la conexión
         if (!$this->conexion) {
@@ -25,6 +26,9 @@ class MySQL {
 
         // Establecer codificación utf8
         mysqli_set_charset($this->conexion, "utf8");
+
+        // ✅ Retornar la conexión para poder usarla externamente
+        return $this->conexion;
     }
 
     // Método para desconectar la base de datos
