@@ -115,11 +115,11 @@ function imprimirTablaPrestamos(PDFReporte $pdf, array $prestamos): void
 {
     $pdf->SetFont('Arial', 'B', 11);
     $pdf->SetFillColor(230, 230, 230);
-    $pdf->Cell(25, 9, 'ID Préstamo', 1, 0, 'C', true);
+    $pdf->Cell(25, 9, 'ID Prestamo', 1, 0, 'C', true);
     $pdf->Cell(25, 9, 'ID Reserva', 1, 0, 'C', true);
     $pdf->Cell(60, 9, 'Usuario', 1, 0, 'C', true);
-    $pdf->Cell(40, 9, 'Fecha Préstamo', 1, 0, 'C', true);
-    $pdf->Cell(40, 9, 'Fecha Devolución', 1, 1, 'C', true);
+    $pdf->Cell(40, 9, 'Fecha Prestamo', 1, 0, 'C', true);
+    $pdf->Cell(40, 9, 'Fecha Devolucion', 1, 1, 'C', true);
 
     $pdf->SetFont('Arial', '', 10);
 

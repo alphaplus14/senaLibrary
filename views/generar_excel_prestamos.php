@@ -111,7 +111,7 @@ try {
     $sheet->getStyle('A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
     // Cabeceras
-    $cabeceras = ['ID Préstamo', 'ID Reserva', 'Usuario', 'Apellido', 'Fecha Préstamo', 'Fecha Devolución'];
+    $cabeceras = ['ID Prestamo', 'ID Reserva', 'Usuario', 'Apellido', 'Fecha Prestamo', 'Fecha Devolucion'];
     $sheet->fromArray($cabeceras, null, 'A4');
 
     // Estilo de cabeceras

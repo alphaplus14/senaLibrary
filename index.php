@@ -595,6 +595,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 $hoy = date('Y-m-d');
 $inicioMes = date('Y-m-01');
 ?>
+<?php if ($rol == 'Administrador'): ?>
 <!-- === FORMULARIOS DE DOCUMENTOS === -->
 <div class="container-documentos">
 
@@ -603,7 +604,7 @@ $inicioMes = date('Y-m-01');
     <h4 class="titulo-seccion">
       <i class="fa-solid fa-calendar-check"></i> REPORTE DE LAS RESERVAS:
     </h4>
-    <form action="generar_pdf_reservas.php" method="get" class="form-documentos">
+    <form action="views/generar_pdf_reservas.php" target="_blank" method="get" class="form-documentos">
       <div class="row-form">
         <div class="form-group">
           <label for="fechaInicio">Fecha inicio:</label>
@@ -640,7 +641,7 @@ $inicioMes = date('Y-m-01');
     <h4 class="titulo-seccion">
         <i class="fa-solid fa-boxes-stacked"></i> REPORTE DEL INVENTARIO:
     </h4>
-    <form action="views/generar_pdf_inventario.php" method="get" class="form-documentos">
+    <form action="views/generar_pdf_inventario.php" target="_blank" method="get" class="form-documentos">
         <div class="row-form">
             <div class="form-group">
                 <label for="salida_inventario">Ver:</label>
@@ -668,7 +669,7 @@ $inicioMes = date('Y-m-01');
     <h4 class="titulo-seccion">
       <i class="fa-solid fa-handshake"></i> REPORTE DE LOS PRÉSTAMOS:
     </h4>
-    <form action="views/generar_pdf_prestamos.php" method="get" class="form-documentos">
+    <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos">
       <div class="row-form">
         <div class="form-group">
           <label for="fechaInicio">Fecha inicio:</label>
@@ -689,7 +690,7 @@ $inicioMes = date('Y-m-01');
         </div>
 
         <div class="form-group btn-group">
-          <button type="submit" class="btn-generar">
+          <button type="submit"  class="btn-generar">
             <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
           </button>
 <button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
@@ -701,6 +702,7 @@ $inicioMes = date('Y-m-01');
   </div>
 
 </div>
+<?php endif; ?>
 
 
 
@@ -1090,6 +1092,21 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
 }
 
 </script>
+
+<!-- script que hace que el formulario de documentos abra en nueva pestaña o descargue segun la seleccion -->
+<script>
+document.querySelectorAll('.form-documentos').forEach(form => {
+  form.addEventListener('submit', e => {
+    const salida = form.querySelector('select[name="salida"]');
+    if (salida && salida.value === 'I') {
+      form.setAttribute('target', '_blank'); // abre en nueva pestaña
+    } else {
+      form.removeAttribute('target'); // descarga en la misma
+    }
+  });
+});
+</script>
+
 
 <script>
 function editarUsuario(id) {
