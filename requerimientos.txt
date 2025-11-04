@@ -5,13 +5,13 @@ ________________________________________
 •	Registrar devoluciones.
 •	Ver historial de préstamos.
 ________________________________________
-📊 6. Panel de Control del Administrador
-•	Mostrar estadísticas generales:
-o	Total de libros.
-o	Total de reservas.
-o	Total de préstamos.
 •	Enlaces rápidos a módulos (usuarios, libros, reservas, préstamos).
 ________________________________________
 ✉️ 8. Notificaciones
 •	Enviar correo electrónico al cliente al confirmar una reserva.
 •	Enviar correo al registrar un préstamo o devolución.
+
++solucionar lo de las fechas incompatibles
++numeros negativos
++enlaces de los modulos
++cambiar diseño del login junto con sus colores

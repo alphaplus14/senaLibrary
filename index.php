@@ -138,6 +138,38 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 
   <style>
+
+    .btn-info {
+  background: linear-gradient(135deg, #17a2b8, #5bc0de);
+  border: none;
+  transition: all 0.3s ease;
+  color: white;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.btn-info:hover {
+  transform: translateY(-5px) scale(1.05);
+  background: linear-gradient(135deg, #5bc0de, #17a2b8);
+  box-shadow: 0 8px 15px rgba(0, 123, 255, 0.3);
+}
+
+.btn-info:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+    .card {
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
 .container-documentos {
   display: flex;
   justify-content: center;
@@ -151,7 +183,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 .card-documento {
   flex: 1 1 30%;             /* ✅ tres columnas iguales */
-  min-width: 320px;          /* ancho mínimo para pantallas pequeñas */
+  min-width: 350px;          /* ancho mínimo para pantallas pequeñas */
   background-color: #ffffff;
   padding: 30px 35px;
   border-radius: 16px;
@@ -219,7 +251,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 }
 
 .btn-generar {
-  background-color: #b70404dd;
+  background-color: #048db7dd;
   color: #ffffff;
   font-weight: 600;
   border: none;
@@ -244,7 +276,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 }
 
 .card-documento {
-  min-height: 450px; 
+  min-height: 500px; 
 }
 
 .btn-group {
@@ -266,7 +298,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 
 /* Ajustes al botón de Excel para que se vea igual que el de PDF */
 .btn-excel {
-    background-color: #28a745;
+    background-color: #00a390ff;
     color: #fff;
     font-weight: 600; /* Asegura el mismo peso de fuente */
     border: none;
@@ -285,7 +317,7 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 }
 
 .btn-excel:hover {
-    background-color: #218838;
+    background-color: #13882cff;
     transform: translateY(-2px);
     color: #fff;
 }
@@ -314,6 +346,8 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 <!-- script de los graficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="js/graficos_libro.js"></script>
+<script src="js/grafico_reservas.js"></script> 
+<script src="js/grafico_prestamos.js"></script>
 
 
 
@@ -493,15 +527,15 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
             <!-- vista de diferentes usuarios  -->
             <div class="row">
               <?php if($rol == "Administrador"): ?>
-              <div class="col-sm-6">
-                <h3 class="mb-0">Lista de Clientes</h3>
-              </div>
-              <div class="col-sm-6">
+                              <div class="">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
                 </ol>
               </div>
+<div class="col-sm-12 d-flex justify-content-center align-items-center">
+  <h3 class="mb-0"><img src="media/clientes icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Lista de Clientes</h3>
+</div>
               <?php endif; ?>
             <?php if($rol != "Administrador"): ?>
             <div class="col-sm-6">
@@ -620,11 +654,83 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
           </div>
         </div>
 
+
+        <!-- graficos de la pagina principal -->
+
         
-<div class="card-grafico">
-  <h4 class="titulo-seccion"><i class="fa-solid fa-book"></i> Total de libros registrados</h4>
-  <canvas id="graficoTotalLibros" width="400" height="200"></canvas>
+<div class="row">
+  <div class="col-12 text-center">
+    <h3 class="mb-0"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Graficos:</h3>
+  </div>
 </div>
+  
+ 
+<div class="row">
+<div class="card-grafico col-4" style="margin: 20px auto; display:flex;">
+  <div class="card" style="width: 28rem; min-height: 320px; padding:1rem; border-radius:12px;">
+    <div class="card-body">
+      <h4 class="titulo-seccion">
+        <i class="fa-solid fa-book"></i> Total de libros registrados
+      </h4>
+      <canvas id="graficoTotalLibros" width="400" height="400"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="card-grafico col-4" style="margin: 20px auto; display:flex; justify-content:center;">
+  <div class="card" style="width: 28rem; min-height: 320px; padding:1rem; border-radius:12px;">
+    <div class="card-body">
+      <h4 class="titulo-seccion">
+        <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
+      </h4>
+      <canvas id="graficoTotalReservas" width="400" height="200"></canvas>
+    </div>
+  </div>
+</div>
+
+
+<div class="card-grafico col-4" style="margin: 20px auto; display:flex; justify-content:center;">
+  <div class="card" style="width: 28rem; min-height: 320px; padding:1rem; border-radius:12px;">
+    <div class="card-body">
+      <h4 class="titulo-seccion">
+        <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
+      </h4>
+      <canvas id="graficoTotalPrestamos" width="400" height="200"></canvas>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- botones de los modulos cesar!!! -->
+
+<div class="container text-center mt-4">
+  <div class="row g-3">
+    <div class="col">
+      <button class="btn btn-info w-100">
+        <i class="fa-solid fa-user"></i><img src="media/usuarios modulo icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Usuarios
+      </button>
+    </div>
+    <div class="col">
+      <button class="btn btn-info w-100">
+        <i class="fa-solid fa-book"></i><img src="media/libro icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Libros
+      </button>
+    </div>
+    <div class="col">
+      <button class="btn btn-info w-100">
+        <i class="fa-solid fa-calendar-check"></i><img src="media/reservas icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Reservas
+      </button>
+    </div>
+    <div class="col">
+      <button class="btn btn-info w-100 ">
+        <i class="fa-solid fa-book-open-reader"></i><img src="media/prestamos icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Préstamos
+      </button>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 
@@ -635,14 +741,19 @@ $hoy = date('Y-m-d');
 $inicioMes = date('Y-m-01');
 ?>
 <?php if ($rol == 'Administrador'): ?>
+  <div class="row">
+  <div class="col-12 text-center mt-4">
+    <h3 class="mb-0"><img src="media/documentos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Generar Documentos:</h3>
+  </div>
+</div>
 <!-- === FORMULARIOS DE DOCUMENTOS === -->
 <div class="container-documentos">
 
   <!-- === PDF DE RESERVAS === -->
   <div class="card-documento">
-    <h4 class="titulo-seccion">
-      <i class="fa-solid fa-calendar-check"></i> REPORTE DE LAS RESERVAS:
-    </h4>
+ <h4 class="titulo-seccion">
+  <i class="fa-solid fa-calendar-check"></i> Generar reporte de las reservas
+</h4>
     <form action="views/generar_pdf_reservas.php" target="_blank" method="get" class="form-documentos">
       <div class="row-form">
         <div class="form-group">
@@ -666,7 +777,7 @@ $inicioMes = date('Y-m-01');
         <div class="form-group">
 <div style="text-align: center;">
   <button type="submit" class="btn-generar">
-    <i class="fa-solid fa-file-pdf"></i> GENERAR PDF
+    <i class="fa-solid fa-file-pdf"> <img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF
   </button>
 </div>
         </div>
@@ -677,9 +788,9 @@ $inicioMes = date('Y-m-01');
 
   <!-- === PDF DE INVENTARIO === -->
 <div class="card-documento">
-    <h4 class="titulo-seccion">
-        <i class="fa-solid fa-boxes-stacked"></i> REPORTE DEL INVENTARIO:
-    </h4>
+<h4 class="titulo-seccion">
+  <i class="fa-solid fa-boxes-stacked"></i> Generar reporte del inventario
+</h4>
     <form action="views/generar_pdf_inventario.php" target="_blank" method="get" class="form-documentos">
         <div class="row-form">
             <div class="form-group">
@@ -693,10 +804,10 @@ $inicioMes = date('Y-m-01');
 
 
           <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
+            <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
           </button>
                 <a href="views/generar_excel_inventario.php" class="btn-excel">
-                    <i class="fa-solid fa-file-excel"></i>  EXCEL
+                    <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i>  EXCEL
                 </a>
             </div>
         </div>
@@ -705,9 +816,9 @@ $inicioMes = date('Y-m-01');
 
   <!-- === PDF DE PRÉSTAMOS === -->
   <div class="card-documento">
-    <h4 class="titulo-seccion">
-      <i class="fa-solid fa-handshake"></i> REPORTE DE LOS PRÉSTAMOS:
-    </h4>
+<h4 class="titulo-seccion">
+  <i class="fa-solid fa-handshake"></i> Generar reporte de préstamos
+</h4>
     <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos">
       <div class="row-form">
         <div class="form-group">
@@ -730,10 +841,10 @@ $inicioMes = date('Y-m-01');
 
         <div class="form-group btn-group">
           <button type="submit"  class="btn-generar">
-            <i class="fa-solid fa-file-pdf"></i> GENERAR PDF  
+            <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
           </button>
 <button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
-  <i class="fa-solid fa-file-excel"></i> EXCEL
+  <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> EXCEL
 </button>
         </div>
       </div>
