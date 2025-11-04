@@ -665,42 +665,44 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 </div>
   
  
-<div class="row">
-<div class="card-grafico col-4" style="margin: 20px auto; display:flex;">
-  <div class="card" style="width: 28rem; min-height: 320px; padding:1rem; border-radius:12px;">
-    <div class="card-body">
-      <h4 class="titulo-seccion">
-        <i class="fa-solid fa-book"></i> Total de libros registrados
-      </h4>
-      <canvas id="graficoTotalLibros" width="400" height="400"></canvas>
+<div class="container mt-4">
+  <div class="row">
+    <!-- Gráfica grande a la izquierda -->
+    <div class="col-lg-8">
+      <div class="card" style="min-height: 660px; padding:1rem; border-radius:12px;">
+        <div class="card-body">
+          <h4 class="titulo-seccion">
+            <i class="fa-solid fa-book"></i> Total de libros registrados
+          </h4>
+          <canvas id="graficoTotalLibros" width="400" height="410"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenedor de las dos pequeñas a la derecha -->
+    <div class="col-lg-4 d-flex flex-column justify-content-between">
+      <div class="card mb-3" style="min-height: 320px; padding:1rem; border-radius:12px;">
+        <div class="card-body">
+          <h4 class="titulo-seccion">
+            <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
+          </h4>
+          <canvas id="graficoTotalReservas" width="300" height="100"></canvas>
+        </div>
+      </div>
+
+
+      <div class="card" style="min-height: 320px; padding:1rem; border-radius:12px;">
+        <div class="card-body">
+          <h4 class="titulo-seccion">
+            <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
+          </h4>
+          <canvas id="graficoTotalPrestamos" width="300" height="100"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-<div class="card-grafico col-4" style="margin: 20px auto; display:flex; justify-content:center;">
-  <div class="card" style="width: 28rem; min-height: 320px; padding:1rem; border-radius:12px;">
-    <div class="card-body">
-      <h4 class="titulo-seccion">
-        <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
-      </h4>
-      <canvas id="graficoTotalReservas" width="400" height="200"></canvas>
-    </div>
-  </div>
-</div>
-
-
-<div class="card-grafico col-4" style="margin: 20px auto; display:flex; justify-content:center;">
-  <div class="card" style="width: 28rem; min-height: 320px; padding:1rem; border-radius:12px;">
-    <div class="card-body">
-      <h4 class="titulo-seccion">
-        <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
-      </h4>
-      <canvas id="graficoTotalPrestamos" width="400" height="200"></canvas>
-    </div>
-  </div>
-</div>
-
-</div>
 
 <!-- botones de los modulos cesar!!! -->
 
