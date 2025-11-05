@@ -486,25 +486,36 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                   </a>
               
                <?php if ($rol == 'Administrador'): ?>
-              <li class="nav-item">
-                <a href="./views/documentos.php" class="nav-link">
-                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
-                  <span>
-                   Documentos 
-                  </span>
-                </a>
-              </li>
+
               <li class="nav-item">
                 <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-box-seam me-2"> </i>
-                  <span> Inventario </span>
+                 <i class="bi bi-book me-2"></i>
+                  <span>Libros</span>
+                </a>
+              </li>
+                                           <li class="nav-item">
+                <a href="./views/usuarios.php" class="nav-link">
+                 <i class="bi bi-file-earmark-person me-2"></i>
+                  <span>Usuarios</span>
+                </a>
+              </li>
+                            <li class="nav-item">
+                <a href="./views/reservas.php" class="nav-link">
+                 <i class="bi bi-journal-richtext me-2"></i>
+                  <span>Reservas</span>
+                </a>
+              </li>
+                            <li class="nav-item">
+                <a href="./views/prestamos.php" class="nav-link">
+                 <i class="bi bi-journal-bookmark-fill me-2"></i>
+                  <span>Prestamos</span>
                 </a>
               </li>
               <?php endif; ?>
                <?php if ($rol == 'Invitado'): ?>
               <li class="nav-item">
                 <a href="./views/gestionarReserva.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2"> </i>
+                 <i class="bi bi-calendar-check me-2 me-2"> </i>
                   <span> Gestionar Reserva </span>
                 </a>
               </li>
@@ -756,7 +767,7 @@ $inicioMes = date('Y-m-01');
  <h4 class="titulo-seccion">
   <i class="fa-solid fa-calendar-check"></i> Generar reporte de las reservas
 </h4>
-    <form action="views/generar_pdf_reservas.php" target="_blank" method="get" class="form-documentos">
+    <form action="views/generar_pdf_reservas.php" target="_blank" method="get" id="formReservas" onsubmit="return validarRangoFechas(this);" class="form-documentos">
       <div class="row-form">
         <div class="form-group">
           <label for="fechaInicio">Fecha inicio:</label>
@@ -821,7 +832,7 @@ $inicioMes = date('Y-m-01');
 <h4 class="titulo-seccion">
   <i class="fa-solid fa-handshake"></i> Generar reporte de préstamos
 </h4>
-    <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos">
+    <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos" id="formPrestamos" onsubmit="return validarRangoFechas(this);">
       <div class="row-form">
         <div class="form-group">
           <label for="fechaInicio">Fecha inicio:</label>
@@ -1257,6 +1268,51 @@ document.querySelectorAll('.form-documentos').forEach(form => {
     }
   });
 });
+</script>
+<script>
+/**
+ * Valida que la fecha de inicio no sea posterior a la fecha de fin 
+ * dentro de un formulario específico.
+ * @param {HTMLFormElement} formElement - El elemento del formulario que se está enviando.
+ * @returns {boolean} - true si la validación es exitosa, false si falla.
+ */
+function validarRangoFechas(formElement) {
+    // 1. Encontrar los campos de fecha DENTRO de este formulario
+    // Usamos querySelector('[name="nombreDelCampo"]') dentro del formulario
+    const fechaInicioInput = formElement.querySelector('input[name="fechaInicio"]');
+    const fechaFinInput = formElement.querySelector('input[name="fechaFin"]');
+
+    // Comprobar que los campos existen (seguridad)
+    if (!fechaInicioInput || !fechaFinInput) {
+        console.error("No se encontraron los campos 'fechaInicio' o 'fechaFin' en el formulario.");
+        return true; // Permitir el envío por defecto si algo falla en el script
+    }
+
+    // 2. Obtener los valores de las fechas
+    const fechaInicio = new Date(fechaInicioInput.value);
+    const fechaFin = new Date(fechaFinInput.value);
+
+    // 3. Comparar las fechas
+    // Si la Fecha de Inicio es mayor (más avanzada/futura) que la Fecha de Fin.
+    if (fechaInicio > fechaFin) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango de fechas inválido',
+            text: 'La Fecha de Inicio no puede ser posterior a la Fecha de Fin. Por favor, corrígelo.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#ff0000ff'
+        });
+        
+        // Enfoca el campo de inicio para guiar al usuario
+        fechaInicioInput.focus(); 
+        
+        // Detiene el envío del formulario
+        return false; 
+    }
+
+    // 4. Si la validación es exitosa, permite el envío del formulario
+    return true;
+}
 </script>
 
 

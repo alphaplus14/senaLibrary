@@ -239,8 +239,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                   </span>
                   </a>
               
-              
-              <li class="nav-item">
+
               <li class="nav-item">
                 <a href="inventario.php" class="nav-link">
                  <i class="bi bi-book me-2"></i>

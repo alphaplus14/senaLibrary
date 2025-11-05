@@ -16,3 +16,4 @@ ________________________________________
 +enlaces de los modulos
 +cambiar diseño del login junto con sus colores
 +cierre de sesion que si se aplique
++llenar los modulos de usuarios, reservas, prestamos
