@@ -232,7 +232,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             >
               <li class="nav-item">
                 <a href="../index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <i class="bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
                     
@@ -259,13 +259,24 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                   <span>Reservas</span>
                 </a>
               </li>
-                            <li class="nav-item">
-                <a href="prestamos.php" class="nav-link">
-                 <i class="bi bi-journal-bookmark-fill me-2"></i>
-                  <span>Prestamos</span>
+              <li class="nav-item">
+                <a href="./inventario.php" class="nav-link active">
+                 <i class="nav-icon bi bi-box-seam me-2"> </i>
+                  <span> Libros </span>
                 </a>
               </li>
-
+              <li class="nav-item">
+                <a href="./reservas.php" class="nav-link">
+                 <i class="bi bi-ticket-perforated me-2"> </i>
+                  <span> Reservas </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
+                </a>
+              </li>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -311,7 +322,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <div class="row">
               <!--begin::Col-->
                 <div class="table-responsive">
-                        <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
+                        <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                     <thead class="table-success">
                         <tr>
                             <th>ID</th>
@@ -450,7 +461,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
+   $('#tablaLibros').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -665,7 +676,6 @@ function editarLibro(id) {
                 `;
             }
 
-
             Swal.fire({
                 title: 'Editar Libro',
                 html: `
@@ -747,7 +757,6 @@ function editarLibro(id) {
 
 </script>
 
-
 <script>
 function eliminarLibro(id) {
   Swal.fire({
@@ -775,9 +784,6 @@ function eliminarLibro(id) {
   });
 }
 </script>
-
-
-
 
   </body>
   <!--end::Body-->

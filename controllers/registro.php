@@ -11,7 +11,7 @@ if (isset($_POST['registrar'])) {
     $apellido = htmlspecialchars(trim($_POST['apellido']), ENT_QUOTES, 'UTF-8');
     $email = htmlspecialchars(trim($_POST['email']), ENT_QUOTES, 'UTF-8');
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // encriptado
-    $tipo = 'usuario'; // solo usuarios normales
+    $tipo = 'Cliente'; // solo usuarios normales
 
     // Verificar si el correo ya existe
     $resultado = $mysql->efectuarConsulta("SELECT * FROM usuario WHERE email_usuario='$email'");

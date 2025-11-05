@@ -486,37 +486,42 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                   </a>
               
                <?php if ($rol == 'Administrador'): ?>
-
-              <li class="nav-item">
-                <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-book me-2"></i>
-                  <span>Libros</span>
-                </a>
-              </li>
                                            <li class="nav-item">
-                <a href="./views/usuarios.php" class="nav-link">
+                <a href="usuarios.php" class="nav-link">
                  <i class="bi bi-file-earmark-person me-2"></i>
                   <span>Usuarios</span>
                 </a>
               </li>
-                            <li class="nav-item">
-                <a href="./views/reservas.php" class="nav-link">
-                 <i class="bi bi-journal-richtext me-2"></i>
-                  <span>Reservas</span>
+              <li class="nav-item">
+                <a href="./views/inventario.php" class="nav-link">
+                 <i class="bi bi-box-seam me-2"> </i>
+                  <span> Libros </span>
                 </a>
               </li>
-                            <li class="nav-item">
-                <a href="./views/prestamos.php" class="nav-link">
-                 <i class="bi bi-journal-bookmark-fill me-2"></i>
-                  <span>Prestamos</span>
+              <li class="nav-item">
+                <a href="./views/reservas.php" class="nav-link">
+                 <i class="bi bi-ticket-perforated me-2"> </i>
+                  <span> Reservas </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./views/historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
                 </a>
               </li>
               <?php endif; ?>
-               <?php if ($rol == 'Invitado'): ?>
+               <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">
                 <a href="./views/gestionarReserva.php" class="nav-link">
                  <i class="bi bi-calendar-check me-2 me-2"> </i>
                   <span> Gestionar Reserva </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./views/historialPrestamos.php" class="nav-link">
+                  <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
                 </a>
               </li>
               <?php endif; ?>
@@ -602,7 +607,13 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                           <td><?= $fila['apellido_usuario'] ?></td>
                           <td><?= $fila['email_usuario'] ?></td>
                           <td><?= $fila['tipo_usuario'] ?></td>
-                          <td><?= $fila['estado'] ?></td>
+                          <td>
+                              <?php if($fila['estado'] == 'Activo'): ?>
+                                  <span class="badge bg-success"><?= $fila['estado'] ?></span>
+                              <?php else: ?>
+                                  <span class="badge bg-secondary"><?= $fila['estado'] ?></span>
+                              <?php endif; ?>
+                          </td>
                           <td class="text-center">
                             <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_usuario'] ?>)">
                               <i class="bi bi-pencil-square"></i>
@@ -963,7 +974,7 @@ $inicioMes = date('Y-m-01');
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
+   $('#tablaUsuarios').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -1018,7 +1029,7 @@ function agregarUsuario() {
             <option value="" selected disabled>Seleccione un tipo</option>
             <option value="Administrador">Administrador</option>
             <option value="Empleado">Empleado</option>
-            <option value="Invitado">Invitado</option>
+            <option value="Cliente">Cliente</option>
           </select>
         </div>
       </form>
@@ -1085,7 +1096,7 @@ function abrirCrearReserva() {
       <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
       <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
       <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
-          <thead>
+          <thead class="table-dark">
               <tr>
                   <th>Titulo</th>
                   <th>Autor</th>
@@ -1371,12 +1382,12 @@ function editarUsuario(id) {
 
                         <div class="mb-3">
                             <label class="form-label">Contraseña Antigua</label>
-                            <input type="password" class="form-control" id="passwordOld" required>
+                            <input type="password" class="form-control" id="passwordOld">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Contraseña Nueva</label>
-                            <input type="password" class="form-control" id="passwordNueva" required>
+                            <input type="password" class="form-control" id="passwordNueva">
                         </div>
 
                         <div class="mb-3">
@@ -1386,8 +1397,9 @@ function editarUsuario(id) {
 
                         <div class="mb-3">
                             <label class="form-label">Cargo</label>
-                             <select class="form-control" id="cargo" required>
-                                ${opcionesCargo} // se llama la variable 
+                              <select class="form-control" id="cargo" required>
+                                ${opcionesCargo}
+                              </select>
                         </div>
                     </form>
                 `,

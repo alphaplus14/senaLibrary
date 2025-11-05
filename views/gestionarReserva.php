@@ -21,7 +21,7 @@ $idUsuario=$_SESSION['id_usuario'];
 $mysql = new MySQL();
 $mysql->conectar();
 
-$resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
+$resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva = 'Pendiente'");
 ?>
 
 <!doctype html>
@@ -177,7 +177,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
 
     <!-- Opciones del menu -->
     <li>
-      <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+      <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
         <i class="bi bi-person me-2 text-secondary"></i> Perfil
       </a>
     </li>
@@ -236,11 +236,18 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
                     Dashboard
                   </span>
                   </a>
-               <?php if ($rol == 'Invitado'): ?>
+              </li>
+               <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">
                 <a href="./gestionarReserva.php" class="nav-link active">
-                 <i class="bi bi-calendar-check me-2"> </i>
+                 <i class="nav-icon bi bi-calendar-check me-2"> </i>
                   <span> Gestionar Reserva </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./historialPrestamos.php" class="nav-link">
+                  <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
                 </a>
               </li>
               <?php endif; ?>
@@ -294,7 +301,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva");
                                 <tr>
                                 <td><?= $fila['id_reserva'] ?></td>
                                 <td><?= $fila['fecha_reserva'] ?></td>
-                                <td><?= $fila['estado_reserva'] ?></td>
+                                <td>
+                                  <span class="badge bg-warning text-dark"><?php echo $fila['estado_reserva']; ?></span>
+                                </td>
                                 <td class="text-center">
                                      <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['id_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
                                      
@@ -413,7 +422,7 @@ function verDetalle(idReserva) {
             if (res.success) {
                 let tabla = `
                     <table class="table table-striped" style="width:100%; text-align:left;">
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th>ISBN</th>
                                 <th>Título</th>
@@ -442,21 +451,37 @@ function verDetalle(idReserva) {
                     </table>
                 `;
 
-                Swal.fire({
-                    title: 'Detalle de la Reserva #' + idReserva,
-                    html: tabla,
-                    icon: 'info',
-                    showCancelButton: true,
-                    confirmButtonText: '<i class="bi bi-x-circle"></i> Cancelar Reserva',
-                    cancelButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
-                    confirmButtonColor: '#d33',
-                    cancelButtonColor: '#3085d6',
-                    width: 850
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        cancelarReserva(idReserva);
-                    }
-                });
+                 // Obtener el estado de la reserva del elemento que trae del json
+                let estadoReserva = res.detalle[0].estado_reserva;
+
+                // Si esta Pendiente, mostrar botón de cancelar
+                if (estadoReserva === 'Pendiente') {
+                    Swal.fire({
+                        title: '<i class="bi bi-book"></i> Detalle de la Reserva #' + idReserva,
+                        html: tabla,
+                        icon: 'info',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="bi bi-x-circle"></i> Cancelar Reserva',
+                        cancelButtonText: '<i class="bi bi-arrow-left"></i> Cerrar',
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        width: 900
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            cancelarReserva(idReserva);
+                        }
+                    });
+                } else {
+                    // Si esta Aprobada, Rechazada o Cancelada, solo mostrar informacion
+                    Swal.fire({
+                        title: 'Detalle de la Reserva #' + idReserva,
+                        html: tabla,
+                        icon: 'info',
+                        confirmButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
+                        confirmButtonColor: '#3085d6',
+                        width: 900
+                    });
+                }
             } else {
                 Swal.fire('Error', res.message, 'error');
             }
@@ -467,7 +492,6 @@ function verDetalle(idReserva) {
         }
     });
 }
-
 function cancelarReserva(idReserva) {
     Swal.fire({
         title: '¿Estás seguro?',

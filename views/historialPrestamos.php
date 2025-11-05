@@ -7,7 +7,7 @@ require_once '../models/MySQL.php';
 session_start();
 
 if (!isset($_SESSION['tipo_usuario'])) {
-    header("location: ./login.php");
+    header("location: ./views/login.php");
     exit();
 }
 $mysql = new MySQL();
@@ -15,15 +15,13 @@ $mysql->conectar();
 
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
-
+$idUsuario=$_SESSION['id_usuario'];
 
 
 $mysql = new MySQL();
 $mysql->conectar();
-//consulta para obtener los libros
-$resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usuario, ' ', usuario.apellido_usuario) as nombre_usuario from reserva inner join usuario on reserva.fk_usuario=usuario.id_usuario where estado_reserva='Pendiente'");
 
-
+$resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva where reserva.fk_usuario=$idUsuario");
 ?>
 
 <!doctype html>
@@ -56,7 +54,7 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
     <!--begin::Accessibility Features-->
     <!-- Skip links will be dynamically added by accessibility.js -->
     <meta name="supported-color-schemes" content="light dark" />
-   
+    <link rel="preload" href="../css/adminlte.css" as="style" />
     <!--end::Accessibility Features-->
 
     <!--begin::Fonts-->
@@ -162,7 +160,7 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
           <ul class="navbar-nav ms-auto">
 
             <!--begin::User Menu Dropdown-->
-         <li class="nav-item dropdown user-menu">
+            <li class="nav-item dropdown user-menu">
   <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
     <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
   </a>
@@ -195,6 +193,7 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
     </li>
   </ul>
 </li>
+
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -230,39 +229,29 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
               data-accordion="false"
               id="navigation"
             >
-              <li class="nav-item">
-                <a href="../index.php" class="nav-link">
+                <li class="nav-item">
+                    <a href="../index.php" class="nav-link">
                   <i class="bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
                   </span>
                   </a>
+                </li>
+
+               <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">
-                <a href="./Documentos.php" class="nav-link">
-                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
-                  <span>
-                   Documentos 
-                  </span>
+                <a href="./gestionarReserva.php" class="nav-link">
+                 <i class="bi bi-calendar-check me-2"> </i>
+                  <span> Gestionar Reserva </span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./inventario.php" class="nav-link">
-                 <i class="bi bi-box-seam me-2"> </i>
-                  <span> Libros </span>
+                <a href="./historialPrestamos.php" class="nav-link active">
+                  <i class="nav-icon bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
                 </a>
               </li>
-              <li class="nav-item">
-                <a href="./reservas.php" class="nav-link active">
-                 <i class="nav-icon bi bi-ticket-perforated me-2"> </i>
-                  <span> Reservas </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
-                </a>
-              </li>
+              <?php endif; ?>
 
             </ul>
             <!--end::Sidebar Menu-->
@@ -278,16 +267,11 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
+            <!-- vista de diferentes usuarios  -->
             <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">Reservas</h3>
+                 <div class="col-sm-6">
+                <h3 class="mb-0">Historial de Prestamos</h3>
               </div>    
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="./inventario.php">Reservas</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Gestion de Reservas</li>
-                </ol>
-              </div>
             </div>
             <!--end::Row-->
           </div>
@@ -296,52 +280,68 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <!--begin::Col-->
-                <div class="table-responsive">
-                        <table id="tablaReservas" class="table table-striped table-bordered" width="100%">
-                    <thead class="table-success">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre Cliente</th>
-                            <th>Fecha Reserva</th>
-                            <th>Estado</th>
-                            <?php if($rol == "Administrador"): ?>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="table-responsive mb-5">
+                        <table id="tablaPrestamos" class="table table-striped table-bordered" width="100%">
+                            <thead class="table-success">
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha Prestamo </th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
-                            <?php endif; ?>
-                            
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <?php while($fila = $resultado->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $fila['id_reserva']; ?></td>
-                            <td><?php echo $fila['nombre_usuario']; ?></td>
-                            <td><?php echo $fila['fecha_reserva']; ?></td>
-                            <td>
-                                <span class="badge bg-warning text-dark"><?php echo $fila['estado_reserva']; ?></span>
-                            </td>
-                            <?php if($rol == "Administrador"): ?>
-                                <td class="text-center">
-                                    <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['id_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
-                                     
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php while($fila = $resultado->fetch_assoc()): ?>
+                                <tr>
+                                <td><?= $fila['id_prestamo'] ?></td>
+                                <td><?= $fila['fecha_prestamo'] ?></td>
+                                <td>
+                                  <?php
+                                    $estado = $fila['estado_reserva'];
+                                    $badgeClass = '';
+                                    $icono = '';
+                                    $texto = '';
+
+                                    if ($estado == 'Aprobada') {
+                                        $badgeClass = 'bg-success';
+                                        $icono = 'bi-check-circle-fill';
+                                        $texto = 'Aprobada';
+                                    } elseif ($estado == 'Rechazada') {
+                                        $badgeClass = 'bg-danger';
+                                        $icono = 'bi-x-circle-fill';
+                                        $texto = 'Rechazada';
+                                    } elseif ($estado == 'Cancelada') {
+                                        $badgeClass = 'bg-secondary';
+                                        $icono = 'bi-slash-circle-fill';
+                                        $texto = 'Cancelada';
+                                    } else {
+                                        // Si llega otro valor inesperado, se muestra neutro
+                                        $badgeClass = 'bg-light text-dark border';
+                                        $icono = 'bi-question-circle';
+                                        $texto = htmlspecialchars($estado);
+                                    }
+                                  ?>
+                                  <span class="badgige <?php echo $badgeClass; ?> px-2 py-2 fw-semibold">
+                                    <i class="bi <?php echo $icono; ?> me-1"></i>
+                                    <?php echo $texto; ?>
+                                  </span>
                                 </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endwhile; ?>
-                    </tbody>
+                                <td class="text-center">
+                                     <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                </td>
+                                </tr>
+                            <?php endwhile; ?>
+                            </tbody>
                         </table>
+                    </div>
                 </div>
-                
-              <!-- /.Start col -->
+
             </div>
-            <!-- /.row (main row) -->
-          </div>
-          <!--end::Container-->
+
         </div>
+
         <!--end::App Content-->
       </main>
       <!--end::App Main-->
@@ -419,9 +419,9 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<script>
+    <script>
 $(document).ready(function() {
-   $('#tablaReservas').DataTable({
+   $('#tablaPrestamos').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -444,10 +444,9 @@ function verDetalle(idReserva) {
         success: function (res) {
             if (res.success) {
                 let tabla = `
-                    <table class="table table-striped" style="width:100%; text-align:left;">
+                    <table class="table table-striped align-middle" style="width:100%; text-align:left;">
                         <thead class="table-dark">
                             <tr>
-                                <th>Cliente</th>
                                 <th>ISBN</th>
                                 <th>Título</th>
                                 <th>Autor</th>
@@ -461,7 +460,6 @@ function verDetalle(idReserva) {
                 res.detalle.forEach(item => {
                     tabla += `
                         <tr>
-                            <td>${item.nombre_usuario}</td>
                             <td>${item.ISBN_libro}</td>
                             <td>${item.titulo_libro}</td>
                             <td>${item.autor_libro}</td>
@@ -475,137 +473,27 @@ function verDetalle(idReserva) {
                         </tbody>
                     </table>
                 `;
-
-                // Obtener el estado de la reserva del elemento que trae del json
-                let estadoReserva = res.detalle[0].estado_reserva;
-
-                // Si la reserva esta Pendiente, mostrar botones
-                if (estadoReserva === 'Pendiente') {
-                    Swal.fire({
-                        title: '<i class="bi bi-book"></i> Detalle de la Reserva #' + idReserva,
-                        html: tabla,
-                        icon: 'info',
-                        showDenyButton: true,
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="bi bi-check-circle"></i> Aprobar Reserva',
-                        denyButtonText: '<i class="bi bi-x-circle"></i> Rechazar Reserva',
-                        cancelButtonText: '<i class="bi bi-arrow-left"></i> Cerrar',
-                        confirmButtonColor: '#28a745',
-                        denyButtonColor: '#dc3545',
-                        cancelButtonColor: '#6c757d',
-                        width: 900
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            aprobarReserva(idReserva);
-                        } else if (result.isDenied) {
-                            rechazarReserva(idReserva);
-                        }
-                    });
-                } else {
-                    // Si esta Cancelada, Aprobada o Rechazada, solo mostrar información
-                    Swal.fire({
-                        title: 'Detalle de la Reserva #' + idReserva,
-                        html: tabla,
-                        icon: 'info',
-                        confirmButtonText: '<i class="bi bi-x"></i> Cerrar',
-                        confirmButtonColor: '#6c757d',
-                        width: 900
-                    });
-                }
+                    // Mostrar alerta con detalle
+                Swal.fire({
+                    title: `<i class="bi bi-book"></i> Detalle de la Reserva #${idReserva}`,
+                    html: tabla,
+                    icon: 'info',
+                    confirmButtonText: '<i class="bi bi-check-circle"></i> Cerrar',
+                    confirmButtonColor: '#3085d6',
+                    width: 900
+                });
+                
             } else {
-                Swal.fire('Error', res.message, 'error');
+                Swal.fire('Sin resultados', res.message || 'No se encontraron libros en esta reserva.', 'warning');
             }
         },
         error: function (xhr) {
-            console.log('Respuesta del servidor:', xhr.responseText);
-            Swal.fire('Error', 'No se pudo obtener la información.', 'error');
-        }
-    });
-}
-
-function aprobarReserva(idReserva) {
-    Swal.fire({
-        title: '¿Aprobar reserva?',
-        text: "Esta acción aprueba la reserva",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: '<i class="bi bi-check-circle"></i> Si, aprobar',
-        cancelButtonText: '<i class="bi bi-x"></i> Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '../controllers/aprobarReserva.php',
-                type: 'POST',
-                data: { id_reserva: idReserva },
-                dataType: 'json',
-                success: function(res) {
-                    if (res.success) {
-                        Swal.fire({
-                            title: '¡Aprobada!',
-                            text: res.message,
-                            icon: 'success',
-                            confirmButtonColor: '#28a745',
-                            confirmButtonText: '<i class="bi bi-check"></i> OK'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', res.message, 'error');
-                    }
-                },
-                error: function(xhr) {
-                    console.log('Error:', xhr.responseText);
-                    Swal.fire('Error', 'No se pudo aprobar la reserva.', 'error');
-                }
-            });
-        }
-    });
-}
-
-function rechazarReserva(idReserva) {
-    Swal.fire({
-        title: '¿Rechazar reserva?',
-        text: "Esta accion no aprueba la reserva",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#dc3545',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: '<i class="bi bi-x-circle"></i> Si, rechazar',
-        cancelButtonText: '<i class="bi bi-arrow-left"></i> Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: '../controllers/rechazarReserva.php',
-                type: 'POST',
-                data: { id_reserva: idReserva },
-                dataType: 'json',
-                success: function(res) {
-                    if (res.success) {
-                        Swal.fire({
-                            title: '¡Rechazada!',
-                            text: res.message,
-                            icon: 'success',
-                            confirmButtonColor: '#28a745',
-                            confirmButtonText: '<i class="bi bi-check"></i> OK'
-                        }).then(() => {
-                            location.reload();
-                        });
-                    } else {
-                        Swal.fire('Error', res.message, 'error');
-                    }
-                },
-                error: function(xhr) {
-                    console.log('Error:', xhr.responseText);
-                    Swal.fire('Error', 'No se pudo rechazar la reserva.', 'error');
-                }
-            });
+            console.error('Respuesta del servidor:', xhr.responseText);
+            Swal.fire('Error', 'No se pudo obtener la información de la reserva.', 'error');
         }
     });
 }
 </script>
-
   </body>
   <!--end::Body-->
 </html>

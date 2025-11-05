@@ -207,6 +207,19 @@ $mysql->conectar();
                     
                   </span>
                   </a>
+              </li>
+              <li class="nav-item">
+                <a href="./gestionarReserva.php" class="nav-link">
+                 <i class="bi bi-calendar-check me-2"> </i>
+                  <span> Gestionar Reserva </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./gestionarReserva.php" class="nav-link">
+                  <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
+                </a>
+              </li>
               
               <?php if ($rol == 'Administrador'): ?>
               <li class="nav-item">
@@ -220,7 +233,13 @@ $mysql->conectar();
               <li class="nav-item">
                 <a href="./inventario.php" class="nav-link">
                  <i class="bi bi-box-seam me-2"> </i>
-                  <span> Inventario </span>
+                  <span> Libros </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-clock-history me-2"></i>
+                  <span> Historial </span>
                 </a>
               </li>
             <?php endif; ?>

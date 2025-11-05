@@ -396,7 +396,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             >
               <li class="nav-item">
                 <a href="../index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <i class="bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
                     
@@ -406,7 +406,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
               
               <li class="nav-item">
                 <a href="./documentos.php" class="nav-link active">
-                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
+                  <i class="nav-icon bi bi-file-earmark-pdf me-2"> </i>    
                   <span>
                    Documentos 
                   </span>
@@ -415,10 +415,21 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
               <li class="nav-item">
                 <a href="./inventario.php" class="nav-link">
                  <i class="bi bi-box-seam me-2"> </i>
-                  <span> Inventario </span>
+                  <span> Libros</span>
                 </a>
               </li>
-
+              <li class="nav-item">
+                <a href="./reservas.php" class="nav-link">
+                 <i class="bi bi-ticket-perforated me-2"> </i>
+                  <span> Reservas </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
+                </a>
+              </li>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -646,26 +657,6 @@ $inicioMes = date('Y-m-01');
       integrity="sha256-XPpPaZlU8S/HWf7FZLAncLg2SAkP8ScUTII89x9D3lY="
       crossorigin="anonymous"
     ></script>
-<script>
-$(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
-    language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-    },
-    pageLength: 5,
-    lengthMenu: [5, 10, 20, 50],
-    responsive: true,
-    autoWidth: true
-});
-
-});
-</script>
-
-
-
-
-
-
 
   </body>
   <!--end::Body-->
