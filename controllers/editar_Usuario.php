@@ -9,7 +9,8 @@ if (!isset($_SESSION['tipo_usuario'])){
   echo json_encode(["success" => false, "message" => "Sesión no válida"]);
   exit();
 }
-//conexion 
+
+// Conexión 
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -20,33 +21,40 @@ if ($id <= 0) {
     exit();
 }
 
+// Sanitizar entradas
+$nombre        = addslashes($_POST['nombre']);
+$apellido      = addslashes($_POST['apellido']);
+$correo        = addslashes($_POST['correo']);
+$cargo         = addslashes($_POST['cargo']);
+$passwordOld   = addslashes($_POST['passwordOld']);
+$passwordNueva = addslashes($_POST['passwordNueva']); 
 
-$nombre        = $_POST['nombre'];
-$apellido      =$_POST['apellido'];
-$correo        = $_POST['correo'];
-$cargo         = $_POST['cargo'];
-$passwordOld   = $_POST['passwordOld']; 
-$passwordNueva = $_POST['passwordNueva'];
+// Verificar si el correo ya está registrado por otro usuario
+$consultaExiste = "SELECT id_usuario FROM usuario 
+                   WHERE email_usuario = '$correo' 
+                   AND id_usuario != '$id'";
+$resultado = $mysql->efectuarConsulta($consultaExiste);
 
-// Verificar si el correo ya está registrado
-    $consultaExiste = "SELECT id_usuario FROM usuario WHERE email_usuario = '$email'";
-    $resultado = $mysql->efectuarConsulta($consultaExiste);
+if ($resultado && mysqli_num_rows($resultado) > 0) {
+    echo json_encode(['success' => false, 'message' => 'El correo ya está registrado por otro usuario.']);
+    $mysql->desconectar();
+    exit;
+}
 
-    if ($resultado && mysqli_num_rows($resultado) > 0) {
-        echo json_encode(['success' => false, 'message' => 'El correo ya está registrado.']);
-        $mysql->desconectar();
-        exit;
-    }
-
-//si cambia la contraseña 
+// Si cambia la contraseña 
 if (!empty($passwordNueva)) {
 
-    //validar la contraseña vieja 
-    if (!password_verify($passwordOld, $row['password'])) {
+    // Validar la contraseña vieja 
+    $consultaPassword = "SELECT password_usuario FROM usuario WHERE id_usuario = '$id'";
+    $resultadoPass = $mysql->efectuarConsulta($consultaPassword);
+    $row = mysqli_fetch_assoc($resultadoPass);
+
+    if (!$row || !password_verify($passwordOld, $row['password_usuario'])) {
         echo json_encode(["success" => false, "message" => "La contraseña actual no coincide"]);
         exit();
     }
-//si coincide actuliza por la nueva
+
+    // Si coincide actualiza por la nueva
     $passwordNuevaHash = password_hash($passwordNueva, PASSWORD_BCRYPT);
     $consulta = "UPDATE usuario
         SET nombre_usuario='$nombre',
@@ -55,9 +63,9 @@ if (!empty($passwordNueva)) {
             password_usuario='$passwordNuevaHash',
             tipo_usuario='$cargo'
         WHERE id_usuario='$id'";
-} else {
-    //si no actualiza queda la misma
 
+} else {
+    // Si no cambia la contraseña, solo actualiza los demás campos
     $consulta = "UPDATE usuario 
         SET nombre_usuario='$nombre',
             apellido_usuario='$apellido',
@@ -75,3 +83,4 @@ if ($result === true) {
 }
 
 $mysql->desconectar();
+?> 

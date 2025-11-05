@@ -565,7 +565,7 @@ function agregarUsuario() {
             <option value="Cliente">Cliente</option>
           </select>
         </div>
-      </form>git
+      </form>
     `,
     confirmButtonText: 'Agregar',
     showCancelButton: true,
@@ -855,12 +855,12 @@ function editarUsuario(id) {
 
                         <div class="mb-3">
                             <label class="form-label">Contraseña Antigua</label>
-                            <input type="password" class="form-control" id="passwordOld" required>
+                            <input type="password" class="form-control" id="passwordOld">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Contraseña Nueva</label>
-                            <input type="password" class="form-control" id="passwordNueva" required>
+                            <input type="password" class="form-control" id="passwordNueva">
                         </div>
 
                         <div class="mb-3">
@@ -870,8 +870,9 @@ function editarUsuario(id) {
 
                         <div class="mb-3">
                             <label class="form-label">Cargo</label>
-                             <select class="form-control" id="cargo" required>
-                                ${opcionesCargo} // se llama la variable 
+                              <select class="form-control" id="cargo" required>
+                                ${opcionesCargo}
+                              </select>
                         </div>
                     </form>
                 `,
