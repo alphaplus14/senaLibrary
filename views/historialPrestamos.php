@@ -17,10 +17,6 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 $idUsuario=$_SESSION['id_usuario'];
 
-
-$mysql = new MySQL();
-$mysql->conectar();
-
 $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva where reserva.fk_usuario=$idUsuario");
 ?>
 
@@ -237,11 +233,10 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                   </span>
                   </a>
                 </li>
-
                <?php if ($rol == 'Cliente'): ?>
               <li class="nav-item">
                 <a href="./gestionarReserva.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2"> </i>
+                 <i class="bi bi bi-journal-richtext me-2"> </i>
                   <span> Gestionar Reserva </span>
                 </a>
               </li>
@@ -252,7 +247,6 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                 </a>
               </li>
               <?php endif; ?>
-
             </ul>
             <!--end::Sidebar Menu-->
           </nav>

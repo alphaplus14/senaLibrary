@@ -15,15 +15,8 @@ $mysql->conectar();
 
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
-
-
-
-$mysql = new MySQL();
-$mysql->conectar();
-//consulta para obtener los libros
-$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
-
-
+//consulta para obtener los usuarios
+$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 ?>
 
 <!doctype html>
@@ -133,7 +126,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -232,39 +224,36 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             >
               <li class="nav-item">
                 <a href="../index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer me-2"></i>
+                  <i class="bi bi-speedometer me-2"></i>
                   <span>
-                    Dashboard
-                    
+                    Dashboard        
                   </span>
                   </a>
-              
-
+              </li>
+              <li class="nav-item">
+                <a href="./usuarios.php" class="nav-link active">
+                  <i class="nav-icon bi bi-file-earmark-person me-2"></i>
+                  <span>Usuarios</span>
+                </a>
+              </li>
               <li class="nav-item">
                 <a href="inventario.php" class="nav-link">
                  <i class="bi bi-book me-2"></i>
                   <span>Libros</span>
                 </a>
               </li>
-                                           <li class="nav-item">
-                <a href="usuarios.php" class="nav-link">
-                 <i class="bi bi-file-earmark-person me-2"></i>
-                  <span>Usuarios</span>
-                </a>
-              </li>
-                            <li class="nav-item">
+              <li class="nav-item">
                 <a href="reservas.php" class="nav-link">
                  <i class="bi bi-journal-richtext me-2"></i>
                   <span>Reservas</span>
                 </a>
               </li>
-                            <li class="nav-item">
-                <a href="prestamos.php" class="nav-link">
-                 <i class="bi bi-journal-bookmark-fill me-2"></i>
+              <li class="nav-item">
+                <a href="historialPrestamosAdmin.php" class="nav-link">
+                 <i class="bi bi-journal-arrow-down me-2"></i>
                   <span>Prestamos</span>
                 </a>
               </li>
-
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -281,12 +270,12 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Inventario</h3>
+                <h3 class="mb-0">Usuarios</h3>
               </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="./inventario.php">Inventario</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
+                  <li class="breadcrumb-item"><a href="./usuarios.php">Usuarios</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
                 </ol>
               </div>
             </div>
@@ -299,74 +288,62 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
         <div class="app-content">
           <!--begin::Container-->
           <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row mb-3 align-items-center">
+            <?php if ($rol == 'Administrador'): ?>
+              <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
-                <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarLibro()">➕ Agregar Nuevo Libro </button>
-                <?php endif; ?>
+                  <button type="button" class="btn btn-success" onclick="agregarUsuario()">
+                    ➕ Agregar Nuevo Usuario
+                  </button>
                 </div>
-            </div>
+              </div>
+            <?php endif; ?>
+
             <div class="row">
-              <!--begin::Col-->
-                <div class="table-responsive">
-                        <table id="tablaEmpleados" class="table table-striped table-bordered" width="100%">
+              <?php if($rol == "Administrador"): ?>
+                <div class="table-responsive mb-5">
+                  <table id="tablaUsuarios" class="table table-striped table-bordered" width="100%">
                     <thead class="table-success">
-                        <tr>
-                            <th>ID</th>
-                            <th>Titulo</th>
-                            <th>Autor</th>
-                            <th>ISBN</th>
-                            <th>Categoria</th>
-                            <th>Cantidad</th>
-                            <th>Estado</th>
-                            <?php if($rol == "Administrador"): ?>
-                                <th>Acciones</th>
-                            <?php endif; ?>
-                            
-                        </tr>
+                      <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Correo Electrónico</th>
+                        <th>Cargo</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                      </tr>
                     </thead>
                     <tbody>
-                    <?php while($fila = $resultado->fetch_assoc()): ?>
+                      <?php while($fila = $resultado->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo $fila['id_libro']; ?></td>
-                            <td><?php echo $fila['titulo_libro']; ?></td>
-                            <td><?php echo $fila['autor_libro']; ?></td>
-                            <td><?php echo $fila['ISBN_libro']; ?></td>
-                            <td><?php echo $fila['categoria_libro']; ?></td>
-                            <td><?php echo $fila['cantidad_libro']; ?></td>
-                            <td>
-                              <?php if($fila['cantidad_libro'] == 0): ?>
-                                <span class="badge bg-danger">No disponible</span>
+                          <td><?= $fila['id_usuario'] ?></td>
+                          <td><?= $fila['nombre_usuario'] ?></td>
+                          <td><?= $fila['apellido_usuario'] ?></td>
+                          <td><?= $fila['email_usuario'] ?></td>
+                          <td><?= $fila['tipo_usuario'] ?></td>
+                          <td>
+                              <?php if($fila['estado'] == 'Activo'): ?>
+                                  <span class="badge bg-success"><?= $fila['estado'] ?></span>
                               <?php else: ?>
-                                <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                                  <span class="badge bg-secondary"><?= $fila['estado'] ?></span>
                               <?php endif; ?>
-                            </td>
-                            <?php if($rol == "Administrador"): ?>
-                            <td class="justify-content-center d-flex gap-1">
-                        
-                        <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
-    <i class="bi bi-pencil-square"></i>
-    </a>
-    | 
-    <a class="btn btn-danger btn-sm"  
-    href="javascript:void(0);" 
-    onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
-    title="Eliminar"> 
-        <i class="bi bi-trash"></i>
-    </a>
-
-                            </td>
-                            <?php endif; ?>
+                          </td>
+                          <td class="text-center">
+                            <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_usuario'] ?>)">
+                              <i class="bi bi-pencil-square"></i>
+                            </a>
+                            |
+                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_usuario'] ?>)" title="Eliminar">
+                              <i class="bi bi-trash"></i>
+                            </a>
+                          </td>
                         </tr>
-                    <?php endwhile; ?>
+                      <?php endwhile; ?>
                     </tbody>
-                        </table>
+                  </table>
                 </div>
-                
-              <!-- /.Start col -->
+              <?php endif; ?>
             </div>
-            <!-- /.row (main row) -->
           </div>
           <!--end::Container-->
         </div>

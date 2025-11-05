@@ -12,16 +12,14 @@ if (!isset($_SESSION['tipo_usuario'])) {
 }
 $mysql = new MySQL();
 $mysql->conectar();
+
 $idUsuario=$_SESSION['id_usuario'];
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
-$mysql = new MySQL();
-$mysql->conectar();
-//consulta para obtener los usuarios
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
+//consulta para obtener los libros
 $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
-
+$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 ?>
 
 <!doctype html>
@@ -332,59 +330,15 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
 /* ... otras clases CSS ... */
 
 </style>
-
-
-
-
-
-
-
-
-
-
-
 <!-- script de los graficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="js/graficos_libro.js"></script>
 <script src="js/grafico_reservas.js"></script> 
 <script src="js/grafico_prestamos.js"></script>
-
-
-
-
-
   </head>
   <!--end::Head-->
   <!--begin::Body-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
       <!--begin::Header-->
@@ -484,23 +438,23 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                     Dashboard
                   </span>
                   </a>
-              
+              </li>
                <?php if ($rol == 'Administrador'): ?>
-                                           <li class="nav-item">
-                <a href="usuarios.php" class="nav-link">
-                 <i class="bi bi-file-earmark-person me-2"></i>
+              <li class="nav-item">
+                <a href="./views/usuarios.php" class="nav-link">
+                  <i class="bi bi-file-earmark-person me-2"></i>
                   <span>Usuarios</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="./views/inventario.php" class="nav-link">
-                 <i class="bi bi-box-seam me-2"> </i>
+                 <i class="bi bi-book me-2"> </i>
                   <span> Libros </span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="./views/reservas.php" class="nav-link">
-                 <i class="bi bi-ticket-perforated me-2"> </i>
+                 <i class="bi bi-journal-richtext me-2"> </i>
                   <span> Reservas </span>
                 </a>
               </li>
@@ -525,7 +479,6 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
                 </a>
               </li>
               <?php endif; ?>
-
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -538,98 +491,13 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
         <!--begin::App Content Header-->
         <div class="app-content-header">
           <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <!-- vista de diferentes usuarios  -->
-            <div class="row">
-              <?php if($rol == "Administrador"): ?>
-                              <div class="">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Lista de Usuarios</li>
-                </ol>
-              </div>
-<div class="col-sm-12 d-flex justify-content-center align-items-center">
-  <h3 class="mb-0"><img src="media/clientes icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Lista de Clientes</h3>
-</div>
-              <?php endif; ?>
-            <?php if($rol != "Administrador"): ?>
-            <div class="col-sm-6">
-                <h3 class="mb-0">Lista de Libros</h3>
-            </div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
-                </ol>
-              </div>
-            <?php endif; ?>
-            </div>
-            <!--end::Row-->
-          </div>
           <!--end::Container-->
         </div>
         <!--end::App Content Header-->
         <!--begin::App Content-->
         <div class="app-content">
           <div class="container-fluid">
-
-            <?php if ($rol == 'Administrador'): ?>
-              <div class="row mb-3 align-items-center">
-                <div class="col-md-6 d-flex gap-2">
-                  <button type="button" class="btn btn-success" onclick="agregarUsuario()">
-                    ➕ Agregar Nuevo Usuario
-                  </button>
-                </div>
-              </div>
-            <?php endif; ?>
-
             <div class="row">
-              <?php if($rol == "Administrador"): ?>
-                <div class="table-responsive mb-5">
-                  <table id="tablaUsuarios" class="table table-striped table-bordered" width="100%">
-                    <thead class="table-success">
-                      <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Correo Electrónico</th>
-                        <th>Cargo</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <?php while($fila = $resultado->fetch_assoc()): ?>
-                        <tr>
-                          <td><?= $fila['id_usuario'] ?></td>
-                          <td><?= $fila['nombre_usuario'] ?></td>
-                          <td><?= $fila['apellido_usuario'] ?></td>
-                          <td><?= $fila['email_usuario'] ?></td>
-                          <td><?= $fila['tipo_usuario'] ?></td>
-                          <td>
-                              <?php if($fila['estado'] == 'Activo'): ?>
-                                  <span class="badge bg-success"><?= $fila['estado'] ?></span>
-                              <?php else: ?>
-                                  <span class="badge bg-secondary"><?= $fila['estado'] ?></span>
-                              <?php endif; ?>
-                          </td>
-                          <td class="text-center">
-                            <a class="btn btn-warning btn-sm" title="Editar" onclick="editarUsuario(<?= $fila['id_usuario'] ?>)">
-                              <i class="bi bi-pencil-square"></i>
-                            </a>
-                            |
-                            <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_usuario'] ?>)" title="Eliminar">
-                              <i class="bi bi-trash"></i>
-                            </a>
-                          </td>
-                        </tr>
-                      <?php endwhile; ?>
-                    </tbody>
-                  </table>
-                </div>
-              <?php endif; ?>
-
             <?php if($rol != "Administrador"): ?>
               <div class="table-responsive">
                   <div class="col"> 
@@ -675,227 +543,195 @@ $resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
             </div>
           </div>
         </div>
-
-
         <!-- graficos de la pagina principal -->
-
         
-<div class="row">
-  <div class="col-12 text-center">
-    <h3 class="mb-0"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Graficos:</h3>
-  </div>
-</div>
-  
- 
-<div class="container mt-4">
-  <div class="row">
-    <!-- Gráfica grande a la izquierda -->
-    <div class="col-lg-8">
-      <div class="card" style="min-height: 660px; padding:1rem; border-radius:12px;">
-        <div class="card-body">
-          <h4 class="titulo-seccion">
-            <i class="fa-solid fa-book"></i> Total de libros registrados
-          </h4>
-          <canvas id="graficoTotalLibros" width="400" height="410"></canvas>
+        <div class="row">
+          <div class="col-12 text-center">
+            <h3 class="mb-0"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Graficos:</h3>
+          </div>
         </div>
-      </div>
-    </div>
+        <div class="container mt-4">
+          <div class="row">
+            <!-- Gráfica grande a la izquierda -->
+            <div class="col-lg-8">
+              <div class="card" style="min-height: 660px; padding:1rem; border-radius:12px;">
+                <div class="card-body">
+                  <h4 class="titulo-seccion">
+                    <i class="fa-solid fa-book"></i> Total de libros registrados
+                  </h4>
+                  <canvas id="graficoTotalLibros" width="400" height="410"></canvas>
+                </div>
+              </div>
+            </div>
 
-    <!-- Contenedor de las dos pequeñas a la derecha -->
-    <div class="col-lg-4 d-flex flex-column justify-content-between">
-      <div class="card mb-3" style="min-height: 320px; padding:1rem; border-radius:12px;">
-        <div class="card-body">
-          <h4 class="titulo-seccion">
-            <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
-          </h4>
-          <canvas id="graficoTotalReservas" width="300" height="100"></canvas>
+            <!-- Contenedor de las dos pequeñas a la derecha -->
+            <div class="col-lg-4 d-flex flex-column justify-content-between">
+              <div class="card mb-3" style="min-height: 320px; padding:1rem; border-radius:12px;">
+                <div class="card-body">
+                  <h4 class="titulo-seccion">
+                    <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
+                  </h4>
+                  <canvas id="graficoTotalReservas" width="300" height="100"></canvas>
+                </div>
+              </div>
+
+
+              <div class="card" style="min-height: 320px; padding:1rem; border-radius:12px;">
+                <div class="card-body">
+                  <h4 class="titulo-seccion">
+                    <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
+                  </h4>
+                  <canvas id="graficoTotalPrestamos" width="300" height="100"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-
-
-      <div class="card" style="min-height: 320px; padding:1rem; border-radius:12px;">
-        <div class="card-body">
-          <h4 class="titulo-seccion">
-            <i class="fa-solid fa-book-open-reader"></i> Total de préstamos realizados
-          </h4>
-          <canvas id="graficoTotalPrestamos" width="300" height="100"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
 <!-- botones de los modulos cesar!!! -->
-
-<div class="container text-center mt-4">
-  <div class="row g-3">
-    <div class="col">
-      <button class="btn btn-info w-100">
-        <i class="fa-solid fa-user"></i><img src="media/usuarios modulo icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Usuarios
-      </button>
-    </div>
-    <div class="col">
-      <button class="btn btn-info w-100">
-        <i class="fa-solid fa-book"></i><img src="media/libro icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Libros
-      </button>
-    </div>
-    <div class="col">
-      <button class="btn btn-info w-100">
-        <i class="fa-solid fa-calendar-check"></i><img src="media/reservas icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Reservas
-      </button>
-    </div>
-    <div class="col">
-      <button class="btn btn-info w-100 ">
-        <i class="fa-solid fa-book-open-reader"></i><img src="media/prestamos icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Préstamos
-      </button>
-    </div>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-<?php
-$hoy = date('Y-m-d');
-$inicioMes = date('Y-m-01');
-?>
-<?php if ($rol == 'Administrador'): ?>
-  <div class="row">
-  <div class="col-12 text-center mt-4">
-    <h3 class="mb-0"><img src="media/documentos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Generar Documentos:</h3>
-  </div>
-</div>
-<!-- === FORMULARIOS DE DOCUMENTOS === -->
-<div class="container-documentos">
-
-  <!-- === PDF DE RESERVAS === -->
-  <div class="card-documento">
- <h4 class="titulo-seccion">
-  <i class="fa-solid fa-calendar-check"></i> Generar reporte de las reservas
-</h4>
-    <form action="views/generar_pdf_reservas.php" target="_blank" method="get" id="formReservas" onsubmit="return validarRangoFechas(this);" class="form-documentos">
-      <div class="row-form">
-        <div class="form-group">
-          <label for="fechaInicio">Fecha inicio:</label>
-          <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+        <div class="container text-center mt-4">
+          <div class="row g-3">
+            <div class="col">
+              <button class="btn btn-info w-100">
+                <i class="fa-solid fa-user"></i><img src="media/usuarios modulo icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Usuarios
+              </button>
+            </div>
+            <div class="col">
+              <a href="./views/inventario.php"> <button class="btn btn-info w-100">
+                <i class="fa-solid fa-book"></i><img src="media/libro icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Libros
+              </button>
+              </a>
+            </div>
+            <div class="col">
+              <button class="btn btn-info w-100">
+                <i class="fa-solid fa-calendar-check"></i><img src="media/reservas icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Reservas
+              </button>
+            </div>
+            <div class="col">
+              <button class="btn btn-info w-100 ">
+                <i class="fa-solid fa-book-open-reader"></i><img src="media/prestamos icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Préstamos
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="fechaFin">Fecha fin:</label>
-          <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+        <?php
+        $hoy = date('Y-m-d');
+        $inicioMes = date('Y-m-01');
+        ?>
+        <?php if ($rol == 'Administrador'): ?>
+          <div class="row">
+          <div class="col-12 text-center mt-4">
+            <h3 class="mb-0"><img src="media/documentos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Generar Documentos:</h3>
+          </div>
         </div>
+        <!-- === FORMULARIOS DE DOCUMENTOS === -->
+        <div class="container-documentos">
 
-        <div class="form-group">
-          <label for="salida">Ver:</label>
-          <select id="salida" name="salida">
-            <option value="I">Ver en el navegador</option>
-            <option value="D">Descargar</option>
-          </select>
-        </div>
+          <!-- === PDF DE RESERVAS === -->
+          <div class="card-documento">
+        <h4 class="titulo-seccion">
+          <i class="fa-solid fa-calendar-check"></i> Generar reporte de las reservas
+        </h4>
+            <form action="views/generar_pdf_reservas.php" target="_blank" method="get" id="formReservas" onsubmit="return validarRangoFechas(this);" class="form-documentos">
+              <div class="row-form">
+                <div class="form-group">
+                  <label for="fechaInicio">Fecha inicio:</label>
+                  <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+                </div>
 
-        <div class="form-group">
-<div style="text-align: center;">
-  <button type="submit" class="btn-generar">
-    <i class="fa-solid fa-file-pdf"> <img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF
-  </button>
-</div>
-        </div>
-        
-      </div>
-    </form>
-  </div>
+                <div class="form-group">
+                  <label for="fechaFin">Fecha fin:</label>
+                  <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+                </div>
 
-  <!-- === PDF DE INVENTARIO === -->
-<div class="card-documento">
-<h4 class="titulo-seccion">
-  <i class="fa-solid fa-boxes-stacked"></i> Generar reporte del inventario
-</h4>
-    <form action="views/generar_pdf_inventario.php" target="_blank" method="get" class="form-documentos">
-        <div class="row-form">
-            <div class="form-group">
-                <label for="salida_inventario">Ver:</label>
-                <select id="salida_inventario" name="salida"> <option value="I">Ver en el navegador</option>
+                <div class="form-group">
+                  <label for="salida">Ver:</label>
+                  <select id="salida" name="salida">
+                    <option value="I">Ver en el navegador</option>
                     <option value="D">Descargar</option>
-                </select>
-            </div>
+                  </select>
+                </div>
 
-            <div class="form-group btn-group">
-
-
+                <div class="form-group">
+        <div style="text-align: center;">
           <button type="submit" class="btn-generar">
-            <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
+            <i class="fa-solid fa-file-pdf"> <img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF
           </button>
-                <a href="views/generar_excel_inventario.php" class="btn-excel">
-                    <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i>  EXCEL
-                </a>
-            </div>
         </div>
-    </form>
-</div>
+                </div>
+                
+              </div>
+            </form>
+          </div>
 
-  <!-- === PDF DE PRÉSTAMOS === -->
-  <div class="card-documento">
-<h4 class="titulo-seccion">
-  <i class="fa-solid fa-handshake"></i> Generar reporte de préstamos
-</h4>
-    <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos" id="formPrestamos" onsubmit="return validarRangoFechas(this);">
-      <div class="row-form">
-        <div class="form-group">
-          <label for="fechaInicio">Fecha inicio:</label>
-          <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+          <!-- === PDF DE INVENTARIO === -->
+        <div class="card-documento">
+        <h4 class="titulo-seccion">
+          <i class="fa-solid fa-boxes-stacked"></i> Generar reporte del inventario
+        </h4>
+            <form action="views/generar_pdf_inventario.php" target="_blank" method="get" class="form-documentos">
+                <div class="row-form">
+                    <div class="form-group">
+                        <label for="salida_inventario">Ver:</label>
+                        <select id="salida_inventario" name="salida"> <option value="I">Ver en el navegador</option>
+                            <option value="D">Descargar</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group btn-group">
+
+
+                  <button type="submit" class="btn-generar">
+                    <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
+                  </button>
+                        <a href="views/generar_excel_inventario.php" class="btn-excel">
+                            <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i>  EXCEL
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
 
-        <div class="form-group">
-          <label for="fechaFin">Fecha fin:</label>
-          <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+          <!-- === PDF DE PRÉSTAMOS === -->
+          <div class="card-documento">
+        <h4 class="titulo-seccion">
+          <i class="fa-solid fa-handshake"></i> Generar reporte de préstamos
+        </h4>
+            <form action="views/generar_pdf_prestamos.php" target="_blank" method="get" class="form-documentos" id="formPrestamos" onsubmit="return validarRangoFechas(this);">
+              <div class="row-form">
+                <div class="form-group">
+                  <label for="fechaInicio">Fecha inicio:</label>
+                  <input type="date" id="fechaInicio" name="fechaInicio" required value="<?php echo htmlspecialchars($inicioMes); ?>">
+                </div>
+
+                <div class="form-group">
+                  <label for="fechaFin">Fecha fin:</label>
+                  <input type="date" id="fechaFin" name="fechaFin" required value="<?php echo htmlspecialchars($hoy); ?>">
+                </div>
+
+                <div class="form-group">
+                  <label for="salida">Ver:</label>
+                  <select id="salida" name="salida">
+                    <option value="I">Ver en el navegador</option>
+                    <option value="D">Descargar</option>
+                  </select>
+                </div>
+
+                <div class="form-group btn-group">
+                  <button type="submit"  class="btn-generar">
+                    <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
+                  </button>
+        <button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
+          <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> EXCEL
+        </button>
+                </div>
+              </div>
+            </form>
+          </div>
+
         </div>
-
-        <div class="form-group">
-          <label for="salida">Ver:</label>
-          <select id="salida" name="salida">
-            <option value="I">Ver en el navegador</option>
-            <option value="D">Descargar</option>
-          </select>
-        </div>
-
-        <div class="form-group btn-group">
-          <button type="submit"  class="btn-generar">
-            <i class="fa-solid fa-file-pdf"><img src="media/pdf icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> GENERAR PDF  
-          </button>
-<button type="submit" formaction="views/generar_excel_prestamos.php" class="btn-excel">
-  <i class="fa-solid fa-file-excel"><img src="media/excel icon.png" alt="PDF" style="width:20px; height:20px; vertical-align:middle; margin-right:6px;"></i> EXCEL
-</button>
-        </div>
-      </div>
-    </form>
-  </div>
-
-</div>
-<?php endif; ?>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <!--end::App Content-->
+        <?php endif; ?>
+       <!--end::App Content-->
       </main>
       <!--end::App Main-->
       <!--begin::Footer-->

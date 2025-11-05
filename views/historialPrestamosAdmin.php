@@ -16,8 +16,6 @@ $mysql->conectar();
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
-$mysql = new MySQL();
-$mysql->conectar();
 //consulta para obtener los libros
 $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva");
 ?>
@@ -230,36 +228,32 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                 <a href="../index.php" class="nav-link">
                   <i class="bi bi-speedometer me-2"></i>
                   <span>
-                    Dashboard
-                    
+                    Dashboard        
                   </span>
                   </a>
-              
-              
+              </li>
               <li class="nav-item">
-                <a href="./Documentos.php" class="nav-link">
-                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
-                  <span>
-                   Documentos 
-                  </span>
+                <a href="./usuarios.php" class="nav-link">
+                  <i class="bi bi-file-earmark-person me-2"></i>
+                  <span>Usuarios</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./inventario.php" class="nav-link">
-                 <i class="bi bi-box-seam me-2"> </i>
-                  <span> Libros </span>
+                <a href="inventario.php" class="nav-link">
+                 <i class="bi bi-book me-2"></i>
+                  <span>Libros</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./reservas.php" class="nav-link">
-                 <i class="bi bi-ticket-perforated me-2"> </i>
-                  <span> Reservas </span>
+                <a href="reservas.php" class="nav-link">
+                 <i class="bi bi-journal-richtext me-2"></i>
+                  <span>Reservas</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./historialPrestamosAdmin.php" class="nav-link active">
+                <a href="historialPrestamosAdmin.php" class="nav-link active">
                  <i class="nav-icon bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
+                  <span>Prestamos</span>
                 </a>
               </li>
             </ul>

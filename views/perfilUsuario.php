@@ -19,31 +19,20 @@ $nombre=$_SESSION['nombre_usuario'];
 $apellido=$_SESSION['apellido_usuario'];
 $email=$_SESSION['email_usuario'];
 
-
-
-
-$mysql = new MySQL();
-$mysql->conectar();
-
-
 ?>
 
-
 <!doctype html>
-
 <html lang="en">
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title> SenaLibrary </title>
-
     <!--begin::Accessibility Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
     <!--end::Accessibility Meta Tags-->
-
     <!--begin::Primary Meta Tags-->
     <meta name="title" content="AdminLTE v4 | Dashboard" />
     <meta name="author" content="ColorlibHQ" />
@@ -161,7 +150,6 @@ $mysql->conectar();
             
           </ul>
           <!--end::Start Navbar Links-->
-
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
 
@@ -204,45 +192,49 @@ $mysql->conectar();
                   <i class="bi bi-speedometer me-2"></i>
                   <span>
                     Dashboard
-                    
                   </span>
                   </a>
               </li>
+               <?php if ($rol == 'Administrador'): ?>
               <li class="nav-item">
-                <a href="./gestionarReserva.php" class="nav-link">
-                 <i class="bi bi-calendar-check me-2"> </i>
-                  <span> Gestionar Reserva </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./gestionarReserva.php" class="nav-link">
-                  <i class="bi bi-clock-history me-2"></i>
-                  <span> Historial </span>
-                </a>
-              </li>
-              
-              <?php if ($rol == 'Administrador'): ?>
-              <li class="nav-item">
-                <a href="./Documentos.php" class="nav-link">
-                  <i class="bi bi-file-earmark-pdf me-2"> </i>    
-                  <span>
-                   Documentos 
-                  </span>
+                <a href="./usuarios.php" class="nav-link">
+                  <i class="bi bi-file-earmark-person me-2"></i>
+                  <span>Usuarios</span>
                 </a>
               </li>
               <li class="nav-item">
                 <a href="./inventario.php" class="nav-link">
-                 <i class="bi bi-box-seam me-2"> </i>
+                 <i class="bi bi-book me-2"> </i>
                   <span> Libros </span>
                 </a>
               </li>
               <li class="nav-item">
+                <a href="./reservas.php" class="nav-link">
+                 <i class="bi bi-journal-richtext me-2"> </i>
+                  <span> Reservas </span>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="./historialPrestamosAdmin.php" class="nav-link">
-                 <i class="bi bi-clock-history me-2"></i>
+                 <i class="bi bi-journal-arrow-down me-2"></i>
+                  <span> Prestamos </span>
+                </a>
+              </li>
+              <?php endif; ?>
+               <?php if ($rol == 'Cliente'): ?>
+              <li class="nav-item">
+                <a href="./gestionarReserva.php" class="nav-link">
+                 <i class="bi bi-calendar-check me-2 me-2"> </i>
+                  <span> Gestionar Reserva </span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="./historialPrestamos.php" class="nav-link">
+                  <i class="bi bi-clock-history me-2"></i>
                   <span> Historial </span>
                 </a>
               </li>
-            <?php endif; ?>
+              <?php endif; ?>
             </ul>
             <!--end::Sidebar Menu-->
           </nav>
@@ -279,60 +271,59 @@ $mysql->conectar();
             <!--begin::Row-->
             <div class="row">
               <!-- /.Start col -->
-<div class="col-md-8 offset-md-2">
-  <div class="card shadow-sm">
-    <div class="card-header bg-success text-white">
-      <h5 class="mb-0">Información Personal</h5>
-    </div>
-    <div class="card-body">
-      <form method="POST" action="../controllers/EditarSesion.php">
-        <div class="mb-3">
-          <label for="nombre" class="form-label">Nombre</label>
-          <input type="text" class="form-control" id="nombre" name="nombre" 
-                 value="<?= htmlspecialchars($nombre) ?>" required>
-        </div>
+              <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm">
+                  <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Información Personal</h5>
+                  </div>
+                  <div class="card-body">
+                    <form method="POST" action="../controllers/EditarSesion.php">
+                      <div class="mb-3">
+                        <label for="nombre" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" 
+                              value="<?= htmlspecialchars($nombre) ?>" required>
+                      </div>
 
-        <div class="mb-3">
-          <label for="apellido" class="form-label">Apellido</label>
-          <input type="text" class="form-control" id="apellido" name="apellido" 
-                 value="<?= htmlspecialchars($apellido) ?>" required>
-        </div>
+                      <div class="mb-3">
+                        <label for="apellido" class="form-label">Apellido</label>
+                        <input type="text" class="form-control" id="apellido" name="apellido" 
+                              value="<?= htmlspecialchars($apellido) ?>" required>
+                      </div>
 
-        <div class="mb-3">
-          <label for="email" class="form-label">Correo Electrónico</label>
-          <input type="email" class="form-control" id="email" name="email" 
-                 value="<?= htmlspecialchars($email) ?>" required>
-        </div>
-        <!-- validamos la contraseña actual como obligatoria en la funcion guardarcambios -->
-        <div class="mb-3">
-  <label for="password_actual" class="form-label">Contraseña actual</label>
-  <input type="password" class="form-control" id="password_actual" name="password_actual" placeholder="Ingresa tu contraseña actual">
-</div>
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Correo Electrónico</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                              value="<?= htmlspecialchars($email) ?>" required>
+                      </div>
+                      <!-- validamos la contraseña actual como obligatoria en la funcion guardarcambios -->
+                      <div class="mb-3">
+                <label for="password_actual" class="form-label">Contraseña actual</label>
+                <input type="password" class="form-control" id="password_actual" name="password_actual" placeholder="Ingresa tu contraseña actual">
+              </div>
 
-           <div class="mb-3">
-          <label for="password" class="form-label">Nueva Contraseña</label>
-  <input type="password" class="form-control" id="password" name="password" placeholder="Nueva contraseña (opcional)">
-        </div>
+                        <div class="mb-3">
+                        <label for="password" class="form-label">Nueva Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Nueva contraseña (opcional)">
+                      </div>
 
 
-<div class="d-flex justify-content-between align-items-center">
-  <button type="button" 
-          class="btn btn-link text-danger d-flex align-items-center p-0" 
-          onclick="window.location.href='../controllers/logout.php'">
-    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-  </button>
+              <div class="d-flex justify-content-between align-items-center">
+                <button type="button" 
+                        class="btn btn-link text-danger d-flex align-items-center p-0" 
+                        onclick="window.location.href='../controllers/logout.php'">
+                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                </button>
 
-  <button type="button" name="actualizar" class="btn btn-success" onclick="guardarCambios()">
-    <i class="bi bi-save"></i> Guardar Cambios
-  </button>
-</div>
+                <button type="button" name="actualizar" class="btn btn-success" onclick="guardarCambios()">
+                  <i class="bi bi-save"></i> Guardar Cambios
+                </button>
+              </div>
 
-        
-      </form>
-    </div>
-  </div>
-</div>
-
+                      
+                    </form>
+                  </div>
+                </div>
+              </div>
             </div>
             <!-- /.row (main row) -->
           </div>
@@ -481,7 +472,6 @@ function guardarCambios() {
 }
 
 </script>
-
 
   </body>
   <!--end::Body-->

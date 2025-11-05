@@ -16,14 +16,8 @@ $mysql->conectar();
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
-
-
-$mysql = new MySQL();
-$mysql->conectar();
 //consulta para obtener los libros
 $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
-
-
 ?>
 
 <!doctype html>
@@ -133,7 +127,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -160,41 +153,35 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
-
             <!--begin::User Menu Dropdown-->
-         <li class="nav-item dropdown user-menu">
-  <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
-    <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
-  </a>
-
-  <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-    <!-- Cabecera del usuario -->
-    <li class="bg-primary text-white text-center rounded-top py-3">
-      <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
-      <small><?php echo $rol; ?></small>
-    </li>
-
-    <!-- Separador -->
-    <li><hr class="dropdown-divider m-0"></li>
-
-    <!-- Opciones del menu -->
-    <li>
-      <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-        <i class="bi bi-person me-2 text-secondary"></i> Perfil
-      </a>
-    </li>
-
-    <!-- Separador -->
-    <li><hr class="dropdown-divider m-0"></li>
-
-    <!-- Opción de cerrar sesión -->
-    <li>
-      <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-      </a>
-    </li>
-  </ul>
-</li>
+                    <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+                <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+                <!-- Cabecera del usuario -->
+                <li class="bg-primary text-white text-center rounded-top py-3">
+                  <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                  <small><?php echo $rol; ?></small>
+                </li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
+                <!-- Opciones del menu -->
+                <li>
+                  <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
+                  </a>
+                </li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
+                <!-- Opción de cerrar sesión -->
+                <li>
+                  <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -234,47 +221,32 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                 <a href="../index.php" class="nav-link">
                   <i class="bi bi-speedometer me-2"></i>
                   <span>
-                    Dashboard
-                    
+                    Dashboard        
                   </span>
                   </a>
-              
-              
-              <li class="nav-item">
-              <li class="nav-item">
-                <a href="inventario.php" class="nav-link">
-                 <i class="bi bi-book me-2"></i>
-                  <span>Libros</span>
-                </a>
               </li>
-                                           <li class="nav-item">
-                <a href="usuarios.php" class="nav-link">
-                 <i class="bi bi-file-earmark-person me-2"></i>
+              <li class="nav-item">
+                <a href="./usuarios.php" class="nav-link">
+                  <i class="bi bi-file-earmark-person me-2"></i>
                   <span>Usuarios</span>
                 </a>
               </li>
-                            <li class="nav-item">
+              <li class="nav-item">
+                <a href="inventario.php" class="nav-link active">
+                 <i class="nav-icon bi bi-book me-2"></i>
+                  <span>Libros</span>
+                </a>
+              </li>
+              <li class="nav-item">
                 <a href="reservas.php" class="nav-link">
                  <i class="bi bi-journal-richtext me-2"></i>
                   <span>Reservas</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a href="./inventario.php" class="nav-link active">
-                 <i class="nav-icon bi bi-box-seam me-2"> </i>
-                  <span> Libros </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./reservas.php" class="nav-link">
-                 <i class="bi bi-ticket-perforated me-2"> </i>
-                  <span> Reservas </span>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="./historialPrestamosAdmin.php" class="nav-link">
+                <a href="historialPrestamosAdmin.php" class="nav-link">
                  <i class="bi bi-journal-arrow-down me-2"></i>
-                  <span> Prestamos </span>
+                  <span>Prestamos</span>
                 </a>
               </li>
             </ul>
@@ -293,11 +265,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
-                <h3 class="mb-0">Inventario</h3>
+                <h3 class="mb-0">Libros</h3>
               </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="./inventario.php">Inventario</a></li>
+                  <li class="breadcrumb-item"><a href="./inventario.php">Libros</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Lista de Libros</li>
                 </ol>
               </div>
@@ -356,18 +328,16 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                             </td>
                             <?php if($rol == "Administrador"): ?>
                             <td class="justify-content-center d-flex gap-1">
-                        
-                        <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
-    <i class="bi bi-pencil-square"></i>
-    </a>
-    | 
-    <a class="btn btn-danger btn-sm"  
-    href="javascript:void(0);" 
-    onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
-    title="Eliminar"> 
-        <i class="bi bi-trash"></i>
-    </a>
-
+                              <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
+          <i class="bi bi-pencil-square"></i>
+          </a>
+          | 
+          <a class="btn btn-danger btn-sm"  
+          href="javascript:void(0);" 
+          onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
+          title="Eliminar"> 
+              <i class="bi bi-trash"></i>
+          </a>
                             </td>
                             <?php endif; ?>
                         </tr>
