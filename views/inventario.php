@@ -675,7 +675,7 @@ function editarLibro(id) {
 
                         <div class="mb-3">
                             <label class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad" value="${libro.cantidad_libro}" required>
+                            <input type="number" class="form-control" id="cantidad" min="0" value="${libro.cantidad_libro}" required>
                         </div>
 
                     </form>
