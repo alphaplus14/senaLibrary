@@ -292,6 +292,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
                             <tr>
                                 <th>ID Reserva</th>
                                 <th>Fecha Reserva</th>
+                                <th>Fecha Recogida</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -301,6 +302,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
                                 <tr>
                                 <td><?= $fila['id_reserva'] ?></td>
                                 <td><?= $fila['fecha_reserva'] ?></td>
+                                <td><?= $fila['fecha_recogida'] ?></td>
                                 <td>
                                   <span class="badge bg-warning text-dark"><?php echo $fila['estado_reserva']; ?></span>
                                 </td>
@@ -314,9 +316,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
                         </table>
                     </div>
                 </div>
-
             </div>
-
         </div>
 
         <!--end::App Content-->

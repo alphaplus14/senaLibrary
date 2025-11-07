@@ -132,10 +132,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 <!-- SweetAlert2 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-
-
-  <style>
+<style>
 
     .btn-info {
   background: linear-gradient(135deg, #17a2b8, #5bc0de);
@@ -282,7 +279,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
   gap: 10px;
   align-items: center;
 }
-
 /* ... dentro de <style> ... */
 
 /* Modificación a .btn-group para alinear los botones */
@@ -328,13 +324,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 }
 
 /* ... otras clases CSS ... */
-
 </style>
+
 <!-- script de los graficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/graficos_libro.js"></script>
-<script src="js/grafico_reservas.js"></script> 
-<script src="js/grafico_prestamos.js"></script>
+
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -368,34 +362,34 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
   </a>
 
-  <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-    <!-- Cabecera del usuario -->
-    <li class="bg-primary text-white text-center rounded-top py-3">
-      <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
-      <small><?php echo $rol; ?></small>
-    </li>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+                <!-- Cabecera del usuario -->
+                <li class="bg-primary text-white text-center rounded-top py-3">
+                  <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                  <small><?php echo $rol; ?></small>
+                </li>
 
-    <!-- Separador -->
-    <li><hr class="dropdown-divider m-0"></li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
 
-    <!-- Opciones del menu -->
-    <li>
-      <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-        <i class="bi bi-person me-2 text-secondary"></i> Perfil
-      </a>
-    </li>
+                <!-- Opciones del menu -->
+                <li>
+                  <a href="./views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
+                  </a>
+                </li>
 
-    <!-- Separador -->
-    <li><hr class="dropdown-divider m-0"></li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
 
-    <!-- Opción de cerrar sesión -->
-    <li>
-      <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-      </a>
-    </li>
-  </ul>
-</li>
+                <!-- Opción de cerrar sesión -->
+                <li>
+                  <a href="./controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -544,12 +538,12 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
           </div>
         </div>
         <!-- graficos de la pagina principal -->
-        
-        <div class="row">
-          <div class="col-12 text-center">
-            <h3 class="mb-0"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:6px;">Graficos:</h3>
+        <?php if($rol == "Administrador"): ?>
+          <div class="row">
+            <div class="col-12 text-center mb-4">
+              <h3 class="d-flex justify-content-center align-items-center"><img src="media/graficos icon.png" alt="PDF" style="width:40px; height:40px; vertical-align:middle; margin-right:10px;">Graficos:</h3>
+            </div>
           </div>
-        </div>
         <div class="container mt-4">
           <div class="row">
             <!-- Gráfica grande a la izquierda -->
@@ -575,7 +569,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                 </div>
               </div>
 
-
               <div class="card" style="min-height: 320px; padding:1rem; border-radius:12px;">
                 <div class="card-body">
                   <h4 class="titulo-seccion">
@@ -591,9 +584,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
         <div class="container text-center mt-4">
           <div class="row g-3">
             <div class="col">
-              <button class="btn btn-info w-100">
+              <a href="./views/usuarios.php"> <button class="btn btn-info w-100">
                 <i class="fa-solid fa-user"></i><img src="media/usuarios modulo icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Usuarios
-              </button>
+              </button> 
+              </a>
             </div>
             <div class="col">
               <a href="./views/inventario.php"> <button class="btn btn-info w-100">
@@ -602,18 +596,20 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               </a>
             </div>
             <div class="col">
-              <button class="btn btn-info w-100">
+              <a href="./views/reservas.php"> <button class="btn btn-info w-100">
                 <i class="fa-solid fa-calendar-check"></i><img src="media/reservas icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Reservas
               </button>
+              </a>
             </div>
             <div class="col">
-              <button class="btn btn-info w-100 ">
+              <a href="./views/historialPrestamosAdmin.php"> <button class="btn btn-info w-100 ">
                 <i class="fa-solid fa-book-open-reader"></i><img src="media/prestamos icon.png" alt="PDF" style="width:30px; height:30px; vertical-align:middle; margin-right:6px;"> Préstamos
               </button>
+              </a>
             </div>
           </div>
         </div>
-
+        <?php endif; ?>
         <?php
         $hoy = date('Y-m-d');
         $inicioMes = date('Y-m-01');
@@ -728,7 +724,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               </div>
             </form>
           </div>
-
         </div>
         <?php endif; ?>
        <!--end::App Content-->
@@ -767,6 +762,11 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="public/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+    <?php if($rol == "Administrador"): ?>
+        <script src="js/graficos_libro.js"></script>
+        <script src="js/grafico_reservas.js"></script> 
+        <script src="js/grafico_prestamos.js"></script>
+    <?php endif; ?>
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
       const Default = {
@@ -810,20 +810,6 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaUsuarios').DataTable({
-    language: {
-        url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
-    },
-    pageLength: 5,
-    lengthMenu: [5, 10, 20, 50],
-    responsive: true,
-    autoWidth: true
-});
-
-});
-</script>
-<script>
-$(document).ready(function() {
    $('#tablaLibros').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
@@ -838,124 +824,54 @@ $(document).ready(function() {
 </script>
 
 <script>
-function agregarUsuario() {
-  Swal.fire({
-    title: 'Agregar Nuevo Usuario',
-    html: `
-      <form id="formAgregarUsuario" class="text-start" action="controllers/agregarUsuario.php" method="POST">
-        <div class="mb-3">
-          <label for="nombre_usuario" class="form-label">Nombre</label>
-          <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="apellido_usuario" class="form-label">Apellido</label>
-          <input type="text" class="form-control" id="apellido_usuario" name="apellido_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="email_usuario" class="form-label">Correo Electrónico</label>
-          <input type="email" class="form-control" id="email_usuario" name="email_usuario"  autocomplete="username" required>
-        </div>
-        <div class="mb-3">
-          <label for="password_usuario" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="password_usuario" autocomplete="current-password" name="password_usuario" required>
-        </div>
-        <div class="mb-3">
-          <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
-          <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
-            <option value="" selected disabled>Seleccione un tipo</option>
-            <option value="Administrador">Administrador</option>
-            <option value="Empleado">Empleado</option>
-            <option value="Cliente">Cliente</option>
-          </select>
-        </div>
-      </form>
-    `,
-    confirmButtonText: 'Agregar',
-    showCancelButton: true,
-    cancelButtonText: 'Cancelar',
-    focusConfirm: false,
-    preConfirm: () => {
-      const nombre = document.getElementById('nombre_usuario').value.trim();
-      const apellido = document.getElementById('apellido_usuario').value.trim();
-      const email = document.getElementById('email_usuario').value.trim();
-      const password = document.getElementById('password_usuario').value.trim();
-      const tipo = document.getElementById('tipo_usuario').value.trim();
-
-      if (!nombre || !apellido || !email || !password || !tipo) {
-        Swal.showValidationMessage('Por favor, complete todos los campos.');
-        return false;
-      }
-
-      const formData = new FormData();
-      formData.append('nombre_usuario', nombre);
-      formData.append('apellido_usuario', apellido);
-      formData.append('email_usuario', email);
-      formData.append('password_usuario', password);
-      formData.append('tipo_usuario', tipo);
-      return formData;
-    }
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const formData = result.value;
-
-      $.ajax({
-        url: 'controllers/agregarUsuario.php',
-        type: 'POST',
-        data: formData,
-        contentType: false,
-        processData: false,
-        dataType: 'json',
-        success: function(response) {
-          if (response.success) {
-            Swal.fire(' Éxito', response.message, 'success').then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire(' Atención', response.message, 'warning');
-          }
-        },
-        error: function(xhr, status, error) {
-          console.error("Error AJAX:", error, xhr.responseText);
-          Swal.fire(' Error', 'El servidor no respondió correctamente.', 'error');
-        }
-      });
-    }
-  });
-}
-</script>
-
-<script>
 function abrirCrearReserva() {
   Swal.fire({
     title: 'Reserva',
     html: `
       <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
       <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
+
       <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
-          <thead class="table-dark">
-              <tr>
-                  <th>Titulo</th>
-                  <th>Autor</th>
-                  <th>Cantidad</th>
-                  <th>Estado</th>
-                  <th>Acción</th>
-              </tr>
-          </thead>
-          <tbody></tbody>
+        <thead class="table-dark">
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Cantidad</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
       </table>
+
+      <div id="fechaRecogidaContainer" style="display:none; margin-top:10px;">
+        <label class="form-label">Fecha de Recogida</label>
+        <input type="date" id="fechaRecogida" class="swal2-input" style="width:50%;">
+      </div>
     `,
     width: 800,
     showCancelButton: true,
     confirmButtonText: 'Confirmar Reserva',
     cancelButtonText: 'Cancelar',
+
     didOpen: () => {
-      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody"); // para que busque la tabla libro dentro del modal y no del html index
+      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
+
+      const observer = new MutationObserver(() => {
+        const filas = tbodyModal.querySelectorAll('tr').length;
+        const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
+        contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
+      });
+
+      observer.observe(tbodyModal, { childList: true });
     },
+
     preConfirm: () => {
       return new Promise((resolve, reject) => {
         const libros = [];
+        const popup = Swal.getPopup();
 
-        Swal.getPopup().querySelectorAll('#tablaLibros tbody tr').forEach(row => { //busca dentro del sweet alert 
+        popup.querySelectorAll('#tablaLibros tbody tr').forEach(row => {
           const id = parseInt(row.getAttribute('data-id'));
           const cantidad = parseInt(row.querySelector('.cantidad').value);
           if (id && cantidad > 0) {
@@ -968,21 +884,29 @@ function abrirCrearReserva() {
           return;
         }
 
-     $.ajax({
-  url: './controllers/agregarReserva.php',
-  type: 'POST',
-  dataType: 'json', // 🔹 muy importante
-  data: { libros: JSON.stringify(libros) },
-  success: function (res) {
-    if (res.success) resolve(res.message);
-    else reject(res.message);
-  },
-  error: function (xhr, status, error) {
-    console.error("Error AJAX:", xhr.responseText);
-    reject('No se pudo agregar la reserva.');
-  }
-});
+        const fechaRecogida = popup.querySelector('#fechaRecogida').value;
+        if (!fechaRecogida) {
+          reject('Selecciona la fecha de recogida.');
+          return;
+        }
 
+        $.ajax({
+          url: './controllers/agregarReserva.php',
+          type: 'POST',
+          dataType: 'json',
+          data: { 
+            libros: JSON.stringify(libros),
+            fechaRecogida: fechaRecogida
+          },
+          success: function (res) {
+            if (res.success) resolve(res.message);
+            else reject(res.message);
+          },
+          error: function (xhr) {
+            console.error("Error AJAX:", xhr.responseText);
+            reject('No se pudo agregar la reserva.');
+          }
+        });
       }).catch(error => Swal.showValidationMessage(error));
     }
   }).then((result) => {
@@ -991,6 +915,7 @@ function abrirCrearReserva() {
     }
   });
 }
+
 
 // Buscar libros mientras se escribe
 function buscarLibro(texto) {
@@ -1087,7 +1012,7 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
     <td>${titulo}</td>
     <td>${autor}</td>
     <td>
-      <input type="number" value="1" min="1" max="${stock}" 
+      <input type="text" value="1" 
              class="form-control form-control-sm cantidad">
       <small class="text-muted">Stock: ${stock}</small>
     </td>
@@ -1159,158 +1084,6 @@ function validarRangoFechas(formElement) {
 
     // 4. Si la validación es exitosa, permite el envío del formulario
     return true;
-}
-</script>
-
-
-<script>
-function editarUsuario(id) {
-    // Primero obtenemos los datos del usuario
-    $.ajax({
-        url: 'controllers/info_usuario.php',
-        type: 'POST',
-        data: { id: id },
-        dataType: 'json',
-        success: function(response) {
-            if (!response.success) {
-                Swal.fire('⚠️ Atención', response.message, 'warning');
-                return;
-            }
-
-            const usuario = response.data;
-
-            //se crea variable para cargar el select con el que tiene el usuario
-            let opcionesCargo = '';
-
-            if (usuario.tipo_usuario === 'Administrador') {
-                opcionesCargo = `
-                    <option value="Administrador" selected>Administrador</option>
-                    <option value="Empleado">Empleado</option>
-                    <option value="Cliente">Cliente</option>
-                `;
-            } else if (usuario.tipo_usuario === 'Empleado') {
-                opcionesCargo = `
-                    <option value="Administrador">Administrador</option>
-                    <option value="Empleado" selected>Empleado</option>
-                    <option value="Cliente">Cliente</option>
-                `;
-            } else if (usuario.tipo_usuario === 'Cliente') {
-                opcionesCargo = `
-                    <option value="Administrador">Administrador</option>
-                    <option value="Empleado">Empleado</option>
-                    <option value="Cliente" selected>Cliente</option>
-                `;
-            }
-
-            Swal.fire({
-                title: 'Editar Usuario',
-                html: `
-                    <form id="formEditarUsuario" class="form-control" method="POST" enctype="multipart/form-data">
-
-                        <div class="mb-3">
-                            <label class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" value="${usuario.nombre_usuario}" required>
-                        </div>
-                         <div class="mb-3">
-                            <label class="form-label">Apellido</label>
-                            <input type="text" class="form-control" id="apellido" value="${usuario.apellido_usuario}" required>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña Antigua</label>
-                            <input type="password" class="form-control" id="passwordOld">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Contraseña Nueva</label>
-                            <input type="password" class="form-control" id="passwordNueva">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label"> Correo Electrónico</label>
-                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Cargo</label>
-                              <select class="form-control" id="cargo" required>
-                                ${opcionesCargo}
-                              </select>
-                        </div>
-                    </form>
-                `,
-                showCancelButton: true,
-                confirmButtonText: 'Guardar',
-                cancelButtonText: 'Cancelar',
-                focusConfirm: false,
-
-                preConfirm: () => {
-                    const formData = new FormData();
-                    formData.append('id', id);
-                    formData.append('nombre', $('#nombre').val().trim());
-                    formData.append('apellido', $('#apellido').val().trim());
-                    formData.append('correo', $('#correo').val().trim());
-                    formData.append('passwordOld', $('#passwordOld').val().trim());
-                    formData.append('passwordNueva', $('#passwordNueva').val().trim());
-                    formData.append('cargo', $('#cargo').val());
-                    return formData;
-                }
-            }).then(result => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: 'controllers/editar_Usuario.php',
-                        type: 'POST',
-                        data: result.value,
-                        contentType: false,
-                        processData: false,
-                        dataType: 'json',
-                        success: function(res) {
-                            if (res.success) {
-                                Swal.fire('✅ Éxito', res.message, 'success').then(() => location.reload());
-                            } else {
-                                Swal.fire('⚠️ Atención', res.message, 'warning');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire('❌ Error', 'Error en el servidor', 'error');
-                            console.error(error, xhr.responseText);
-                        }
-                    });
-                }
-            });
-        },
-        error: function() {
-            Swal.fire('❌ Error', 'No se pudo cargar la información del usuario', 'error');
-        }
-    });
-}
-
-</script>
-
-<script>
-function eliminarEmpleado(id) {
-  Swal.fire({
-    title: "¿Deseas eliminar el empleado?",
-    text: "No podrás revertir esto",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Sí, eliminar"
-  }).then((result) => {
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Eliminado!",
-        text: "El empleado ha sido eliminado exitosamente.",
-        icon: "success",
-        timer: 2000,      // el tiempo que se demora en cerrar el alert 
-        showConfirmButton: false
-      }).then(() => {
-        // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "./controllers/eliminar.php?id=" + id;
-      });
-    }
-  });
 }
 </script>
 

@@ -17,7 +17,29 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
 //consulta para obtener los libros
-$resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva");
+$resultado = $mysql->efectuarConsulta("(SELECT 
+        prestamo.id_prestamo,
+        prestamo.fecha_prestamo,
+        prestamo.fk_reserva,
+        reserva.estado_reserva,
+        reserva.fecha_reserva
+     FROM prestamo 
+     INNER JOIN reserva ON reserva.id_reserva = prestamo.fk_reserva
+    )
+    
+    UNION
+    
+    (SELECT 
+        NULL AS id_prestamo,
+        NULL AS fecha_prestamo,
+        reserva.id_reserva AS fk_reserva,
+        reserva.estado_reserva,
+        reserva.fecha_reserva
+     FROM reserva
+     WHERE reserva.estado_reserva = 'Rechazada'
+     AND reserva.id_reserva NOT IN (SELECT fk_reserva FROM prestamo)
+    );
+");
 ?>
 
 <!doctype html>
@@ -291,9 +313,11 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                         <table id="tablaPrestamos" class="table table-striped table-bordered" width="100%">
                             <thead class="table-success">
                             <tr>
-                                <th>ID</th>
+                                <th>ID Prestamo</th>
                                 <th>Fecha Prestamo </th>
+                                <th>ID Reserva</th>
                                 <th>Estado</th>
+                                <th>Fecha Reserva</th>
                                 <th>Devolución</th>
                                 <th>Acciones</th>
                             </tr>
@@ -303,40 +327,38 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                                 <tr>
                                 <td><?= $fila['id_prestamo'] ?></td>
                                 <td><?= $fila['fecha_prestamo'] ?></td>
-                                <td>
+                                <td><?= $fila['fk_reserva'] ?></td>
+                                                                <td>
                                   <?php
-                                    $estado = $fila['estado_reserva'];
-                                    $badgeClass = '';
-                                    $icono = '';
-                                    $texto = '';
+                                      $estado = $fila['estado_reserva'];
 
-                                      if ($estado == 'Aprobada') {
-                                          $badgeClass = 'bg-success text-white';
-                                          $icono = 'bi-check-circle-fill text-white';
-                                          $texto = 'Aprobada';
-                                    } elseif ($estado == 'Rechazada') {
-                                        $badgeClass = 'bg-danger';
-                                        $icono = 'bi-x-circle-fill';
-                                        $texto = 'Rechazada';
-                                    } elseif ($estado == 'Cancelada') {
-                                        $badgeClass = 'bg-secondary';
-                                        $icono = 'bi-slash-circle-fill';
-                                        $texto = 'Cancelada';
-                                    } else {
-                                        // Si llega otro valor inesperado, se muestra neutro
-                                        $badgeClass = 'bg-light text-dark border';
-                                        $icono = 'bi-question-circle';
-                                        $texto = htmlspecialchars($estado);
-                                    }
+                                      // Configuración de estados en un arreglo limpio y escalable
+                                      $estilos = [
+                                          'Aprobada' => [
+                                              'clase' => 'bg-success text-white',
+                                              'icono' => 'bi-check-circle-fill'
+                                          ],
+                                          'Rechazada' => [
+                                              'clase' => 'bg-danger text-white',
+                                              'icono' => 'bi-x-circle-fill'
+                                          ]
+                                      ];
+
+                                      // Valores por defecto si no coincide con ninguno
+                                      $badgeClass = $estilos[$estado]['clase'] ?? 'bg-secondary text-dark';
+                                      $icono      = $estilos[$estado]['icono'] ?? 'bi-question-circle';
+                                      $texto      = htmlspecialchars($estado);
                                   ?>
-                                  <span class="badge <?php echo $badgeClass; ?> px-2 py-2 fw-semibold">
-                                    <i class="bi <?php echo $icono; ?> me-1"></i>
-                                    <?php echo $texto; ?>
+
+                                  <span class="badge d-inline-flex align-items-center gap-1 px-3 py-2 rounded-pill <?php echo $badgeClass; ?>">
+                                      <i class="bi <?php echo $icono; ?>"></i>
+                                      <?php echo $texto; ?>
                                   </span>
                                 </td>
+                                <td><?= $fila['fecha_reserva'] ?></td>
                                 <td></td>
                                 <td class="text-center">
-                                  <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                     <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
                                 </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -435,7 +457,8 @@ $(document).ready(function() {
     pageLength: 5,
     lengthMenu: [5, 10, 20, 50],
     responsive: true,
-    autoWidth: true
+    autoWidth: true,
+    order: [[2, "asc"]]
 });
 
 });

@@ -426,7 +426,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     ></script>
 <script>
 $(document).ready(function() {
-   $('#tablaEmpleados').DataTable({
+   $('#tablaUsuarios').DataTable({
     language: {
         url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
     },
@@ -440,40 +440,35 @@ $(document).ready(function() {
 </script>
 
 <script>
-function agregarLibro() {
+function agregarUsuario() {
   Swal.fire({
-    title: 'Agregar Nuevo Libro',
+    title: 'Agregar Nuevo Usuario',
     html: `
-      <form id="formAgregarLibro" class="text-start" action="controllers/agregarLibro.php" method="POST">
+      <form id="formAgregarUsuario" class="text-start" action="controllers/agregarUsuario.php" method="POST">
         <div class="mb-3">
-          <label for="titulo_libro" class="form-label">Titulo</label>
-          <input type="text" class="form-control" id="titulo_libro" name="titulo_libro" required>
+          <label for="nombre_usuario" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
         </div>
         <div class="mb-3">
-          <label for="autor_libro" class="form-label">Autor</label>
-          <input type="text" class="form-control" id="autor_libro" name="autor_libro" required>
+          <label for="apellido_usuario" class="form-label">Apellido</label>
+          <input type="text" class="form-control" id="apellido_usuario" name="apellido_usuario" required>
         </div>
         <div class="mb-3">
-          <label for="ISBN" class="form-label">ISBN</label>
-          <input type="text" class="form-control" id="ISBN" name="ISBN" required>
+          <label for="email_usuario" class="form-label">Correo Electrónico</label>
+          <input type="email" class="form-control" id="email_usuario" name="email_usuario"  autocomplete="username" required>
         </div>
         <div class="mb-3">
-          <label for="categoria_libro" class="form-label">Categoria</label>
-          <select class="form-select" id="categoria_libro" name="categoria_libro" required>
+          <label for="password_usuario" class="form-label">Contraseña</label>
+          <input type="password" class="form-control" id="password_usuario" autocomplete="current-password" name="password_usuario" required>
+        </div>
+        <div class="mb-3">
+          <label for="tipo_usuario" class="form-label">Tipo de Usuario</label>
+          <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
             <option value="" selected disabled>Seleccione un tipo</option>
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
+            <option value="Administrador">Administrador</option>
+            <option value="Empleado">Empleado</option>
+            <option value="Cliente">Cliente</option>
           </select>
-        </div>
-        <div class="mb-3">
-            <label for="cantidad" class="form-label">Cantidad</label>
-            <input type="number" class="form-control" id="cantidad" name="cantidad" required>
         </div>
       </form>
     `,
@@ -482,23 +477,23 @@ function agregarLibro() {
     cancelButtonText: 'Cancelar',
     focusConfirm: false,
     preConfirm: () => {
-      const titulo = document.getElementById('titulo_libro').value.trim();
-      const autor = document.getElementById('autor_libro').value.trim();
-      const ISBN = document.getElementById('ISBN').value.trim();
-      const categoria = document.getElementById('categoria_libro').value.trim();
-      const cantidad = document.getElementById('cantidad').value.trim();
+      const nombre = document.getElementById('nombre_usuario').value.trim();
+      const apellido = document.getElementById('apellido_usuario').value.trim();
+      const email = document.getElementById('email_usuario').value.trim();
+      const password = document.getElementById('password_usuario').value.trim();
+      const tipo = document.getElementById('tipo_usuario').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categoria || !cantidad) {
+      if (!nombre || !apellido || !email || !password || !tipo) {
         Swal.showValidationMessage('Por favor, complete todos los campos.');
         return false;
       }
 
       const formData = new FormData();
-      formData.append('titulo_libro', titulo);
-      formData.append('autor_libro', autor);
-      formData.append('ISBN_libro', ISBN);
-      formData.append('categoria_libro', categoria);
-      formData.append('cantidad_libro', cantidad);
+      formData.append('nombre_usuario', nombre);
+      formData.append('apellido_usuario', apellido);
+      formData.append('email_usuario', email);
+      formData.append('password_usuario', password);
+      formData.append('tipo_usuario', tipo);
       return formData;
     }
   }).then((result) => {
@@ -506,7 +501,7 @@ function agregarLibro() {
       const formData = result.value;
 
       $.ajax({
-        url: '../controllers/agregarLibro.php',
+        url: 'controllers/agregarUsuario.php',
         type: 'POST',
         data: formData,
         contentType: false,
@@ -532,11 +527,10 @@ function agregarLibro() {
 </script>
 
 <script>
-
-function editarLibro(id) {
+function editarUsuario(id) {
     // Primero obtenemos los datos del usuario
     $.ajax({
-        url: '../controllers/info_libro.php',
+        url: 'controllers/info_usuario.php',
         type: 'POST',
         data: { id: id },
         dataType: 'json',
@@ -546,134 +540,66 @@ function editarLibro(id) {
                 return;
             }
 
-            const libro = response.data;
+            const usuario = response.data;
 
             //se crea variable para cargar el select con el que tiene el usuario
-            let categoriaLibro = '';
+            let opcionesCargo = '';
 
-            if (libro.categoria_libro === 'Ficcion') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
+            if (usuario.tipo_usuario === 'Administrador') {
+                opcionesCargo = `
+                    <option value="Administrador" selected>Administrador</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Cliente">Cliente</option>
                 `;
-            } else if (libro.categoria_libro === 'No ficcion') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
+            } else if (usuario.tipo_usuario === 'Empleado') {
+                opcionesCargo = `
+                    <option value="Administrador">Administrador</option>
+                    <option value="Empleado" selected>Empleado</option>
+                    <option value="Cliente">Cliente</option>
                 `;
-            } else if (libro.categoria_libro  === 'De Referencia') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Libros de Texto') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Tecnicos o Especializados') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Practicos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Poeticos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Religiosos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
+            } else if (usuario.tipo_usuario === 'Cliente') {
+                opcionesCargo = `
+                    <option value="Administrador">Administrador</option>
+                    <option value="Empleado">Empleado</option>
+                    <option value="Cliente" selected>Cliente</option>
                 `;
             }
 
-
             Swal.fire({
-                title: 'Editar Libro',
+                title: 'Editar Usuario',
                 html: `
-                    <form id="formEditarLibro" class="form-control" method="POST" enctype="multipart/form-data">
+                    <form id="formEditarUsuario" class="form-control" method="POST" enctype="multipart/form-data">
 
                         <div class="mb-3">
-                            <label class="form-label">Titulo</label>
-                            <input type="text" class="form-control" id="titulo" value="${libro.titulo_libro}" required>
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" value="${usuario.nombre_usuario}" required>
+                        </div>
+                         <div class="mb-3">
+                            <label class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="apellido" value="${usuario.apellido_usuario}" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Autor</label>
-                            <input type="text" class="form-control" id="autor" value="${libro.autor_libro}" required>
+                            <label class="form-label">Contraseña Antigua</label>
+                            <input type="password" class="form-control" id="passwordOld">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="ISBN" value="${libro.ISBN_libro}" disabled>
+                            <label class="form-label">Contraseña Nueva</label>
+                            <input type="password" class="form-control" id="passwordNueva">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label"> Categoria</label>
-                            <select class="form-control" id="categoria" required>
-                            ${categoriaLibro} //se llama la variable
-                            </select>
+                            <label class="form-label"> Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" value="${usuario.email_usuario}">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad" value="${libro.cantidad_libro}" required>
+                            <label class="form-label">Cargo</label>
+                              <select class="form-control" id="cargo" required>
+                                ${opcionesCargo}
+                              </select>
                         </div>
-
                     </form>
                 `,
                 showCancelButton: true,
@@ -684,17 +610,18 @@ function editarLibro(id) {
                 preConfirm: () => {
                     const formData = new FormData();
                     formData.append('id', id);
-                    formData.append('titulo', $('#titulo').val().trim());
-                    formData.append('autor', $('#autor').val().trim());
-                    formData.append('ISBN', $('#ISBN').val().trim());
-                    formData.append('categoria', $('#categoria').val().trim());
-                    formData.append('cantidad', $('#cantidad').val());
+                    formData.append('nombre', $('#nombre').val().trim());
+                    formData.append('apellido', $('#apellido').val().trim());
+                    formData.append('correo', $('#correo').val().trim());
+                    formData.append('passwordOld', $('#passwordOld').val().trim());
+                    formData.append('passwordNueva', $('#passwordNueva').val().trim());
+                    formData.append('cargo', $('#cargo').val());
                     return formData;
                 }
             }).then(result => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '../controllers/editar_Libro.php',
+                        url: 'controllers/editar_Usuario.php',
                         type: 'POST',
                         data: result.value,
                         contentType: false,
@@ -723,36 +650,32 @@ function editarLibro(id) {
 
 </script>
 
-
 <script>
-function eliminarLibro(id) {
+function eliminarEmpleado(id) {
   Swal.fire({
-    title: "¿Deseas eliminar el libro?",
+    title: "¿Deseas eliminar el empleado?",
     text: "No podrás revertir esto",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
     cancelButtonColor: "#d33",
-    confirmButtonText: "Sí, eliminar",
-    cancelButtonText: "Cancelar"
+    confirmButtonText: "Sí, eliminar"
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire({
         title: "Eliminado!",
-        text: "El libro ha sido eliminado exitosamente.",
+        text: "El empleado ha sido eliminado exitosamente.",
         icon: "success",
         timer: 2000,      // el tiempo que se demora en cerrar el alert 
         showConfirmButton: false
       }).then(() => {
         // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "../controllers/eliminarLibro.php?id=" + id;
+        window.location.href = "./controllers/eliminar.php?id=" + id;
       });
     }
   });
 }
 </script>
-
-
 
 
   </body>

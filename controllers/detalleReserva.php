@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_reserva'])) {
     $mysql->conectar();
 
     $query = "
-      select reserva.id_reserva,reserva.fecha_reserva,reserva.estado_reserva,libro.id_libro,libro.ISBN_libro,libro.titulo_libro,libro.autor_libro,reserva.estado_reserva,libro.categoria_libro,usuario.nombre_usuario from reserva inner join reserva_has_libro on reserva_has_libro.reserva_id_reserva=reserva.id_reserva inner join libro on reserva_has_libro.libro_id_libro=libro.id_libro inner join usuario on reserva.fk_usuario=usuario.id_usuario where reserva.id_reserva='$idReserva';
+      select reserva.id_reserva,reserva.fecha_reserva,reserva.estado_reserva,libro.id_libro,libro.ISBN_libro,libro.titulo_libro,libro.autor_libro,libro.categoria_libro,usuario.nombre_usuario from reserva inner join reserva_has_libro on reserva_has_libro.reserva_id_reserva=reserva.id_reserva inner join libro on reserva_has_libro.libro_id_libro=libro.id_libro inner join usuario on reserva.fk_usuario=usuario.id_usuario where reserva.id_reserva='$idReserva';
     ";
 
     $resultado = $mysql->efectuarConsulta($query);

@@ -17,7 +17,29 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 $idUsuario=$_SESSION['id_usuario'];
 
-$resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FROM prestamo inner join reserva on reserva.id_reserva=prestamo.fk_reserva where reserva.fk_usuario=$idUsuario");
+$resultado=$mysql->efectuarConsulta("SELECT 
+        prestamo.id_prestamo,
+        prestamo.fecha_prestamo,
+        prestamo.fk_reserva,
+        reserva.estado_reserva,
+        reserva.fecha_reserva
+    FROM prestamo 
+    INNER JOIN reserva ON reserva.id_reserva = prestamo.fk_reserva 
+    WHERE reserva.fk_usuario = $idUsuario
+    
+    UNION
+    
+    SELECT 
+        NULL as id_prestamo,
+        NULL as fecha_prestamo,
+        reserva.id_reserva as fk_reserva,
+        reserva.estado_reserva,
+        reserva.fecha_reserva
+    FROM reserva
+    WHERE reserva.fk_usuario = $idUsuario 
+    AND reserva.estado_reserva IN ('Cancelada', 'Rechazada')
+    AND reserva.id_reserva NOT IN (SELECT fk_reserva FROM prestamo)
+");
 ?>
 
 <!doctype html>
@@ -161,35 +183,34 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
     <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
   </a>
 
-  <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-    <!-- Cabecera del usuario -->
-    <li class="bg-primary text-white text-center rounded-top py-3">
-      <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
-      <small><?php echo $rol; ?></small>
-    </li>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+                <!-- Cabecera del usuario -->
+                <li class="bg-primary text-white text-center rounded-top py-3">
+                  <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                  <small><?php echo $rol; ?></small>
+                </li>
 
-    <!-- Separador -->
-    <li><hr class="dropdown-divider m-0"></li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
 
-    <!-- Opciones del menu -->
-    <li>
-      <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-        <i class="bi bi-person me-2 text-secondary"></i> Perfil
-      </a>
-    </li>
+                <!-- Opciones del menu -->
+                <li>
+                  <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
+                  </a>
+                </li>
 
-    <!-- Separador -->
-    <li><hr class="dropdown-divider m-0"></li>
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
 
-    <!-- Opción de cerrar sesión -->
-    <li>
-      <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-        <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-      </a>
-    </li>
-  </ul>
-</li>
-
+                <!-- Opción de cerrar sesión -->
+                <li>
+                  <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
             <!--end::User Menu Dropdown-->
           </ul>
           <!--end::End Navbar Links-->
@@ -280,9 +301,11 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                         <table id="tablaPrestamos" class="table table-striped table-bordered" width="100%">
                             <thead class="table-success">
                             <tr>
-                                <th>ID</th>
+                                <th>ID Prestamo</th>
                                 <th>Fecha Prestamo </th>
+                                <th>ID Reserva</th>
                                 <th>Estado</th>
+                                <th>Fecha Reserva</th>
                                 <th>Acciones</th>
                             </tr>
                             </thead>
@@ -291,37 +314,39 @@ $resultado=$mysql->efectuarConsulta("SELECT prestamo.*,reserva.estado_reserva FR
                                 <tr>
                                 <td><?= $fila['id_prestamo'] ?></td>
                                 <td><?= $fila['fecha_prestamo'] ?></td>
+                                <td><?= $fila['fk_reserva'] ?></td>
                                 <td>
                                   <?php
-                                    $estado = $fila['estado_reserva'];
-                                    $badgeClass = '';
-                                    $icono = '';
-                                    $texto = '';
+                                      $estado = $fila['estado_reserva'];
 
-                                    if ($estado == 'Aprobada') {
-                                        $badgeClass = 'bg-success';
-                                        $icono = 'bi-check-circle-fill';
-                                        $texto = 'Aprobada';
-                                    } elseif ($estado == 'Rechazada') {
-                                        $badgeClass = 'bg-danger';
-                                        $icono = 'bi-x-circle-fill';
-                                        $texto = 'Rechazada';
-                                    } elseif ($estado == 'Cancelada') {
-                                        $badgeClass = 'bg-secondary';
-                                        $icono = 'bi-slash-circle-fill';
-                                        $texto = 'Cancelada';
-                                    } else {
-                                        // Si llega otro valor inesperado, se muestra neutro
-                                        $badgeClass = 'bg-light text-dark border';
-                                        $icono = 'bi-question-circle';
-                                        $texto = htmlspecialchars($estado);
-                                    }
+                                      // Configuración de estados en un arreglo limpio y escalable
+                                      $estilos = [
+                                          'Aprobada' => [
+                                              'clase' => 'bg-success text-white',
+                                              'icono' => 'bi-check-circle-fill'
+                                          ],
+                                          'Rechazada' => [
+                                              'clase' => 'bg-danger text-white',
+                                              'icono' => 'bi-x-circle-fill'
+                                          ],
+                                          'Cancelada' => [
+                                              'clase' => 'bg-dark text-white',
+                                              'icono' => 'bi-slash-circle-fill'
+                                          ]
+                                      ];
+
+                                      // Valores por defecto si no coincide con ninguno
+                                      $badgeClass = $estilos[$estado]['clase'] ?? 'bg-secondary text-dark';
+                                      $icono      = $estilos[$estado]['icono'] ?? 'bi-question-circle';
+                                      $texto      = htmlspecialchars($estado);
                                   ?>
-                                  <span class="badgige <?php echo $badgeClass; ?> px-2 py-2 fw-semibold">
-                                    <i class="bi <?php echo $icono; ?> me-1"></i>
-                                    <?php echo $texto; ?>
+
+                                  <span class="badge d-inline-flex align-items-center gap-1 px-3 py-2 rounded-pill <?php echo $badgeClass; ?>">
+                                      <i class="bi <?php echo $icono; ?>"></i>
+                                      <?php echo $texto; ?>
                                   </span>
                                 </td>
+                                <td><?= $fila['fecha_reserva'] ?></td>
                                 <td class="text-center">
                                      <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
                                 </td>

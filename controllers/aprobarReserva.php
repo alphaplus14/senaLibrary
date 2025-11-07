@@ -20,48 +20,54 @@ try {
     $mysql = new MySQL();
     $mysql->conectar();
 
+    // Verificar que la reserva exista y esté pendiente
+    $queryVerificar = "SELECT estado_reserva FROM reserva WHERE id_reserva = $idReserva";
+    $resultadoVerificar = $mysql->efectuarConsulta($queryVerificar);
+    
+    if (mysqli_num_rows($resultadoVerificar) === 0) {
+        echo json_encode(['success' => false, 'message' => 'La reserva no existe']);
+        $mysql->desconectar();
+        exit();
+    }
+    
+    $filaReserva = mysqli_fetch_assoc($resultadoVerificar);
+    if ($filaReserva['estado_reserva'] !== 'Pendiente') {
+        echo json_encode(['success' => false, 'message' => 'La reserva ya fue procesada anteriormente']);
+        $mysql->desconectar();
+        exit();
+    }
+
     // Obtener los libros de la reserva
     $queryLibros = "SELECT libro_id_libro FROM reserva_has_libro WHERE reserva_id_reserva = $idReserva";
     $resultadoLibros = $mysql->efectuarConsulta($queryLibros);
 
     if (mysqli_num_rows($resultadoLibros) > 0) {
 
-        // Cambiar el estado de la reserva
-        $query = "UPDATE reserva SET estado_reserva = 'Aprobada' WHERE id_reserva = $idReserva";
-        $resultado = $mysql->efectuarConsulta($query);
+        // Cambiar el estado de la reserva a Aprobada
+        $queryActualizar = "UPDATE reserva SET estado_reserva = 'Aprobada' WHERE id_reserva = $idReserva";
+        $resultadoActualizar = $mysql->efectuarConsulta($queryActualizar);
 
         // Registrar prestamo
-        $queryPrestamos = "INSERT INTO prestamo (fk_reserva, fecha_prestamo) VALUES ($idReserva, NOW())";
-        $resultadoPrestamo = $mysql->efectuarConsulta($queryPrestamos);
+        $queryPrestamo = "INSERT INTO prestamo (fk_reserva, fecha_prestamo) VALUES ($idReserva, NOW())";
+        $resultadoPrestamo = $mysql->efectuarConsulta($queryPrestamo);
 
-        // Descontar stock de libros
-        $todosActualizados = true;
-        while ($libro = mysqli_fetch_assoc($resultadoLibros)) {
-            $queryStock = "UPDATE libro SET cantidad_libro = cantidad_libro - 1 WHERE id_libro = " . $libro['libro_id_libro'];
-            $resultadoStock = $mysql->efectuarConsulta($queryStock);
-            if (!$resultadoStock) $todosActualizados = false;
-        }
+        $mysql->desconectar();
 
-        if ($resultado && $resultadoPrestamo && $todosActualizados) {
-            echo json_encode(['success' => true, 'message' => 'Reserva aprobada exitosamente']);
+        if ($resultadoActualizar && $resultadoPrestamo) {
+            echo json_encode(['success' => true, 'message' => 'Reserva aprobada y préstamo registrado exitosamente']);
         } else {
-            echo json_encode(['success' => false, 'message' => 'Error al aprobar la reserva']);
+            echo json_encode(['success' => false, 'message' => 'Error al aprobar la reserva o registrar el préstamo']);
         }
 
     } else {
+        $mysql->desconectar();
         echo json_encode(['success' => false, 'message' => 'No se encontraron libros en la reserva']);
     }
 
 } catch (Exception $e) {
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
-} finally {
-    // Intentar cerrar, pero sin acceder a las propiedades del modelo
-    try {
-        if (isset($mysql)) {
-            @$mysql->desconectar();
-        }
-    } catch (Throwable $e) {
-        // Ignorar si ya esta cerrada
+    if (isset($mysql)) {
+        @$mysql->desconectar();
     }
+    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
 ?>

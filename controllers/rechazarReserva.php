@@ -35,21 +35,7 @@ try {
         throw new Exception('Error al actualizar el estado de la reserva');
     }
 
-    // Devolver los libros al stock
-    $todosActualizados = true;
-    while ($libro = mysqli_fetch_assoc($resultadoLibros)) {
-        $queryStock = "
-            UPDATE libro 
-            SET cantidad_libro = cantidad_libro + 1 
-            WHERE id_libro = " . $libro['libro_id_libro'];
-        $resultadoStock = $mysql->efectuarConsulta($queryStock);
-
-        if (!$resultadoStock) {
-            $todosActualizados = false;
-        }
-    }
-
-    if ($resultado && $todosActualizados) {
+    if ($resultado) {
         echo json_encode([
             'success' => true,
             'message' => 'Reserva rechazada exitosamente'
