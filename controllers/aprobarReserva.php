@@ -1,10 +1,12 @@
 <?php
 require_once '../models/MySQL.php';
+require_once '../controllers/emailService.php'; 
 session_start();
 
 header('Content-Type: application/json');
 
 try {
+
     if (!isset($_SESSION['tipo_usuario']) || $_SESSION['tipo_usuario'] != 'Administrador') {
         echo json_encode(['success' => false, 'message' => 'No autorizado']);
         exit();
@@ -20,54 +22,67 @@ try {
     $mysql = new MySQL();
     $mysql->conectar();
 
-    // Verificar que la reserva exista y esté pendiente
-    $queryVerificar = "SELECT estado_reserva FROM reserva WHERE id_reserva = $idReserva";
-    $resultadoVerificar = $mysql->efectuarConsulta($queryVerificar);
-    
-    if (mysqli_num_rows($resultadoVerificar) === 0) {
-        echo json_encode(['success' => false, 'message' => 'La reserva no existe']);
-        $mysql->desconectar();
-        exit();
-    }
-    
-    $filaReserva = mysqli_fetch_assoc($resultadoVerificar);
-    if ($filaReserva['estado_reserva'] !== 'Pendiente') {
-        echo json_encode(['success' => false, 'message' => 'La reserva ya fue procesada anteriormente']);
-        $mysql->desconectar();
+    //  Verificar estado de la reserva
+    $reserva = $mysql->efectuarConsulta("SELECT fk_usuario, estado_reserva FROM reserva WHERE id_reserva = $idReserva");
+    $res = mysqli_fetch_assoc($reserva);
+
+    if (!$res || $res['estado_reserva'] != 'Pendiente') {
+        echo json_encode(['success' => false, 'message' => 'La reserva ya fue procesada']);
         exit();
     }
 
-    // Obtener los libros de la reserva
-    $queryLibros = "SELECT libro_id_libro FROM reserva_has_libro WHERE reserva_id_reserva = $idReserva";
-    $resultadoLibros = $mysql->efectuarConsulta($queryLibros);
+    $idUsuario = $res['fk_usuario'];
 
-    if (mysqli_num_rows($resultadoLibros) > 0) {
+    // 📌 Traer libros de la reserva
+    $libros = $mysql->efectuarConsulta("
+        SELECT libro.id_libro, libro.titulo_libro, libro.cantidad_libro
+        FROM reserva_has_libro
+        INNER JOIN libro ON libro.id_libro = reserva_has_libro.libro_id_libro
+        WHERE reserva_id_reserva = $idReserva
+    ");
 
-        // Cambiar el estado de la reserva a Aprobada
-        $queryActualizar = "UPDATE reserva SET estado_reserva = 'Aprobada' WHERE id_reserva = $idReserva";
-        $resultadoActualizar = $mysql->efectuarConsulta($queryActualizar);
-
-        // Registrar prestamo
-        $queryPrestamo = "INSERT INTO prestamo (fk_reserva, fecha_prestamo) VALUES ($idReserva, NOW())";
-        $resultadoPrestamo = $mysql->efectuarConsulta($queryPrestamo);
-
-        $mysql->desconectar();
-
-        if ($resultadoActualizar && $resultadoPrestamo) {
-            echo json_encode(['success' => true, 'message' => 'Reserva aprobada y préstamo registrado exitosamente']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Error al aprobar la reserva o registrar el préstamo']);
+    //  Verificar stock
+    while ($row = mysqli_fetch_assoc($libros)) {
+        if ($row['cantidad_libro'] <= 0) {
+            echo json_encode(['success' => false, 'message' => 'No hay stock disponible para: ' . $row['titulo_libro']]);
+            exit();
         }
-
-    } else {
-        $mysql->desconectar();
-        echo json_encode(['success' => false, 'message' => 'No se encontraron libros en la reserva']);
     }
+
+    //  Restar stock
+    $mysql->efectuarConsulta("
+        UPDATE libro 
+        INNER JOIN reserva_has_libro ON libro.id_libro = reserva_has_libro.libro_id_libro
+        SET libro.cantidad_libro = libro.cantidad_libro - 1
+        WHERE reserva_has_libro.reserva_id_reserva = $idReserva
+    ");
+
+    //  Cambiar estado de la reserva
+    $mysql->efectuarConsulta("UPDATE reserva SET estado_reserva='Aprobada' WHERE id_reserva=$idReserva");
+
+    //  Registrar préstamo
+    $mysql->efectuarConsulta("INSERT INTO prestamo (fk_reserva, fecha_prestamo, fecha_devolucion_prestamo) VALUES ($idReserva, NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY))");
+
+    //  Obtener correo del usuario
+    $usuario = $mysql->efectuarConsulta("SELECT email_usuario, nombre_usuario FROM usuario WHERE id_usuario = $idUsuario
+");
+    $usuario = mysqli_fetch_assoc($usuario);
+
+    // 📧 Enviar correo
+    $asunto = " Reserva Aprobada - SenaLibrary";
+    $mensaje = "
+        <h3>¡Tu reserva ha sido aprobada!</h3>
+        <p>Hola <strong>{$usuario['nombre_usuario']}</strong>, tu reserva #$idReserva ha sido aprobada.</p>
+        <p>Puedes acercarte a recoger tus libros en la fecha correspondiente.</p>
+        <br><strong>SenaLibrary</strong>
+    ";
+
+    enviarCorreo($usuario['email_usuario'], $asunto, $mensaje);
+
+    echo json_encode(['success' => true, 'message' => 'Reserva aprobada correctamente y correo enviado']);
+
+    $mysql->desconectar();
 
 } catch (Exception $e) {
-    if (isset($mysql)) {
-        @$mysql->desconectar();
-    }
     echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
-?>

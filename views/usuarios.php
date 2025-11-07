@@ -444,7 +444,7 @@ function agregarUsuario() {
   Swal.fire({
     title: 'Agregar Nuevo Usuario',
     html: `
-      <form id="formAgregarUsuario" class="text-start" action="controllers/agregarUsuario.php" method="POST">
+      <form id="formAgregarUsuario" class="text-start" action="../controllers/agregarUsuario.php" method="POST">
         <div class="mb-3">
           <label for="nombre_usuario" class="form-label">Nombre</label>
           <input type="text" class="form-control" id="nombre_usuario" name="nombre_usuario" required>
@@ -501,7 +501,7 @@ function agregarUsuario() {
       const formData = result.value;
 
       $.ajax({
-        url: 'controllers/agregarUsuario.php',
+        url: '../controllers/agregarUsuario.php',
         type: 'POST',
         data: formData,
         contentType: false,
