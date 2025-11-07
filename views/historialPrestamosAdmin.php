@@ -22,7 +22,8 @@ $resultado = $mysql->efectuarConsulta("(SELECT
         prestamo.fecha_prestamo,
         prestamo.fk_reserva,
         reserva.estado_reserva,
-        reserva.fecha_reserva
+        reserva.fecha_reserva,
+        prestamo.fecha_devolucion_prestamo
      FROM prestamo 
      INNER JOIN reserva ON reserva.id_reserva = prestamo.fk_reserva
     )
@@ -34,7 +35,8 @@ $resultado = $mysql->efectuarConsulta("(SELECT
         NULL AS fecha_prestamo,
         reserva.id_reserva AS fk_reserva,
         reserva.estado_reserva,
-        reserva.fecha_reserva
+        reserva.fecha_reserva,
+        null as fecha_devolucion_prestamo
      FROM reserva
      WHERE reserva.estado_reserva = 'Rechazada'
      AND reserva.id_reserva NOT IN (SELECT fk_reserva FROM prestamo)
@@ -356,7 +358,7 @@ $resultado = $mysql->efectuarConsulta("(SELECT
                                   </span>
                                 </td>
                                 <td><?= $fila['fecha_reserva'] ?></td>
-                                <td></td>
+                                <td><?= $fila['fecha_devolucion_prestamo'] ?></td>
                                 <td class="text-center">
                                      <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
                                 </td>

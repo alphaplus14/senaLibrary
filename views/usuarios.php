@@ -15,8 +15,9 @@ $mysql->conectar();
 
 $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
+$idUsuario=$_SESSION['id_usuario'];
 //consulta para obtener los usuarios
-$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
+$resultado=$mysql->efectuarConsulta("SELECT * FROM usuario where id_usuario!='$idUsuario'");
 ?>
 
 <!doctype html>
@@ -529,7 +530,7 @@ function agregarUsuario() {
 function editarUsuario(id) {
     // Primero obtenemos los datos del usuario
     $.ajax({
-        url: 'controllers/info_usuario.php',
+        url: '../controllers/info_usuario.php',
         type: 'POST',
         data: { id: id },
         dataType: 'json',
@@ -620,7 +621,7 @@ function editarUsuario(id) {
             }).then(result => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: 'controllers/editar_Usuario.php',
+                        url: '../controllers/editar_Usuario.php',
                         type: 'POST',
                         data: result.value,
                         contentType: false,
@@ -669,13 +670,12 @@ function eliminarEmpleado(id) {
         showConfirmButton: false
       }).then(() => {
         // Redirige al controlador de eliminar  cuando cierra el alert 
-        window.location.href = "./controllers/eliminar.php?id=" + id;
+        window.location.href = "../controllers/eliminar.php?id=" + id;
       });
     }
   });
 }
 </script>
-
 
   </body>
   <!--end::Body-->

@@ -4,6 +4,7 @@ require_once '../controllers/emailService.php';
 session_start();
 
 header('Content-Type: application/json');
+date_default_timezone_set('America/Bogota');
 
 try {
 
@@ -12,12 +13,17 @@ try {
         exit();
     }
 
-    if (!isset($_POST['id_reserva'])) {
-        echo json_encode(['success' => false, 'message' => 'ID de reserva no proporcionado']);
+    if (!isset($_POST['id_reserva']) || !isset($_POST['dias_prestamo'])) {
+        echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
         exit();
     }
 
     $idReserva = intval($_POST['id_reserva']);
+    $diasPrestamo = intval($_POST['dias_prestamo']);
+
+   // Calcular fechas
+    $fechaPrestamo = date('Y-m-d');
+    $fechaDevolucion = date('Y-m-d', strtotime($fechaPrestamo . ' + ' . $diasPrestamo . ' days'));
 
     $mysql = new MySQL();
     $mysql->conectar();
@@ -31,11 +37,11 @@ try {
         exit();
     }
 
+    //capturo en una variable el id del usuario
     $idUsuario = $res['fk_usuario'];
 
-    // 📌 Traer libros de la reserva
-    $libros = $mysql->efectuarConsulta("
-        SELECT libro.id_libro, libro.titulo_libro, libro.cantidad_libro
+    // Traer libros de la reserva
+    $libros = $mysql->efectuarConsulta(" SELECT libro.id_libro, libro.titulo_libro, libro.cantidad_libro
         FROM reserva_has_libro
         INNER JOIN libro ON libro.id_libro = reserva_has_libro.libro_id_libro
         WHERE reserva_id_reserva = $idReserva
@@ -50,8 +56,7 @@ try {
     }
 
     //  Restar stock
-    $mysql->efectuarConsulta("
-        UPDATE libro 
+    $mysql->efectuarConsulta("UPDATE libro 
         INNER JOIN reserva_has_libro ON libro.id_libro = reserva_has_libro.libro_id_libro
         SET libro.cantidad_libro = libro.cantidad_libro - 1
         WHERE reserva_has_libro.reserva_id_reserva = $idReserva
@@ -60,15 +65,15 @@ try {
     //  Cambiar estado de la reserva
     $mysql->efectuarConsulta("UPDATE reserva SET estado_reserva='Aprobada' WHERE id_reserva=$idReserva");
 
-    //  Registrar préstamo
-    $mysql->efectuarConsulta("INSERT INTO prestamo (fk_reserva, fecha_prestamo, fecha_devolucion_prestamo) VALUES ($idReserva, NOW(), DATE_ADD(NOW(), INTERVAL 3 DAY))");
+    //  Registrar prestamo
+    $mysql->efectuarConsulta("INSERT INTO prestamo (fk_reserva, fecha_prestamo, fecha_devolucion_prestamo) VALUES ($idReserva, '$fechaPrestamo','$fechaDevolucion')");
 
     //  Obtener correo del usuario
     $usuario = $mysql->efectuarConsulta("SELECT email_usuario, nombre_usuario FROM usuario WHERE id_usuario = $idUsuario
 ");
     $usuario = mysqli_fetch_assoc($usuario);
 
-    // 📧 Enviar correo
+    // Enviar correo
     $asunto = " Reserva Aprobada - SenaLibrary";
     $mensaje = "
         <h3>¡Tu reserva ha sido aprobada!</h3>

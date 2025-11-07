@@ -465,12 +465,23 @@ function verDetalle(idReserva) {
                 tabla += `
                         </tbody>
                     </table>
+
+                    <div class="mt-3">
+                      <label class="form-label fw-bold">Días de Préstamo</label>
+                      <select id="dias_prestamo" class="form-control">
+                          <option value="" selected disabled>Seleccione una cantidad de días</option>
+                          <option value="5">5 Días</option>
+                          <option value="10">10 Días</option>
+                          <option value="15">15 Días</option>
+                      </select>
+                      <small class="text-muted">*Requerido para aprobar la reserva</small>
+                    </div>
                 `;
 
                 // Obtener el estado de la reserva del elemento que trae del json
                 let estadoReserva = res.detalle[0].estado_reserva;
 
-                // Si la reserva esta Pendiente, mostrar botones
+                // Si la reserva está Pendiente, mostrar botones
                 if (estadoReserva === 'Pendiente') {
                     Swal.fire({
                         title: '<i class="bi bi-book"></i> Detalle de la Reserva #' + idReserva,
@@ -484,22 +495,32 @@ function verDetalle(idReserva) {
                         confirmButtonColor: '#28a745',
                         denyButtonColor: '#dc3545',
                         cancelButtonColor: '#6c757d',
-                        width: 900
+                        width: 900,
+                        // Validar antes de cerrar el modal
+                        preConfirm: () => {
+                            const diasPrestamo = document.getElementById('dias_prestamo').value;
+                            if (!diasPrestamo) {
+                                Swal.showValidationMessage('Debe seleccionar los días de préstamo');
+                                return false;
+                            }
+                            return { diasPrestamo: diasPrestamo };
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            aprobarReserva(idReserva);
+                            // Pasar los días de préstamo a la función
+                            aprobarReserva(idReserva, result.value.diasPrestamo);
                         } else if (result.isDenied) {
                             rechazarReserva(idReserva);
                         }
                     });
                 } else {
-                    // Si esta Cancelada, Aprobada o Rechazada, solo mostrar información
+                    // Si no esta pendiente, solo mostrar información
                     Swal.fire({
-                        title: 'Detalle de la Reserva #' + idReserva,
-                        html: tabla,
+                        title: '<i class="bi bi-book"></i> Detalle de la Reserva #' + idReserva,
+                        html: tabla.replace('<div class="mt-3">', `<div class="alert alert-info"><strong>Estado:</strong> ${estadoReserva}</div><div class="mt-3" hidden>`),
                         icon: 'info',
-                        confirmButtonText: '<i class="bi bi-x"></i> Cerrar',
-                        confirmButtonColor: '#6c757d',
+                        confirmButtonText: '<i class="bi bi-check"></i> Cerrar',
+                        confirmButtonColor: '#007bff',
                         width: 900
                     });
                 }
@@ -514,22 +535,26 @@ function verDetalle(idReserva) {
     });
 }
 
-function aprobarReserva(idReserva) {
+
+function aprobarReserva(idReserva, diasPrestamo) {
     Swal.fire({
         title: '¿Aprobar reserva?',
-        text: "Esta acción aprueba la reserva",
+        text: `Se aprobará la reserva por ${diasPrestamo} días`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#28a745',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: '<i class="bi bi-check-circle"></i> Si, aprobar',
+        confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, aprobar',
         cancelButtonText: '<i class="bi bi-x"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
                 url: '../controllers/aprobarReserva.php',
                 type: 'POST',
-                data: { id_reserva: idReserva },
+                data: { 
+                    id_reserva: idReserva,
+                    dias_prestamo: diasPrestamo  // Enviamos los dias
+                },
                 dataType: 'json',
                 success: function(res) {
                     if (res.success) {
@@ -558,12 +583,12 @@ function aprobarReserva(idReserva) {
 function rechazarReserva(idReserva) {
     Swal.fire({
         title: '¿Rechazar reserva?',
-        text: "Esta accion no aprueba la reserva",
+        text: "Esta acción rechazará la reserva",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc3545',
         cancelButtonColor: '#6c757d',
-        confirmButtonText: '<i class="bi bi-x-circle"></i> Si, rechazar',
+        confirmButtonText: '<i class="bi bi-x-circle"></i> Sí, rechazar',
         cancelButtonText: '<i class="bi bi-arrow-left"></i> Cancelar'
     }).then((result) => {
         if (result.isConfirmed) {
