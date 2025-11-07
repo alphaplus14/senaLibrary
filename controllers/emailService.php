@@ -12,8 +12,8 @@ function enviarCorreo($destinatario, $asunto, $mensaje) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'franklinpenilla2001@gmail.com'; //aqui ira el correo, recomiendo crear uno solo para que funcione con senalibrary
-        $mail->Password = 'tzcewzjcikwtzcma'; // cesar, la contraseña que de google debe ir aqui sin espacios
+        $mail->Username = ''; //aqui ira el correo, recomiendo crear uno solo para que funcione con senalibrary
+        $mail->Password = ''; // cesar, la contraseña que de google debe ir aqui sin espacios
         $mail->SMTPSecure = 'ssl';
         $mail->Port = 465;
 
@@ -27,7 +27,7 @@ function enviarCorreo($destinatario, $asunto, $mensaje) {
         ];
 
         // Destinatario
-        $mail->setFrom('franklinpenilla2001@gmail.com', 'SenaLibrary');
+        $mail->setFrom('aqui va el correo cesar', 'SenaLibrary');
         $mail->addAddress($destinatario);
 
         // Contenido
