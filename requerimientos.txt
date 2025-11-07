@@ -1,7 +1,0 @@
-
-________________________________________
-✉️ 8. Notificaciones
-•	Enviar correo electrónico al cliente al confirmar una reserva.
-•	Enviar correo al registrar un préstamo o devolución.
-
-+cambiar diseño del login junto con sus colores

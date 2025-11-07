@@ -180,7 +180,7 @@ $resultado=$mysql->efectuarConsulta("SELECT
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
   <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
-    <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
+    <span class="d-none d-md-inline"><<?php echo $nombre; ?></span>
   </a>
 
               <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
@@ -228,7 +228,7 @@ $resultado=$mysql->efectuarConsulta("SELECT
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"> SenaLibrary</span>
+            <span class="title"><img src="../media/senalibrary icon.png"  style="width:30px; height:40px; vertical-align:middle; margin-right:5px; margin-top: 5px; margin-bottom: 5px;"> SenaLibrary</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->

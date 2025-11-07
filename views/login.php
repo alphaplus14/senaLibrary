@@ -11,7 +11,7 @@
       crossorigin="anonymous"
     />
   </head>
-  <body class="bg-light">
+  <body class="bg-light"style="background: url('../media/fondo senalibrary.jpg') no-repeat center center fixed; background-size: cover;">
     <div class="container-fluid vh-100">
       <div class="row h-100 d-flex justify-content-center align-items-center">
         <div class="col-10 col-sm-6 col-md-4 col-lg-3 bg-white p-4 rounded shadow">
@@ -26,11 +26,11 @@
               <input type="password" class="form-control" name="password" placeholder="Digite la contraseña" required />
             </div>
             <div class="d-grid">
-              <button type="submit" name="enviar" class="btn btn-success">Acceder</button>
+              <button type="submit" name="enviar" class="btn btn-primary">Acceder</button>
             </div>
             <div class="text-center mt-3">
   <p>¿No tienes cuenta? 
-    <a href="registro.php" class="text-success fw-bold text-decoration-none">Regístrate aquí</a>
+    <a href="registro.php" class="text-primary fw-bold text-decoration-none">Regístrate aquí</a>
   </p>
 </div>
           </form>

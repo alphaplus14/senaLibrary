@@ -211,7 +211,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM reserva WHERE estado_reserva 
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"> SenaLibrary</span>
+            <span class="title"><img src="../media/senalibrary icon.png"  style="width:30px; height:40px; vertical-align:middle; margin-right:5px; margin-top: 5px; margin-bottom: 5px;"> SenaLibrary</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->

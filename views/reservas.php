@@ -205,7 +205,7 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"> SenaLibrary</span>
+            <span class="title"><img src="../media/senalibrary icon.png"  style="width:30px; height:40px; vertical-align:middle; margin-right:5px; margin-top: 5px; margin-bottom: 5px;"> SenaLibrary</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -269,17 +269,15 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
-            <div class="row">
-              <div class="col-sm-6">
-                <h3 class="mb-0">Reservas</h3>
-              </div>    
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="./inventario.php">Reservas</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Gestion de Reservas</li>
-                </ol>
-              </div>
-            </div>
+ <div class="position-relative">
+  <h3 class="text-center">
+    <i class="bi bi-box"></i> reservas
+  </h3>
+  <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
+    <li class="breadcrumb-item"><a href="./reservas.php">reservas</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Lista de reservas</li>
+  </ol>
+</div>
             <!--end::Row-->
           </div>
           <!--end::Container-->

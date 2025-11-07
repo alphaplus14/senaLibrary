@@ -130,7 +130,7 @@ $email=$_SESSION['email_usuario'];
   </head>
   <!--end::Head-->
   <!--begin::Body-->
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
       <!--begin::Header-->
@@ -140,15 +140,54 @@ $email=$_SESSION['email_usuario'];
           <!--begin::Start Navbar Links-->
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+              <a class="nav-link" data-lte-toggle="sidebar" href="index.php" role="button">
                 <i class="bi bi-list"></i>
               </a>
             </li>
             <li class="nav-item d-none d-md-block">
-              <a href="../index.php" class="nav-link">Inicio</a>
+              <a href="index.php" class="nav-link">Inicio</a>
             </li>
             
           </ul>
+          <!--end::Start Navbar Links-->
+
+          <!--begin::End Navbar Links-->
+          <ul class="navbar-nav ms-auto">
+
+            <!--begin::User Menu Dropdown-->
+            <li class="nav-item dropdown user-menu">
+  <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+    <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
+  </a>
+
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+                <!-- Cabecera del usuario -->
+                <li class="bg-primary text-white text-center rounded-top py-3">
+                  <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                  <small><?php echo $rol; ?></small>
+                </li>
+
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
+
+                <!-- Opciones del menu -->
+                <li>
+                  <a href="../views/perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
+                  </a>
+                </li>
+
+                <!-- Separador -->
+                <li><hr class="dropdown-divider m-0"></li>
+
+                <!-- Opción de cerrar sesión -->
+                <li>
+                  <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                  </a>
+                </li>
+              </ul>
+            </li>
           <!--end::Start Navbar Links-->
           <!--begin::End Navbar Links-->
           <ul class="navbar-nav ms-auto">
@@ -169,7 +208,7 @@ $email=$_SESSION['email_usuario'];
            
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="title"> SenaLibrary</span>
+            <span class="title"><img src="../media/senalibrary icon.png"  style="width:30px; height:40px; vertical-align:middle; margin-right:5px; margin-top: 5px; margin-bottom: 5px;"> SenaLibrary</span>
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->
@@ -255,7 +294,7 @@ $email=$_SESSION['email_usuario'];
               </div>    
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item active"><a href="./inventario.php">Informacion Personal</a></li>
+                  <li class="breadcrumb-item active "><a href="./inventario.php">Informacion Personal</a></li>
                 </ol>
               </div>
             </div>
@@ -273,8 +312,8 @@ $email=$_SESSION['email_usuario'];
               <!-- /.Start col -->
               <div class="col-md-8 offset-md-2">
                 <div class="card shadow-sm">
-                  <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Información Personal</h5>
+                  <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0 ">Información Personal</h5>
                   </div>
                   <div class="card-body">
                     <form method="POST" action="../controllers/EditarSesion.php">
@@ -308,14 +347,9 @@ $email=$_SESSION['email_usuario'];
 
 
               <div class="d-flex justify-content-between align-items-center">
-                <button type="button" 
-                        class="btn btn-link text-danger d-flex align-items-center p-0" 
-                        onclick="window.location.href='../controllers/logout.php'">
-                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-                </button>
 
-                <button type="button" name="actualizar" class="btn btn-success" onclick="guardarCambios()">
-                  <i class="bi bi-save"></i> Guardar Cambios
+                <button type="button" name="actualizar" class="btn btn-info" onclick="guardarCambios()">
+                  <i class="bi bi-save "></i> Guardar Cambios
                 </button>
               </div>
 
