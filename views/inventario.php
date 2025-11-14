@@ -268,7 +268,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     <i class="bi bi-bookshelf"></i> Libros
   </h3>
   <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-    <li class="breadcrumb-item"><a href="./inventario.php">libros</a></li>
+    <li class="breadcrumb-item"><a href="./inventario.php">Libros</a></li>
     <li class="breadcrumb-item active" aria-current="page">Lista de libros</li>
   </ol>
 </div>
@@ -285,7 +285,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                 <?php if ($rol == 'Administrador'): ?>
-                     <button type="button" class="btn btn-success" onclick="agregarLibro()">➕ Agregar Nuevo Libro </button>
+                     <button type="button" class="btn btn-success" onclick="agregarLibro()">➕ Libro </button>
                 <?php endif; ?>
                 </div>
             </div>
@@ -461,18 +461,11 @@ function agregarLibro() {
           <input type="text" class="form-control" id="ISBN" name="ISBN" required>
         </div>
         <div class="mb-3">
-          <label for="categoria_libro" class="form-label">Categoria</label>
-          <select class="form-select" id="categoria_libro" name="categoria_libro" required>
-            <option value="" selected disabled>Seleccione un tipo</option>
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-          </select>
+          <label for="categoria" class="form-label">Categoria</label>
+          <input type="text" id="busquedaCategoria" class="form-control" placeholder="Buscar Categoria..." onkeyup="buscarCategoria(this.value)">
+          <input type="hidden" id="categoria_libro" name="categoria_libro">
+          <div id="sugerencias" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
+          <div id="categoriasSeleccionadas">  </div>
         </div>
         <div class="mb-3">
             <label for="cantidad" class="form-label">Cantidad</label>
@@ -488,10 +481,10 @@ function agregarLibro() {
       const titulo = document.getElementById('titulo_libro').value.trim();
       const autor = document.getElementById('autor_libro').value.trim();
       const ISBN = document.getElementById('ISBN').value.trim();
-      const categoria = document.getElementById('categoria_libro').value.trim();
+      const categorias = document.getElementById('categoria_libro').value.trim();
       const cantidad = document.getElementById('cantidad').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categoria || !cantidad) {
+      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
         Swal.showValidationMessage('Por favor, complete todos los campos.');
         return false;
       }
@@ -500,7 +493,7 @@ function agregarLibro() {
       formData.append('titulo_libro', titulo);
       formData.append('autor_libro', autor);
       formData.append('ISBN_libro', ISBN);
-      formData.append('categoria_libro', categoria);
+      formData.append('categoria_libro', categorias);
       formData.append('cantidad_libro', cantidad);
       return formData;
     }
@@ -532,7 +525,176 @@ function agregarLibro() {
     }
   });
 }
+
+function buscarCategoria(texto) {
+    // Si el texto es muy corto, limpia las sugerencias
+    if (texto.length < 2) {
+        document.getElementById('sugerencias').innerHTML = '';
+        return;
+    }
+
+    $.ajax({
+        url: '../controllers/buscarCategoria.php', 
+        type: 'POST',
+        dataType: 'json', 
+        data: { query: texto },
+        success: function (categorias) {
+            let html = '<ul class="list-group">';
+            // se utiliza .replace para que no rompa el codigo con comillas
+            if (categorias.length > 0) {
+                categorias.forEach(categoria => {
+                    html += `
+                        <li class="list-group-item list-group-item-action" 
+                            style="cursor: pointer;" 
+                            onclick="seleccionarCategoria(${categoria.id}, '${categoria.nombre_categoria.replace(/'/g, "\\'")}')">
+                            ${categoria.nombre_categoria}
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+            } else {
+                html += `
+                    <div class="alert alert-info mb-0">
+                        <small>No se encontró la categoría "${texto}"</small>
+                    </div>
+                    <button type="button" class="btn btn-success btn-sm mt-2" onclick="agregarNuevaCategoria('${texto.replace(/'/g, "\\'")}')">
+                        <i class="bi bi-plus-circle"></i> Agregar nueva categoría
+                    </button>
+                `;
+            }
+
+            document.getElementById('sugerencias').innerHTML = html;
+        },
+        error: function (xhr, status, error) {
+            console.error("❌ Error en la búsqueda:", error);
+            document.getElementById('sugerencias').innerHTML = '<div class="text-danger ps-2">Error al buscar categorias.</div>';
+        }
+    });
+}
+
+let categoriasSeleccionadas = []; // lista de id
+
+function seleccionarCategoria(id, nombre) {    
+    // Convertir a numero
+    id = parseInt(id);
+    console.log('ID convertido:', id, 'Tipo:', typeof id);
+    
+    // Evitar repetidos
+    if (categoriasSeleccionadas.includes(id)) {
+        // Limpiar busqueda
+        document.getElementById('sugerencias').innerHTML = '';
+        document.getElementById('busquedaCategoria').value = '';
+        return;
+    }
+
+    categoriasSeleccionadas.push(id);
+
+    // Actualizar input oculto (lo enviamos como JSON)
+    document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
+
+    // Agregar chip visual
+    const contenedor = document.querySelector('categoriasSeleccionadas');
+    const chip = document.querySelector('span');
+
+    chip.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 14px;
+        border: 1px solid #c8e6c9;
+    `;
+    chip.innerHTML = `
+        ${nombre}
+        <span 
+            onclick="eliminarCategoria(${id}, this)" 
+            style="
+                margin-left: 8px;
+                font-size: 16px;
+                cursor: pointer;
+            "
+        >&times;</span>
+    `;
+
+    contenedor.appendChild(chip);
+
+    // Limpiar sugerencias
+    document.getElementById('sugerencias').innerHTML = '';
+    document.getElementById('busquedaCategoria').value = '';
+}
+
+function eliminarCategoria(id, elemento) {
+    // Convertir a numero
+    id = parseInt(id);
+    
+    // Remover del arreglo
+    categoriasSeleccionadas = categoriasSeleccionadas.filter(catId => catId !== id);
+
+    // Actualizamos el input oculto
+    document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
+
+    // Eliminar visualmente la viñeta
+    elemento.parentNode.remove();
+}
+
+function agregarNuevaCategoria(nombreCategoria) {
+    Swal.fire({
+        title: 'Agregar Nueva Categoría',
+        html: `
+            <input type="text" id="nuevaCategoria" class="form-control" value="${nombreCategoria}" placeholder="Nombre de la categoría">
+        `,
+        confirmButtonText: 'Guardar',
+        showCancelButton: true,
+        cancelButtonText: 'Cancelar',
+        preConfirm: () => {
+            const nombre = document.getElementById('nuevaCategoria').value.trim();
+            if (!nombre) {
+                Swal.showValidationMessage('Por favor, ingrese el nombre de la categoría.');
+                return false;
+            }
+            return { nombre: nombre };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '../controllers/agregarCategoria.php',
+                type: 'POST',
+                dataType: 'json',
+                data: { nombre_categoria: result.value.nombre },
+                success: function(response) {
+                    if (response.success) {
+
+                        //agregar automaticamente
+                        seleccionarCategoria(response.id, result.value.nombre);
+
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Categoría agregada correctamente',
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
+
+                        document.getElementById('busquedaCategoria').value = '';
+                        document.getElementById('sugerencias').innerHTML = '';
+
+                    } else {
+                        Swal.fire('Error', response.message || 'No se pudo agregar la categoría', 'error');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error al agregar categoría:", error);
+                    Swal.fire('Error', 'No se pudo conectar con el servidor', 'error');
+                }
+            });
+        }
+    });
+}
+
 </script>
+
+
 
 <script>
 
@@ -558,7 +720,7 @@ function editarLibro(id) {
                 categoriaLibro = `
             <option value="Ficcion">Ficcion</option>
             <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
+            <option value="De Referencia"> De R eferencia</option>
             <option value="Libros de Texto"> Libros de Texto</option>
             <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
             <option value="Practicos"> Practicos</option>

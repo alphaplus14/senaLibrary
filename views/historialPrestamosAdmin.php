@@ -360,7 +360,8 @@ $resultado = $mysql->efectuarConsulta("(SELECT
                                 <td><?= $fila['fecha_reserva'] ?></td>
                                 <td><?= $fila['fecha_devolucion_prestamo'] ?></td>
                                 <td class="text-center">
-                                     <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button> <small> Ver detalle </small>
+                                  <button class="btn btn-success btn-sm" onclick="aprobarDevolucion(<?= $fila['id_prestamos'] ?>)"><i class="bi bi-check"></i></button>
+                                  <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)"><i class="bi bi-eye"></i></button>
                                 </td>
                                 </tr>
                             <?php endwhile; ?>

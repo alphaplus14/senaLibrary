@@ -292,7 +292,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario where id_usuario!='$i
               <div class="row mb-3 align-items-center">
                 <div class="col-md-6 d-flex gap-2">
                   <button type="button" class="btn btn-success" onclick="agregarUsuario()">
-                    ➕ Agregar Nuevo Usuario
+                    ➕ Usuario
                   </button>
                 </div>
               </div>
@@ -466,7 +466,6 @@ function agregarUsuario() {
           <select class="form-select" id="tipo_usuario" name="tipo_usuario" required>
             <option value="" selected disabled>Seleccione un tipo</option>
             <option value="Administrador">Administrador</option>
-            <option value="Empleado">Empleado</option>
             <option value="Cliente">Cliente</option>
           </select>
         </div>
