@@ -269,15 +269,15 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
- <div class="position-relative">
-  <h3 class="text-center">
-    <i class="bi bi-box"></i> reservas
-  </h3>
-  <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-    <li class="breadcrumb-item"><a href="./reservas.php">reservas</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Lista de reservas</li>
-  </ol>
-</div>
+            <div class="position-relative">
+              <h3 class="text-center">
+                <i class="bi bi-box"></i> Reservas
+              </h3>
+              <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
+                <li class="breadcrumb-item"><a href="./reservas.php">reservas</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lista de reservas</li>
+              </ol>
+            </div>
             <!--end::Row-->
           </div>
           <!--end::Container-->
@@ -465,7 +465,6 @@ function verDetalle(idReserva) {
                 tabla += `
                         </tbody>
                     </table>
-
                     <div class="mt-3">
                       <label class="form-label fw-bold">Días de Préstamo</label>
                       <select id="dias_prestamo" class="form-control">
@@ -534,7 +533,6 @@ function verDetalle(idReserva) {
         }
     });
 }
-
 
 function aprobarReserva(idReserva, diasPrestamo) {
     Swal.fire({

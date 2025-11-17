@@ -836,7 +836,6 @@ function abrirCrearReserva() {
           <tr>
             <th>Título</th>
             <th>Autor</th>
-            <th>Cantidad</th>
             <th>Estado</th>
             <th>Acción</th>
           </tr>
@@ -1013,7 +1012,7 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
     <td>${autor}</td>
     <td>
       <input type="text" value="1" 
-             class="form-control form-control-sm cantidad">
+      class="form-control form-control-sm cantidad">
       <small class="text-muted">Stock: ${stock}</small>
     </td>
     <td>${disponibilidad}</td>
