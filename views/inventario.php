@@ -17,7 +17,19 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
 //consulta para obtener los libros
-$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
+$resultado = $mysql->efectuarConsulta("SELECT 
+        libro.id_libro, 
+        libro.titulo_libro, 
+        libro.autor_libro, 
+        libro.ISBN_libro, 
+        libro.cantidad_libro, 
+        libro.disponibilidad_libro,
+        categorias.nombre_categoria
+    FROM libro INNER JOIN categorias_has_libro 
+        ON categorias_has_libro.libro_id_libro = libro.id_libro
+    INNER JOIN categorias 
+        ON categorias.id_categoria = categorias_has_libro.categorias_id_categoria
+");
 ?>
 
 <!doctype html>
@@ -315,7 +327,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                             <td><?php echo $fila['titulo_libro']; ?></td>
                             <td><?php echo $fila['autor_libro']; ?></td>
                             <td><?php echo $fila['ISBN_libro']; ?></td>
-                            <td><?php echo $fila['categoria_libro']; ?></td>
+                            <td><?php echo $fila['categorias.nombre_categoria']; ?></td>
                             <td><?php echo $fila['cantidad_libro']; ?></td>
                             <td>
                               <?php if($fila['cantidad_libro'] == 0): ?>
@@ -484,7 +496,7 @@ function agregarLibro() {
       const categorias = document.getElementById('categoria_libro').value.trim();
       const cantidad = document.getElementById('cantidad').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
+      if (!titulo || !autor || !ISBN || !cantidad) {
         Swal.showValidationMessage('Por favor, complete todos los campos.');
         return false;
       }
@@ -593,8 +605,8 @@ function seleccionarCategoria(id, nombre) {
     document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
 
     // Agregar chip visual
-    const contenedor = document.querySelector('categoriasSeleccionadas');
-    const chip = document.querySelector('span');
+    const contenedor = document.getElementById('categoriasSeleccionadas');
+    const chip = document.createElement('span');
 
     chip.style.cssText = `
         display: inline-flex;
