@@ -322,10 +322,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
     margin-top: 0; /* Anula cualquier margen que pueda tener */
     align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
 }
-
 /* ... otras clases CSS ... */
 </style>
-
 <!-- script de los graficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -1010,11 +1008,6 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
   fila.innerHTML = `
     <td>${titulo}</td>
     <td>${autor}</td>
-    <td>
-      <input type="text" value="1" 
-      class="form-control form-control-sm cantidad">
-      <small class="text-muted">Stock: ${stock}</small>
-    </td>
     <td>${disponibilidad}</td>
     <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
   `;
