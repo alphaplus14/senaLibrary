@@ -14,23 +14,19 @@
 
 declare(strict_types=1);
 
-// ----------------------------------------------
-// Configuración de errores 
-// ----------------------------------------------
+
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
 require_once __DIR__ . '/../libs/fpdf/fpdf.php';
 
-// ----------------------------------------------
-// Función: Crear conexión PDO a la base de datos
-// ----------------------------------------------
+
 function crearConexionPdo(): PDO
 {
     $host = 'localhost';
     $nombreBaseDatos = 'senalibrary'; // <- nombre de la base de datos
-    $usuario = 'root';               // <- nombre de tu usuario
-    $clave = '';                     // <- nombre de tu clave
+    $usuario = 'root';               // <- nombre usuario
+    $clave = '';                     // <- nombre clave
 
     $dsn = "mysql:host={$host};dbname={$nombreBaseDatos};charset=utf8mb4";
 
@@ -43,27 +39,20 @@ function crearConexionPdo(): PDO
     return new PDO($dsn, $usuario, $clave, $opciones);
 }
 
-// ----------------------------------------------
-// Función: Validar formato de fecha (Y-m-d)
-// ----------------------------------------------
 function esFechaYmdValida(string $fecha): bool
 {
     $dt = DateTime::createFromFormat('Y-m-d', $fecha);
     return $dt !== false && $dt->format('Y-m-d') === $fecha;
 }
 
-// ----------------------------------------------
-// Función: Formatear fecha a formato latino (d/m/Y)
-// ----------------------------------------------
+
 function formatearFechaLatam(string $fecha): string
 {
     $dt = new DateTime($fecha);
     return $dt->format('d/m/Y');
 }
 
-// ----------------------------------------------
-// Clase: PDFReporte (encabezado y pie del PDF)
-// ----------------------------------------------
+
 class PDFReporte extends FPDF
 {
     public string $tituloReporte = 'Reporte';
@@ -93,9 +82,6 @@ class PDFReporte extends FPDF
     }
 }
 
-// ----------------------------------------------
-// Función: Obtener reservas por rango de fechas
-// ----------------------------------------------
 function obtenerReservasPorRango(PDO $conexion, string $fechaInicio, string $fechaFin): array
 {
     $sql = "SELECT 
@@ -120,9 +106,7 @@ function obtenerReservasPorRango(PDO $conexion, string $fechaInicio, string $fec
 }
 
 
-// ----------------------------------------------
-// Función: Contar reservas por estado y total
-// ----------------------------------------------
+
 function contarReservasPorEstado(array $reservas): array
 {
     $resumen = ['total' => count($reservas)];
@@ -138,9 +122,7 @@ function contarReservasPorEstado(array $reservas): array
     return $resumen;
 }
 
-// ----------------------------------------------
-// Función: Imprimir tabla principal de reservas
-// ----------------------------------------------
+
 function imprimirTablaReservas(PDFReporte $pdf, array $reservas): void
 {
     $pdf->SetFont('Arial', 'B', 11);
@@ -167,9 +149,6 @@ function imprimirTablaReservas(PDFReporte $pdf, array $reservas): void
 }
 
 
-// ----------------------------------------------
-// Función: Imprimir resumen de reservas
-// ----------------------------------------------
 function imprimirResumenReservas(PDFReporte $pdf, array $resumen): void
 {
     $pdf->Ln(3);
@@ -188,9 +167,6 @@ function imprimirResumenReservas(PDFReporte $pdf, array $resumen): void
     $pdf->MultiCell(0, 7, utf8_decode($linea), 0, 'L');
 }
 
-// ----------------------------------------------
-// Bloque principal: Generar el PDF
-// ----------------------------------------------
 try {
     // Parámetros GET
     $fechaInicio = isset($_GET['fechaInicio']) && esFechaYmdValida($_GET['fechaInicio'])

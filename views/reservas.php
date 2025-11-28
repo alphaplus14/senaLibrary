@@ -551,7 +551,7 @@ function aprobarReserva(idReserva, diasPrestamo) {
                 type: 'POST',
                 data: { 
                     id_reserva: idReserva,
-                    dias_prestamo: diasPrestamo  // Enviamos los dias
+                    dias_prestamo: diasPrestamo  
                 },
                 dataType: 'json',
                 success: function(res) {

@@ -6,17 +6,12 @@
 
 declare(strict_types=1);
 
-// ----------------------------------------------
-// Configuración de errores 
-// ----------------------------------------------
+
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
 require_once __DIR__ . '/../libs/fpdf/fpdf.php';
 
-// ----------------------------------------------
-// Función: Crear conexión PDO a la base de datos
-// ----------------------------------------------
 function crearConexionPdo(): PDO
 {
     $host = 'localhost';
@@ -35,27 +30,19 @@ function crearConexionPdo(): PDO
     return new PDO($dsn, $usuario, $clave, $opciones);
 }
 
-// ----------------------------------------------
-// Función: Validar formato de fecha (Y-m-d)
-// ----------------------------------------------
 function esFechaYmdValida(string $fecha): bool
 {
     $dt = DateTime::createFromFormat('Y-m-d', $fecha);
     return $dt !== false && $dt->format('Y-m-d') === $fecha;
 }
 
-// ----------------------------------------------
-// Función: Formatear fecha a formato latino (d/m/Y)
-// ----------------------------------------------
+
 function formatearFechaLatam(string $fecha): string
 {
     $dt = new DateTime($fecha);
     return $dt->format('d/m/Y');
 }
 
-// ----------------------------------------------
-// Clase: PDFReporte (encabezado y pie del PDF)
-// ----------------------------------------------
 class PDFReporte extends FPDF
 {
     public string $tituloReporte = 'Reporte';
@@ -81,9 +68,7 @@ class PDFReporte extends FPDF
     }
 }
 
-// ----------------------------------------------
-// Función: Obtener préstamos por rango de fechas
-// ----------------------------------------------
+
 function obtenerPrestamosPorRango(PDO $conexion, string $fechaInicio, string $fechaFin): array
 {
     $sql = "SELECT 
@@ -108,9 +93,6 @@ function obtenerPrestamosPorRango(PDO $conexion, string $fechaInicio, string $fe
     return $consulta->fetchAll();
 }
 
-// ----------------------------------------------
-// Función: Imprimir tabla principal de préstamos
-// ----------------------------------------------
 function imprimirTablaPrestamos(PDFReporte $pdf, array $prestamos): void
 {
     $pdf->SetFont('Arial', 'B', 11);
@@ -138,9 +120,7 @@ function imprimirTablaPrestamos(PDFReporte $pdf, array $prestamos): void
     }
 }
 
-// ----------------------------------------------
-// Bloque principal: Generar el PDF
-// ----------------------------------------------
+
 try {
     $fechaInicio = isset($_GET['fechaInicio']) && esFechaYmdValida($_GET['fechaInicio'])
         ? $_GET['fechaInicio'] : date('Y-m-01');
