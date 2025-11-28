@@ -821,6 +821,7 @@ $(document).ready(function() {
 });
 </script>
 
+<script src="./public/js/fechas.js"> </script>
 <script>
 function abrirCrearReserva() {
   Swal.fire({
@@ -853,8 +854,16 @@ function abrirCrearReserva() {
 
     didOpen: () => {
       window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
+        let hoy = new Date().toISOString().split("T")[0];
 
-      const observer = new MutationObserver(() => {
+        let max = new Date();
+        max.setDate(max.getDate() + 45);
+        max = max.toISOString().split("T")[0];
+
+        document.getElementById("fechaRecogida").min = hoy;
+        document.getElementById("fechaRecogida").max = max;
+
+        const observer = new MutationObserver(() => {
         const filas = tbodyModal.querySelectorAll('tr').length;
         const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
         contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
@@ -1019,29 +1028,6 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
 }
 
 </script>
-
-<script>
-let hoy = new Date();
-let yyyy = hoy.getFullYear();
-let mm = String(hoy.getMonth() + 1).padStart(2, '0');
-let dd = String(hoy.getDate()).padStart(2, '0');
-let fechaHoy = `${yyyy}-${mm}-${dd}`;
-
-
-let futuro = new Date();
-futuro.setDate(futuro.getDate() + 45);
-
-let yyyyF = futuro.getFullYear();
-let mmF = String(futuro.getMonth() + 1).padStart(2, '0');
-let ddF = String(futuro.getDate()).padStart(2, '0');
-let fechaMax = `${yyyyF}-${mmF}-${ddF}`;
-
-
-let inputFecha = document.getElementById('fechaRecogida');
-inputFecha.setAttribute('min', fechaHoy);
-inputFecha.setAttribute('max', fechaMax);
-</script>
-
 <!-- script que hace que el formulario de documentos abra en nueva pestaña o descargue segun la seleccion -->
 <script>
 document.querySelectorAll('.form-documentos').forEach(form => {

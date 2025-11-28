@@ -350,19 +350,19 @@ $resultado = $mysql->efectuarConsulta("(SELECT
                       <td><?= $fila['fecha_reserva'] ?></td>
                       <td><?= $fila['fecha_devolucion_prestamo'] ?></td>
                       <td class="text-center">
-                        <!-- Botón Ver Detalle -->
-  <div class="botones">
-  <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)">
-    <i class="bi bi-eye"></i>
-  </button>
+                        <!-- Boton Ver Detalle -->
+                          <div class="botones">
+                          <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)">
+                            <i class="bi bi-eye"></i>
+                          </button>
                         <!-- <small> Detalles </small> -->
 
                         <?php if (!empty($fila['id_prestamo'])): ?>
                           <br>
-                          <!-- Botón Renovar Préstamo -->
-     <button class="btn btn-warning btn-sm" onclick="renovarPrestamo(<?= $fila['id_prestamo'] ?>)">
-      <i class="bi bi-arrow-repeat"></i>
-    </button>
+                          <!-- Boton Renovar Préstamo -->
+                            <button class="btn btn-warning btn-sm" onclick="renovarPrestamo(<?= $fila['id_prestamo'] ?>)">
+                              <i class="bi bi-arrow-repeat"></i>
+                            </button>
                           </div>
                           </div>
                           <!-- <small> Renovar </small> -->
