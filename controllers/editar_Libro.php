@@ -9,7 +9,8 @@ if (!isset($_SESSION['tipo_usuario'])){
   echo json_encode(["success" => false, "message" => "Sesión no válida"]);
   exit();
 }
-//conexion 
+
+// Conexion 
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -20,13 +21,14 @@ if ($id <= 0) {
     exit();
 }
 
-
-$titulo       = $_POST['titulo'];
-$autor      =$_POST['autor'];
-$ISBN       = $_POST['ISBN'];
-$categoria        = $_POST['categoria'];
+$titulo    = $_POST['titulo'];
+$autor     = $_POST['autor'];
+$ISBN      = $_POST['ISBN'];
+$categoria = $_POST['categoria']; 
 $cantidad  = $_POST['cantidad']; 
+$categorias = isset($_POST['categorias']) ? json_decode($_POST['categorias'], true) : []; 
 
+// Actualizar informacion 
 $consulta = "UPDATE libro
         SET titulo_libro='$titulo',
             autor_libro='$autor',
@@ -35,13 +37,27 @@ $consulta = "UPDATE libro
             cantidad_libro='$cantidad'
         WHERE id_libro='$id'";
 
-
 $result = $mysql->efectuarConsulta($consulta);
 
 if ($result === true) {
+    // Si se enviaron categorías multiples, actualizar la tabla libro_categoria
+    if (!empty($categorias)) {
+        // Eliminar las categorias anteriores
+        $deleteQuery = "DELETE FROM libro_categoria WHERE id_libro = $id";
+        $mysql->efectuarConsulta($deleteQuery);
+        
+        // Insertar las nuevas categorias
+        foreach ($categorias as $id_categoria) {
+            $id_categoria = intval($id_categoria);
+            $insertQuery = "INSERT INTO libro_categoria (id_libro, id_categoria) VALUES ($id, $id_categoria)";
+            $mysql->efectuarConsulta($insertQuery);
+        }
+    }
+    
     echo json_encode(["success" => true, "message" => "Libro actualizado correctamente"]);
 } else {
     echo json_encode(["success" => false, "message" => "Error al actualizar"]);
 }
 
 $mysql->desconectar();
+?>
