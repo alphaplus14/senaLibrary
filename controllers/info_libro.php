@@ -36,16 +36,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
             $categorias_nombres[] = $cat['nombre_categoria'];
         }
         
-        echo json_encode([
+          echo json_encode([
             'success' => true,
             'data' => [
                 'id_libro' => $informacion['id_libro'],
                 'titulo_libro' => $informacion['titulo_libro'],
                 'autor_libro' => $informacion['autor_libro'],
                 'ISBN_libro' => $informacion['ISBN_libro'],
-                'categorias_ids' => $categorias_ids,
-                'categorias_nombres' => implode(', ', $categorias_nombres),
-
                 'categorias_ids' => $categorias_ids,
                 'categorias_nombres' => implode(', ', $categorias_nombres),
                 'cantidad_libro' => $informacion['cantidad_libro'],
