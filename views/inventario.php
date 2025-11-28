@@ -706,10 +706,7 @@ function agregarNuevaCategoria(nombreCategoria) {
 
 </script>
 
-
-
 <script>
-
 function editarLibro(id) {
     // Primero obtenemos los datos del usuario
     $.ajax({

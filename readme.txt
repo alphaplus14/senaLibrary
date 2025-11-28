@@ -4,6 +4,3 @@ ADSO:3064749
 
 admin@gmail.com
 password:admin
-
-corregir graficas
-renovacion de reserva
