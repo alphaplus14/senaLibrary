@@ -593,8 +593,8 @@ function seleccionarCategoria(id, nombre) {
     document.getElementById('categoria_libro').value = JSON.stringify(categoriasSeleccionadas);
 
     // Agregar chip visual
-    const contenedor = document.querySelector('categoriasSeleccionadas');
-    const chip = document.querySelector('span');
+    const contenedor = document.getElementById('categoriasSeleccionadas');
+    const chip = document.createElement('span');
 
     chip.style.cssText = `
         display: inline-flex;

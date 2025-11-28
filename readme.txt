@@ -4,8 +4,3 @@ ADSO:3064749
 
 admin@gmail.com
 password:admin
-
-corregir graficas
-renovacion de reserva
-funcion de buscar categorias para agregaraselaS A LOS LIBROS
-funcion para agregar categorias

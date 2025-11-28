@@ -6,9 +6,7 @@
 
 declare(strict_types=1);
 
-// ----------------------------------------------
-// Configuración de errores
-// ----------------------------------------------
+
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
@@ -21,9 +19,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-// ----------------------------------------------
-// Función: Crear conexión PDO a la base de datos
-// ----------------------------------------------
+
 function crearConexionPdo(): PDO
 {
     $host = 'localhost';
@@ -42,18 +38,13 @@ function crearConexionPdo(): PDO
     return new PDO($dsn, $usuario, $clave, $opciones);
 }
 
-// ----------------------------------------------
-// Validar formato de fecha (Y-m-d)
-// ----------------------------------------------
+
 function esFechaYmdValida(string $fecha): bool
 {
     $dt = DateTime::createFromFormat('Y-m-d', $fecha);
     return $dt !== false && $dt->format('Y-m-d') === $fecha;
 }
 
-// ----------------------------------------------
-// Obtener préstamos por rango de fechas
-// ----------------------------------------------
 function obtenerPrestamosPorRango(PDO $conexion, string $fechaInicio, string $fechaFin): array
 {
     $sql = "SELECT 
@@ -78,9 +69,6 @@ function obtenerPrestamosPorRango(PDO $conexion, string $fechaInicio, string $fe
     return $consulta->fetchAll();
 }
 
-// ----------------------------------------------
-// BLOQUE PRINCIPAL
-// ----------------------------------------------
 try {
     $fechaInicio = isset($_GET['fechaInicio']) && esFechaYmdValida($_GET['fechaInicio'])
         ? $_GET['fechaInicio'] : date('Y-m-01');
