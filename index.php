@@ -510,7 +510,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                       </thead>
                       <tbody>
                           <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                              <tr>
+                            <?php if($fila['disponibilidad_libro'] != "Inactivo"): ?>
+                              <tr>                              
                                   <td><?= $fila['id_libro'] ?></td>
                                   <td><?= $fila['titulo_libro'] ?></td>
                                   <td><?= $fila['autor_libro'] ?></td>
@@ -524,7 +525,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                                           <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
                                       <?php endif; ?>
                                   </td>
-                              </tr>
+                                </tr>
+                              <?php endif;?>
                           <?php endwhile; ?>
                       </tbody>
                   </table>
@@ -1006,11 +1008,6 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
   fila.innerHTML = `
     <td>${titulo}</td>
     <td>${autor}</td>
-    <td>
-      <input type="text" value="1" 
-      class="form-control form-control-sm cantidad">
-      <small class="text-muted">Stock: ${stock}</small>
-    </td>
     <td>${disponibilidad}</td>
     <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
   `;
@@ -1021,6 +1018,28 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
   document.getElementById('busquedaProducto').value = '';
 }
 
+</script>
+
+<script>
+let hoy = new Date();
+let yyyy = hoy.getFullYear();
+let mm = String(hoy.getMonth() + 1).padStart(2, '0');
+let dd = String(hoy.getDate()).padStart(2, '0');
+let fechaHoy = `${yyyy}-${mm}-${dd}`;
+
+
+let futuro = new Date();
+futuro.setDate(futuro.getDate() + 45);
+
+let yyyyF = futuro.getFullYear();
+let mmF = String(futuro.getMonth() + 1).padStart(2, '0');
+let ddF = String(futuro.getDate()).padStart(2, '0');
+let fechaMax = `${yyyyF}-${mmF}-${ddF}`;
+
+
+let inputFecha = document.getElementById('fechaRecogida');
+inputFecha.setAttribute('min', fechaHoy);
+inputFecha.setAttribute('max', fechaMax);
 </script>
 
 <!-- script que hace que el formulario de documentos abra en nueva pestaña o descargue segun la seleccion -->
