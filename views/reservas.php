@@ -274,7 +274,7 @@ $resultado=$mysql->efectuarConsulta(" select reserva.*,CONCAT(usuario.nombre_usu
                 <i class="bi bi-box"></i> Reservas
               </h3>
               <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-                <li class="breadcrumb-item"><a href="./reservas.php">reservas</a></li>
+                <li class="breadcrumb-item"><a href="./reservas.php">Reservas</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Lista de reservas</li>
               </ol>
             </div>

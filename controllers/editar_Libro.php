@@ -10,7 +10,6 @@ if (!isset($_SESSION['tipo_usuario'])){
   exit();
 }
 
-// Conexion 
 require_once '../models/MySQL.php';
 $mysql = new MySQL();
 $mysql->conectar();
@@ -24,36 +23,54 @@ if ($id <= 0) {
 $titulo    = $_POST['titulo'];
 $autor     = $_POST['autor'];
 $ISBN      = $_POST['ISBN'];
-$categoria = $_POST['categoria']; 
-$cantidad  = $_POST['cantidad']; 
-$categorias = isset($_POST['categorias']) ? json_decode($_POST['categorias'], true) : []; 
+$cantidad  = $_POST['cantidad'];
 
-// Actualizar informacion 
+$categorias = isset($_POST['categorias']) ? json_decode($_POST['categorias'], true) : [];  // ← CAMBIO AQUÍ
+
 $consulta = "UPDATE libro
         SET titulo_libro='$titulo',
             autor_libro='$autor',
             ISBN_libro='$ISBN',
-            categoria_libro='$categoria',
             cantidad_libro='$cantidad'
         WHERE id_libro='$id'";
 
 $result = $mysql->efectuarConsulta($consulta);
 
 if ($result === true) {
-    // Si se enviaron categorías multiples, actualizar la tabla libro_categoria
-    if (!empty($categorias)) {
-        // Eliminar las categorias anteriores
-        $deleteQuery = "DELETE FROM libro_categoria WHERE id_libro = $id";
-        $mysql->efectuarConsulta($deleteQuery);
-        
-        // Insertar las nuevas categorias
-        foreach ($categorias as $id_categoria) {
-            $id_categoria = intval($id_categoria);
-            $insertQuery = "INSERT INTO libro_categoria (id_libro, id_categoria) VALUES ($id, $id_categoria)";
-            $mysql->efectuarConsulta($insertQuery);
+
+    // categorias actuales
+    $actualesQuery = $mysql->efectuarConsulta("
+        SELECT categorias_id_categoria FROM categorias_has_libro 
+        WHERE libro_id_libro = $id
+    ");
+
+    $actuales = [];
+    while ($fila = mysqli_fetch_assoc($actualesQuery)) {
+        $actuales[] = intval($fila['categorias_id_categoria']);
+    }
+
+    // insertar nuevas
+    foreach ($categorias as $id_categoria) {
+        $id_categoria = intval($id_categoria);
+
+        if (!in_array($id_categoria, $actuales)) {
+            $mysql->efectuarConsulta("
+                INSERT INTO categorias_has_libro (categorias_id_categoria, libro_id_libro)
+                VALUES ($id_categoria, $id)
+            ");
         }
     }
-    
+
+    // elimina las que no se necesitan
+    foreach ($actuales as $catActual) {
+        if (!in_array($catActual, $categorias)) {
+            $mysql->efectuarConsulta("
+                DELETE FROM categorias_has_libro 
+                WHERE libro_id_libro = $id AND categorias_id_categoria = $catActual
+            ");
+        }
+    }
+
     echo json_encode(["success" => true, "message" => "Libro actualizado correctamente"]);
 } else {
     echo json_encode(["success" => false, "message" => "Error al actualizar"]);

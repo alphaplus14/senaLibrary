@@ -284,7 +284,7 @@ $resultado = $mysql->efectuarConsulta("(SELECT
               <i class="bi bi-columns me-1"></i>Prestamos
             </h3>
             <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-              <li class="breadcrumb-item"><a href="./usuarios.php">prestamos</a></li>
+              <li class="breadcrumb-item"><a href="./usuarios.php">Prestamos</a></li>
               <li class="breadcrumb-item active" aria-current="page">Lista de prestamos</li>
             </ol>
           </div>
