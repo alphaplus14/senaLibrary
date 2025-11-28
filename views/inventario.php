@@ -728,9 +728,13 @@ function editarLibro(id) {
             }
 
             const libro = response.data;
-            
-            // Variables globales para el modal de edición
-            window.categoriasSeleccionadas = libro.categorias_ids || []; // Array de IDs de categorías
+
+            // Convertir categorias_ids en arreglo real
+            window.categoriasSeleccionadas = Array.isArray(libro.categorias_ids)
+                ? libro.categorias_ids
+                : libro.categorias_ids
+                    ? libro.categorias_ids.split(',').map(id => parseInt(id.trim()))
+                    : [];
 
             Swal.fire({
                 title: 'Editar Libro',
@@ -738,37 +742,58 @@ function editarLibro(id) {
                     <form id="formEditarLibro" class="text-start" method="POST">
                         <div class="mb-3">
                             <label class="form-label">Título</label>
-                            <input type="text" class="form-control" id="titulo_edit" value="${libro.titulo_libro}" required>
+                            <input type="text" class="form-control" id="titulo_edit"
+                                   value="${libro.titulo_libro.replace(/"/g, '&quot;')}" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Autor</label>
-                            <input type="text" class="form-control" id="autor_edit" value="${libro.autor_libro}" required>
+                            <input type="text" class="form-control" id="autor_edit"
+                                   value="${libro.autor_libro.replace(/"/g, '&quot;')}" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="ISBN_edit" value="${libro.ISBN_libro}" disabled>
+                            <input type="text" class="form-control" id="ISBN_edit"
+                                   value="${libro.ISBN_libro}" disabled>
                         </div>
 
                         <div class="mb-3">
-                            <label for="categoria" class="form-label">Categorías</label>
-                            <input type="text" id="busquedaCategoria_edit" class="form-control" placeholder="Buscar Categoría..." onkeyup="buscarCategoriaEdit(this.value)">
-                            <input type="hidden" id="categoria_libro_edit" name="categoria_libro_edit">
-                            <div id="sugerencias_edit" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
+                            <label class="form-label">Categorías</label>
+                            <input type="text" id="busquedaCategoria_edit" class="form-control"
+                                   placeholder="Buscar Categoría..." onkeyup="buscarCategoriaEdit(this.value)">
+                            <input type="hidden" id="categoria_libro_edit">
+
+                            <div id="sugerencias_edit"
+                                 style="text-align:left; max-height:200px; margin-top: 5px;"></div>
+
                             <div id="categoriasSeleccionadas_edit" class="mt-2">
-                                ${libro.categorias_nombres ? libro.categorias_nombres.split(',').map((cat, idx) => `
-                                    <span style="display: inline-flex; align-items: center; background-color: #e8f5e9; color: #2e7d32; padding: 6px 12px; border-radius: 30px; font-size: 14px; border: 1px solid #c8e6c9; margin-right: 5px; margin-bottom: 5px;">
-                                        ${cat.trim()}
-                                        <span onclick="eliminarCategoriaEdit(${libro.categorias_ids[idx]}, this)" style="margin-left: 8px; font-size: 16px; cursor: pointer;">&times;</span>
-                                    </span>
-                                `).join('') : ''}
+                                ${
+                                    libro.categorias_nombres && window.categoriasSeleccionadas.length > 0
+                                        ? libro.categorias_nombres.split(',').map((cat, index) => {
+                                            const idCat = window.categoriasSeleccionadas[index];
+                                            return `
+                                                <span style="
+                                                    display:inline-flex;align-items:center;
+                                                    background:#e8f5e9;color:#2e7d32;
+                                                    padding:6px 12px;border-radius:30px;
+                                                    font-size:14px;border:1px solid #c8e6c9;
+                                                    margin-right:5px;margin-bottom:5px;">
+                                                    ${cat.trim()}
+                                                    <span onclick="eliminarCategoriaEdit(${idCat}, this)"
+                                                          style="margin-left:8px;font-size:16px;cursor:pointer;">&times;</span>
+                                                </span>
+                                            `;
+                                        }).join('')
+                                        : ''
+                                }
                             </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad_edit" min="0" value="${libro.cantidad_libro}" required>
+                            <input type="number" class="form-control" id="cantidad_edit"
+                                   min="0" value="${libro.cantidad_libro}" required>
                         </div>
                     </form>
                 `,
@@ -776,10 +801,10 @@ function editarLibro(id) {
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
-                focusConfirm: false,
                 didOpen: () => {
-                    // Actualizar el input hidden con las categorías iniciales
-                    document.getElementById('categoria_libro_edit').value = JSON.stringify(window.categoriasSeleccionadas);
+                    // Cargar los IDs en el input hidden
+                    document.getElementById('categoria_libro_edit').value =
+                        JSON.stringify(window.categoriasSeleccionadas);
                 },
                 preConfirm: () => {
                     const formData = new FormData();
@@ -787,39 +812,42 @@ function editarLibro(id) {
                     formData.append('titulo', $('#titulo_edit').val().trim());
                     formData.append('autor', $('#autor_edit').val().trim());
                     formData.append('ISBN', $('#ISBN_edit').val().trim());
-                    formData.append('categorias', $('#categoria_libro_edit').val()); // Enviar como JSON
+                    formData.append('categorias', $('#categoria_libro_edit').val());
                     formData.append('cantidad', $('#cantidad_edit').val());
+
                     return formData;
                 }
             }).then(result => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url: '../controllers/editar_Libro.php',
-                        type: 'POST',
-                        data: result.value,
-                        contentType: false,
-                        processData: false,
-                        dataType: 'json',
-                        success: function(res) {
-                            if (res.success) {
-                                Swal.fire('✅ Éxito', res.message, 'success').then(() => location.reload());
-                            } else {
-                                Swal.fire('⚠️ Atención', res.message, 'warning');
-                            }
-                        },
-                        error: function(xhr, status, error) {
-                            Swal.fire('❌ Error', 'Error en el servidor', 'error');
-                            console.error(error, xhr.responseText);
+                if (!result.isConfirmed) return;
+
+                $.ajax({
+                    url: '../controllers/editar_Libro.php',
+                    type: 'POST',
+                    data: result.value,
+                    contentType: false,
+                    processData: false,
+                    dataType: 'json',
+                    success: function(res) {
+                        if (res.success) {
+                            Swal.fire('✅ Éxito', res.message, 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('⚠️ Atención', res.message, 'warning');
                         }
-                    });
-                }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire('❌ Error', 'Error en el servidor', 'error');
+                        console.error(error, xhr.responseText);
+                    }
+                });
             });
         },
         error: function() {
             Swal.fire('❌ Error', 'No se pudo cargar la información del libro', 'error');
         }
     });
-}
+} 
+        
 // Funciones auxiliares para edición
 function buscarCategoriaEdit(texto) {
     if (texto.length < 2) {
@@ -859,7 +887,13 @@ function buscarCategoriaEdit(texto) {
 
 function seleccionarCategoriaEdit(id, nombre) {
     id = parseInt(id);
-    
+
+    // asegurar que el array siempre sea numero
+    window.categoriasSeleccionadas = Array.isArray(window.categoriasSeleccionadas)
+        ? window.categoriasSeleccionadas.map(Number)
+        : window.categoriasSeleccionadas.toString().split(',').map(e => parseInt(e.trim()));
+
+    // evitar repetidos
     if (window.categoriasSeleccionadas.includes(id)) {
         document.getElementById('sugerencias_edit').innerHTML = '';
         document.getElementById('busquedaCategoria_edit').value = '';
@@ -888,6 +922,7 @@ function seleccionarCategoriaEdit(id, nombre) {
         <span onclick="eliminarCategoriaEdit(${id}, this)" 
               style="margin-left: 8px; font-size: 16px; cursor: pointer;">&times;</span>
     `;
+
     contenedor.appendChild(chip);
 
     document.getElementById('sugerencias_edit').innerHTML = '';
@@ -896,8 +931,15 @@ function seleccionarCategoriaEdit(id, nombre) {
 
 function eliminarCategoriaEdit(id, elemento) {
     id = parseInt(id);
-    window.categoriasSeleccionadas = window.categoriasSeleccionadas.filter(catId => catId !== id);
-    document.getElementById('categoria_libro_edit').value = JSON.stringify(window.categoriasSeleccionadas);
+
+    // asegurar que el array sea numerico 
+    window.categoriasSeleccionadas = window.categoriasSeleccionadas
+        .map(Number)
+        .filter(catId => catId !== id);
+
+    document.getElementById('categoria_libro_edit').value =
+        JSON.stringify(window.categoriasSeleccionadas);
+
     elemento.parentNode.remove();
 }
 </script>
