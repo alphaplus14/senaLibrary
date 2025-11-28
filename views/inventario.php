@@ -316,40 +316,52 @@ $resultado = $mysql->efectuarConsulta("
                             <?php endif; ?>
                         </tr>
                     </thead>
-                    <tbody>
-                    <?php while($fila = $resultado->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $fila['id_libro']; ?></td>
-                            <td><?php echo $fila['titulo_libro']; ?></td>
-                            <td><?php echo $fila['autor_libro']; ?></td>
-                            <td><?php echo $fila['ISBN_libro']; ?></td>
-                            <td><?php echo $fila['categoria_libro']; ?></td>
-                            <td><?php echo $fila['cantidad_libro']; ?></td>
-                            <td>
-                              <?php if($fila['cantidad_libro'] == 0): ?>
-                                <span class="badge bg-danger">No disponible</span>
-                              <?php else: ?>
-                                <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                              <?php endif; ?>
-                            </td>
-                            <?php if($rol == "Administrador"): ?>
-                            <td class="justify-content-center d-flex gap-1">
-                              <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
-          <i class="bi bi-pencil-square"></i>
-          </a>
-          | 
-          <a class="btn btn-danger btn-sm"  
-          href="javascript:void(0);" 
-          onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
-          title="Eliminar"> 
-              <i class="bi bi-trash"></i>
-          </a>
-                            </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endwhile; ?>
-                    </tbody>
-                        </table>
+                      <tbody>
+                          <?php while($fila = $resultado->fetch_assoc()): ?>
+                              <tr>
+                                  <td><?php echo $fila['id_libro']; ?></td>
+                                  <td><?php echo $fila['titulo_libro']; ?></td>
+                                  <td><?php echo $fila['autor_libro']; ?></td>
+                                  <td><?php echo $fila['ISBN_libro']; ?></td>
+                                  <td>
+                                      <?php 
+                                      // Mostrar categorias como badges
+                                      if (!empty($fila['categorias'])) {
+                                          $categorias = explode(', ', $fila['categorias']);
+                                          foreach($categorias as $categoria): 
+                                      ?>
+                                          <span class="badge bg-info me-1 mb-1"><?php echo htmlspecialchars($categoria); ?></span>
+                                      <?php 
+                                          endforeach;
+                                      } else {
+                                          echo '<span class="badge bg-secondary">Sin categoría</span>';
+                                      }
+                                      ?>
+                                  </td>
+                                  <td><?php echo $fila['cantidad_libro']; ?></td>
+                                  <td>
+                                    <?php if ($fila['cantidad_libro'] == 0 || $fila['disponibilidad_libro'] === 'Inactivo'): ?>
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                                    <?php endif; ?>
+                                  </td>
+                                  <?php if($rol == "Administrador"): ?>
+                                  <td class="justify-content-center d-flex gap-1">
+                                    <a class="btn btn-warning btn-sm" title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
+                                      <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    | 
+                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);" 
+                                      onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" title="Eliminar"> 
+                                      <i class="bi bi-trash"></i>
+                                    </a>
+                                  </td>
+                                  <?php endif; ?>
+                              </tr>
+                          <?php endwhile; ?>
+                      </tbody>
+                  </table>
                 </div>
                 
               <!-- /.Start col -->
@@ -492,7 +504,7 @@ function agregarLibro() {
       const categorias = document.getElementById('categoria_libro').value.trim();
       const cantidad = document.getElementById('cantidad').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
+      if (!titulo || !autor || !ISBN || !categorias || !cantidad) {
         Swal.showValidationMessage('Por favor, complete todos los campos.');
         return false;
       }
