@@ -35,18 +35,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $nuevaHash = password_hash($_POST['password'], PASSWORD_DEFAULT);
             $consultaBase .= ", password_usuario = '$nuevaHash'";
         } else {
-            // Contraseña incorrecta → devolvemos respuesta
+            // Contraseña incorrecta 
             echo "incorrecta";
             $mysql->desconectar();
             exit();
         }
     }
 
-    // Ejecutamos actualización
+   
     $consultaBase .= " WHERE id_usuario = '$idUsuario'";
     $mysql->efectuarConsulta($consultaBase);
 
-    // Actualizar datos de sesión
+    
     $_SESSION['nombre_usuario'] = $nuevoNombre;
     $_SESSION['apellido_usuario'] = $nuevoApellido;
     $_SESSION['email_usuario'] = $nuevoEmail;

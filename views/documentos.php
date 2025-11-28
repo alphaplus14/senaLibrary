@@ -259,9 +259,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 /* Modificación a .btn-group para alinear los botones */
 .btn-group {
     display: flex;
-    gap: 15px; /* Aumenta el espacio entre botones */
+    gap: 15px; 
     align-items: center;
-    /* Nuevo: Añade esto para que los botones crezcan y se repartan el espacio */
+    
     width: 100%; 
 }
 
@@ -269,19 +269,18 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
 .btn-excel {
     background-color: #28a745;
     color: #fff;
-    font-weight: 600; /* Asegura el mismo peso de fuente */
+    font-weight: 600; 
     border: none;
-    border-radius: 8px; /* Usa el mismo radio que .btn-generar */
-    padding: 12px 18px; /* Usa el mismo padding que .btn-generar */
+    border-radius: 8px; 
+    padding: 12px 18px; 
     text-decoration: none;
-    display: inline-flex; /* Para alinear icono y texto */
+    display: inline-flex; 
     align-items: center;
     justify-content: center;
     gap: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     
-    /* CLAVE: Hace que el botón ocupe el espacio disponible de forma equitativa */
     flex-grow: 1; 
 }
 
@@ -291,11 +290,10 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
     color: #fff;
 }
 
-/* Asegura que el botón de PDF también crezca equitativamente en un grupo */
 .btn-group .btn-generar {
     flex-grow: 1; 
-    margin-top: 0; /* Anula cualquier margen que pueda tener */
-    align-self: unset; /* Anula align-self: flex-start; del estilo anterior */
+    margin-top: 0; 
+    align-self: unset; 
 }
 
 /* ... otras clases CSS ... */

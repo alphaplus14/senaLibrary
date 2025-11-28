@@ -2,7 +2,7 @@
 require_once '../models/MySQL.php';
 
 
-//buena practica verificar el metodo y que no este vacio el id
+//verificar el metodo y que no este vacio el id
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])){
 $id=intval($_POST['id']);
 

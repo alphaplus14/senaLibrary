@@ -11,8 +11,8 @@ fetch('controllers/consulta_prestamos.php')
         datasets: [{
           label: 'Total de préstamos',
           data: [total],
-          backgroundColor: ['#87CEEB'], // Azul cielo
-          borderColor: ['#4682B4'],     // Azul acero
+          backgroundColor: ['#87CEEB'], 
+          borderColor: ['#4682B4'],     
           borderWidth: 2,
           hoverOffset: 12
         }]
