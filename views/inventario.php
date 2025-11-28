@@ -17,7 +17,16 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
 //consulta para obtener los libros
-$resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
+$resultado = $mysql->efectuarConsulta("
+    SELECT 
+        libro.*,
+        GROUP_CONCAT(categorias.nombre_categoria SEPARATOR ', ') as categorias
+    FROM libro
+    LEFT JOIN categorias_has_libro ON libro.id_libro = categorias_has_libro.libro_id_libro
+    LEFT JOIN categorias ON categorias_has_libro.categorias_id_categoria = categorias.id_categoria
+    GROUP BY libro.id_libro
+    ORDER BY libro.id_libro DESC
+");
 ?>
 
 <!doctype html>
@@ -263,15 +272,15 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
- <div class="position-relative">
-  <h3 class="text-center">
-    <i class="bi bi-bookshelf"></i> Libros
-  </h3>
-  <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-    <li class="breadcrumb-item"><a href="./inventario.php">Libros</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Lista de libros</li>
-  </ol>
-</div>
+            <div class="position-relative">
+              <h3 class="text-center">
+                <i class="bi bi-bookshelf"></i> Libros
+              </h3>
+              <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
+                <li class="breadcrumb-item"><a href="./inventario.php">Libros</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lista de libros</li>
+              </ol>
+            </div>
             <!--end::Row-->
           </div>
           <!--end::Container-->
@@ -292,7 +301,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
             <div class="row">
               <!--begin::Col-->
                 <div class="table-responsive">
-                        <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
+                  <table id="tablaLibros" class="table table-striped table-bordered" width="100%">
                     <thead class="table-success">
                         <tr>
                             <th>ID</th>
@@ -305,43 +314,54 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM libro");
                             <?php if($rol == "Administrador"): ?>
                                 <th>Acciones</th>
                             <?php endif; ?>
-                            
                         </tr>
                     </thead>
-                    <tbody>
-                    <?php while($fila = $resultado->fetch_assoc()): ?>
-                        <tr>
-                            <td><?php echo $fila['id_libro']; ?></td>
-                            <td><?php echo $fila['titulo_libro']; ?></td>
-                            <td><?php echo $fila['autor_libro']; ?></td>
-                            <td><?php echo $fila['ISBN_libro']; ?></td>
-                            <td><?php echo $fila['categoria_libro']; ?></td>
-                            <td><?php echo $fila['cantidad_libro']; ?></td>
-                            <td>
-                              <?php if($fila['cantidad_libro'] == 0): ?>
-                                <span class="badge bg-danger">No disponible</span>
-                              <?php else: ?>
-                                <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
-                              <?php endif; ?>
-                            </td>
-                            <?php if($rol == "Administrador"): ?>
-                            <td class="justify-content-center d-flex gap-1">
-                              <a class="btn btn-warning btn-sm"  title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
-          <i class="bi bi-pencil-square"></i>
-          </a>
-          | 
-          <a class="btn btn-danger btn-sm"  
-          href="javascript:void(0);" 
-          onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" 
-          title="Eliminar"> 
-              <i class="bi bi-trash"></i>
-          </a>
-                            </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endwhile; ?>
-                    </tbody>
-                        </table>
+                      <tbody>
+                          <?php while($fila = $resultado->fetch_assoc()): ?>
+                              <tr>
+                                  <td><?php echo $fila['id_libro']; ?></td>
+                                  <td><?php echo $fila['titulo_libro']; ?></td>
+                                  <td><?php echo $fila['autor_libro']; ?></td>
+                                  <td><?php echo $fila['ISBN_libro']; ?></td>
+                                  <td>
+                                      <?php 
+                                      // Mostrar categorias como badges
+                                      if (!empty($fila['categorias'])) {
+                                          $categorias = explode(', ', $fila['categorias']);
+                                          foreach($categorias as $categoria): 
+                                      ?>
+                                          <span class="badge bg-info me-1 mb-1"><?php echo htmlspecialchars($categoria); ?></span>
+                                      <?php 
+                                          endforeach;
+                                      } else {
+                                          echo '<span class="badge bg-secondary">Sin categoría</span>';
+                                      }
+                                      ?>
+                                  </td>
+                                  <td><?php echo $fila['cantidad_libro']; ?></td>
+                                  <td>
+                                    <?php if ($fila['cantidad_libro'] == 0 || $fila['disponibilidad_libro'] === 'Inactivo'): ?>
+                                        <span class="badge bg-danger">Inactivo</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
+                                    <?php endif; ?>
+                                  </td>
+                                  <?php if($rol == "Administrador"): ?>
+                                  <td class="justify-content-center d-flex gap-1">
+                                    <a class="btn btn-warning btn-sm" title="editar" onclick="editarLibro(<?php echo $fila['id_libro']; ?>)">
+                                      <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    | 
+                                    <a class="btn btn-danger btn-sm" href="javascript:void(0);" 
+                                      onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" title="Eliminar"> 
+                                      <i class="bi bi-trash"></i>
+                                    </a>
+                                  </td>
+                                  <?php endif; ?>
+                              </tr>
+                          <?php endwhile; ?>
+                      </tbody>
+                  </table>
                 </div>
                 
               <!-- /.Start col -->
@@ -464,8 +484,8 @@ function agregarLibro() {
           <label for="categoria" class="form-label">Categoria</label>
           <input type="text" id="busquedaCategoria" class="form-control" placeholder="Buscar Categoria..." onkeyup="buscarCategoria(this.value)">
           <input type="hidden" id="categoria_libro" name="categoria_libro">
+          <div id="categoriasSeleccionadas"></div>
           <div id="sugerencias" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
-          <div id="categoriasSeleccionadas">  </div>
         </div>
         <div class="mb-3">
             <label for="cantidad" class="form-label">Cantidad</label>
@@ -484,7 +504,7 @@ function agregarLibro() {
       const categorias = document.getElementById('categoria_libro').value.trim();
       const cantidad = document.getElementById('cantidad').value.trim();
 
-      if (!titulo || !autor || !ISBN || !categorias ||autor || !cantidad) {
+      if (!titulo || !autor || !ISBN || !categorias || !cantidad) {
         Swal.showValidationMessage('Por favor, complete todos los campos.');
         return false;
       }
@@ -696,7 +716,6 @@ function agregarNuevaCategoria(nombreCategoria) {
 
 <script>
 function editarLibro(id) {
-    // Primero obtenemos los datos del usuario
     $.ajax({
         url: '../controllers/info_libro.php',
         type: 'POST',
@@ -709,147 +728,67 @@ function editarLibro(id) {
             }
 
             const libro = response.data;
-
-            //se crea variable para cargar el select con el que tiene el usuario
-            let categoriaLibro = '';
-
-            if (libro.categoria_libro === 'Ficcion') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De R eferencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro === 'No ficcion') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'De Referencia') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Libros de Texto') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Tecnicos o Especializados') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Practicos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Poeticos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            } else if (libro.categoria_libro  === 'Religiosos') {
-                categoriaLibro = `
-            <option value="Ficcion">Ficcion</option>
-            <option value="No Ficcion">No Ficcion</option>
-            <option value="De Referencia"> De Referencia</option>
-            <option value="Libros de Texto"> Libros de Texto</option>
-            <option value="Tecnicos o Especializados"> Tecnicos o Especializados</option>
-            <option value="Practicos"> Practicos</option>
-            <option value="Poeticos"> Poeticos</option>
-            <option value="Religiosos"> Religiosos</option>
-                `;
-            }
+            
+            // Variables globales para el modal de edición
+            window.categoriasSeleccionadas = libro.categorias_ids || []; // Array de IDs de categorías
 
             Swal.fire({
                 title: 'Editar Libro',
                 html: `
-                    <form id="formEditarLibro" class="form-control" method="POST" enctype="multipart/form-data">
-
+                    <form id="formEditarLibro" class="text-start" method="POST">
                         <div class="mb-3">
-                            <label class="form-label">Titulo</label>
-                            <input type="text" class="form-control" id="titulo" value="${libro.titulo_libro}" required>
+                            <label class="form-label">Título</label>
+                            <input type="text" class="form-control" id="titulo_edit" value="${libro.titulo_libro}" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Autor</label>
-                            <input type="text" class="form-control" id="autor" value="${libro.autor_libro}" required>
+                            <input type="text" class="form-control" id="autor_edit" value="${libro.autor_libro}" required>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">ISBN</label>
-                            <input type="text" class="form-control" id="ISBN" value="${libro.ISBN_libro}" disabled>
+                            <input type="text" class="form-control" id="ISBN_edit" value="${libro.ISBN_libro}" disabled>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label"> Categoria</label>
-                            <select class="form-control" id="categoria" required>
-                            ${categoriaLibro} //se llama la variable
-                            </select>
+                            <label for="categoria" class="form-label">Categorías</label>
+                            <input type="text" id="busquedaCategoria_edit" class="form-control" placeholder="Buscar Categoría..." onkeyup="buscarCategoriaEdit(this.value)">
+                            <input type="hidden" id="categoria_libro_edit" name="categoria_libro_edit">
+                            <div id="sugerencias_edit" style="text-align:left; max-height:200px; margin-top: 5px;"></div>
+                            <div id="categoriasSeleccionadas_edit" class="mt-2">
+                                ${libro.categorias_nombres ? libro.categorias_nombres.split(',').map((cat, idx) => `
+                                    <span style="display: inline-flex; align-items: center; background-color: #e8f5e9; color: #2e7d32; padding: 6px 12px; border-radius: 30px; font-size: 14px; border: 1px solid #c8e6c9; margin-right: 5px; margin-bottom: 5px;">
+                                        ${cat.trim()}
+                                        <span onclick="eliminarCategoriaEdit(${libro.categorias_ids[idx]}, this)" style="margin-left: 8px; font-size: 16px; cursor: pointer;">&times;</span>
+                                    </span>
+                                `).join('') : ''}
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Cantidad</label>
-                            <input type="number" class="form-control" id="cantidad" min="0" value="${libro.cantidad_libro}" required>
+                            <input type="number" class="form-control" id="cantidad_edit" min="0" value="${libro.cantidad_libro}" required>
                         </div>
-
                     </form>
                 `,
+                width: '600px',
                 showCancelButton: true,
                 confirmButtonText: 'Guardar',
                 cancelButtonText: 'Cancelar',
                 focusConfirm: false,
-
+                didOpen: () => {
+                    // Actualizar el input hidden con las categorías iniciales
+                    document.getElementById('categoria_libro_edit').value = JSON.stringify(window.categoriasSeleccionadas);
+                },
                 preConfirm: () => {
                     const formData = new FormData();
                     formData.append('id', id);
-                    formData.append('titulo', $('#titulo').val().trim());
-                    formData.append('autor', $('#autor').val().trim());
-                    formData.append('ISBN', $('#ISBN').val().trim());
-                    formData.append('categoria', $('#categoria').val().trim());
-                    formData.append('cantidad', $('#cantidad').val());
+                    formData.append('titulo', $('#titulo_edit').val().trim());
+                    formData.append('autor', $('#autor_edit').val().trim());
+                    formData.append('ISBN', $('#ISBN_edit').val().trim());
+                    formData.append('categorias', $('#categoria_libro_edit').val()); // Enviar como JSON
+                    formData.append('cantidad', $('#cantidad_edit').val());
                     return formData;
                 }
             }).then(result => {
@@ -877,11 +816,90 @@ function editarLibro(id) {
             });
         },
         error: function() {
-            Swal.fire('❌ Error', 'No se pudo cargar la información del usuario', 'error');
+            Swal.fire('❌ Error', 'No se pudo cargar la información del libro', 'error');
+        }
+    });
+}
+// Funciones auxiliares para edición
+function buscarCategoriaEdit(texto) {
+    if (texto.length < 2) {
+        document.getElementById('sugerencias_edit').innerHTML = '';
+        return;
+    }
+
+    $.ajax({
+        url: '../controllers/buscarCategoria.php',
+        type: 'POST',
+        dataType: 'json',
+        data: { query: texto },
+        success: function(categorias) {
+            let html = '<ul class="list-group">';
+            if (categorias.length > 0) {
+                categorias.forEach(categoria => {
+                    html += `
+                        <li class="list-group-item list-group-item-action" 
+                            style="cursor: pointer;" 
+                            onclick="seleccionarCategoriaEdit(${categoria.id}, '${categoria.nombre_categoria.replace(/'/g, "\\'")}')">
+                            ${categoria.nombre_categoria}
+                        </li>
+                    `;
+                });
+                html += '</ul>';
+            } else {
+                html += `
+                    <div class="alert alert-info mb-0">
+                        <small>No se encontró la categoría "${texto}"</small>
+                    </div>
+                `;
+            }
+            document.getElementById('sugerencias_edit').innerHTML = html;
         }
     });
 }
 
+function seleccionarCategoriaEdit(id, nombre) {
+    id = parseInt(id);
+    
+    if (window.categoriasSeleccionadas.includes(id)) {
+        document.getElementById('sugerencias_edit').innerHTML = '';
+        document.getElementById('busquedaCategoria_edit').value = '';
+        return;
+    }
+
+    window.categoriasSeleccionadas.push(id);
+    document.getElementById('categoria_libro_edit').value = JSON.stringify(window.categoriasSeleccionadas);
+
+    const contenedor = document.getElementById('categoriasSeleccionadas_edit');
+    const chip = document.createElement('span');
+    chip.style.cssText = `
+        display: inline-flex;
+        align-items: center;
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        padding: 6px 12px;
+        border-radius: 30px;
+        font-size: 14px;
+        border: 1px solid #c8e6c9;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    `;
+    chip.innerHTML = `
+        ${nombre}
+        <span onclick="eliminarCategoriaEdit(${id}, this)" 
+              style="margin-left: 8px; font-size: 16px; cursor: pointer;">&times;</span>
+    `;
+    contenedor.appendChild(chip);
+
+    document.getElementById('sugerencias_edit').innerHTML = '';
+    document.getElementById('busquedaCategoria_edit').value = '';
+}
+
+function eliminarCategoriaEdit(id, elemento) {
+    id = parseInt(id);
+    window.categoriasSeleccionadas = window.categoriasSeleccionadas.filter(catId => catId !== id);
+    document.getElementById('categoria_libro_edit').value = JSON.stringify(window.categoriasSeleccionadas);
+    elemento.parentNode.remove();
+}
 </script>
 
 <script>
