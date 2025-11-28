@@ -27,7 +27,8 @@ class MySQL {
         // Establecer codificación utf8
         mysqli_set_charset($this->conexion, "utf8");
 
-        // ✅ Retornar la conexión para poder usarla externamente
+        //Retornar la conexión para poder usarla externamente
+        
         return $this->conexion;
     }
 
