@@ -45,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
                 'ISBN_libro' => $informacion['ISBN_libro'],
                 'categorias_ids' => $categorias_ids,
                 'categorias_nombres' => implode(', ', $categorias_nombres),
-
                 'cantidad_libro' => $informacion['cantidad_libro'],
                 'disponibilidad_libro' => $informacion['disponibilidad_libro'],
             ]
