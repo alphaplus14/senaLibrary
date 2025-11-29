@@ -49,18 +49,11 @@ try {
 
     //  Verificar stock
     while ($row = mysqli_fetch_assoc($libros)) {
-        if ($row['cantidad_libro'] <= 0) {
+        if ($row['cantidad_libro'] < 0) {
             echo json_encode(['success' => false, 'message' => 'No hay stock disponible para: ' . $row['titulo_libro']]);
             exit();
         }
     }
-
-    //  Restar stock
-    $mysql->efectuarConsulta("UPDATE libro 
-        INNER JOIN reserva_has_libro ON libro.id_libro = reserva_has_libro.libro_id_libro
-        SET libro.cantidad_libro = libro.cantidad_libro - 1
-        WHERE reserva_has_libro.reserva_id_reserva = $idReserva
-    ");
 
     //  Cambiar estado de la reserva
     $mysql->efectuarConsulta("UPDATE reserva SET estado_reserva='Aprobada' WHERE id_reserva=$idReserva");
