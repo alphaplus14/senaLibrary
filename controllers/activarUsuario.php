@@ -9,7 +9,7 @@ $mysql->conectar();
  
 
 
-    $estado='Inactivo';
+    $estado='Activo';
         $mysql->efectuarConsulta("UPDATE usuario 
             SET 
                 estado='$estado'             WHERE id_usuario='$id'");

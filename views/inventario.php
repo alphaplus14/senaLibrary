@@ -312,7 +312,7 @@ $resultado = $mysql->efectuarConsulta("
                             <th>Cantidad</th>
                             <th>Estado</th>
                             <?php if($rol == "Administrador"): ?>
-                                <th>Acciones</th>
+                              <th>Acciones</th>
                             <?php endif; ?>
                         </tr>
                     </thead>
@@ -340,7 +340,7 @@ $resultado = $mysql->efectuarConsulta("
                                   </td>
                                   <td><?php echo $fila['cantidad_libro']; ?></td>
                                   <td>
-                                    <?php if ($fila['cantidad_libro'] == 0 || $fila['disponibilidad_libro'] === 'Inactivo'): ?>
+                                    <?php if ($fila['disponibilidad_libro'] === 'Inactivo'): ?>
                                         <span class="badge bg-danger">Inactivo</span>
                                     <?php else: ?>
                                         <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
@@ -352,10 +352,17 @@ $resultado = $mysql->efectuarConsulta("
                                       <i class="bi bi-pencil-square"></i>
                                     </a>
                                     | 
+                                    <?php if($fila['disponibilidad_libro']=='Disponible'):?>
                                     <a class="btn btn-danger btn-sm" href="javascript:void(0);" 
                                       onclick="eliminarLibro(<?php echo $fila['id_libro']; ?>)" title="Eliminar"> 
                                       <i class="bi bi-trash"></i>
                                     </a>
+                                    <?php else: ?>
+                                    <a class="btn btn-success btn-sm" href="javascript:void(0);" 
+                                      onclick="activarLibro(<?php echo $fila['id_libro']; ?>)" title="Activar"> 
+                                      <i class="bi bi-check"></i>
+                                    </a>
+                                    <?php endif; ?>
                                   </td>
                                   <?php endif; ?>
                               </tr>
@@ -948,7 +955,6 @@ function eliminarCategoriaEdit(id, elemento) {
 function eliminarLibro(id) {
   Swal.fire({
     title: "¿Deseas eliminar el libro?",
-    text: "No podrás revertir esto",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
@@ -966,6 +972,33 @@ function eliminarLibro(id) {
       }).then(() => {
         // Redirige al controlador de eliminar  cuando cierra el alert 
         window.location.href = "../controllers/eliminarLibro.php?id=" + id;
+      });
+    }
+  });
+}
+</script>
+
+<script>
+function activarLibro(id) {
+  Swal.fire({
+    title: "¿Deseas Activar el libro?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, activar",
+    cancelButtonText: "Cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Libro Activado!",
+        text: "El libro ha sido activado exitosamente.",
+        icon: "success",
+        timer: 1500,      // el tiempo que se demora en cerrar el alert 
+        showConfirmButton: false
+      }).then(() => {
+        // Redirige al controlador de eliminar  cuando cierra el alert 
+        window.location.href = "../controllers/activarLibro.php?id=" + id;
       });
     }
   });

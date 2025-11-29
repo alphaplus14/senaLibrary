@@ -349,12 +349,12 @@ $resultado = $mysql->efectuarConsulta("(SELECT
                       </td>
                       <td><?= $fila['fecha_reserva'] ?></td>
                       <td><?= $fila['fecha_devolucion_prestamo'] ?></td>
-                      <td class="text-center">
+                      <td class="justify-content-center d-flex gap-1">
                         <!-- Boton Ver Detalle -->
                           <div class="botones">
                           <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)">
                             <i class="bi bi-eye"></i>
-                          </button>
+                          </button> |
                         <!-- <small> Detalles </small> -->
 
                         <?php if (!empty($fila['id_prestamo'])): ?>
@@ -363,7 +363,6 @@ $resultado = $mysql->efectuarConsulta("(SELECT
                             <button class="btn btn-warning btn-sm" onclick="renovarPrestamo(<?= $fila['id_prestamo'] ?>)">
                               <i class="bi bi-arrow-repeat"></i>
                             </button>
-                          </div>
                           </div>
                           <!-- <small> Renovar </small> -->
                         <?php endif; ?>
