@@ -550,7 +550,79 @@ $resultado = $mysql->efectuarConsulta("(SELECT
       });
     }
 
+
+    function renovarPrestamo(idPrestamo) {
+  Swal.fire({
+    title: "¿Renovar préstamo?",
+    text: "Se extenderá la fecha de devolución una semana.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, renovar',
+    cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
+    confirmButtonColor: '#28a745',
+    cancelButtonColor: '#dc3545'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Mostrar loading mientras procesa
+      Swal.fire({
+        title: 'Procesando...',
+        text: 'Renovando el préstamo',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      $.ajax({
+        url: '../controllers/renovarPrestamo.php',
+        type: 'POST',
+        data: { id_prestamo: idPrestamo },
+        dataType: 'json',
+        success: function (res) {
+          if (res.success) {
+            Swal.fire({
+              icon: 'success',
+              title: '¡Renovación realizada!',
+              html: `
+                <div class="text-center">
+                  <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                  <p class="mt-3 mb-2"><strong>${res.message}</strong></p>
+                  <p class="text-muted">Nueva fecha de devolución: <strong>${res.nueva_fecha || 'Actualizada'}</strong></p>
+                </div>
+              `,
+              confirmButtonText: '<i class="bi bi-check"></i> Aceptar',
+              confirmButtonColor: '#28a745',
+              timer: 3000,
+              timerProgressBar: true
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error al renovar',
+              text: res.message || 'No se pudo completar la renovación',
+              confirmButtonText: '<i class="bi bi-x"></i> Cerrar',
+              confirmButtonColor: '#dc3545'
+            });
+          }
+        },
+        error: function (xhr) {
+          console.error('Error:', xhr.responseText);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error de conexión',
+            text: 'No se pudo conectar con el servidor',
+            confirmButtonText: '<i class="bi bi-x"></i> Cerrar',
+            confirmButtonColor: '#dc3545'
+          });
+        }
+      });
+    }
+  });
+}
   </script>
+  
 </body>
 <!--end::Body-->
 
