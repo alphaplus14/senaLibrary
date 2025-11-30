@@ -333,9 +333,15 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario where id_usuario!='$i
                               <i class="bi bi-pencil-square"></i>
                             </a>
                             |
+                            <?php if($fila['estado'] == 'Activo'): ?>
                             <a class="btn btn-danger btn-sm" href="javascript:void(0);" onclick="eliminarEmpleado(<?= $fila['id_usuario'] ?>)" title="Eliminar">
                               <i class="bi bi-trash"></i>
                             </a>
+                            <?php else: ?>
+                            <a class="btn btn-success btn-sm" href="javascript:void(0);" onclick="activarUsuario(<?= $fila['id_usuario'] ?>)" title="Activar">
+                              <i class="bi bi-check"></i>
+                            </a>
+                            <?php endif; ?>
                           </td>
                         </tr>
                       <?php endwhile; ?>
@@ -653,7 +659,6 @@ function editarUsuario(id) {
 function eliminarEmpleado(id) {
   Swal.fire({
     title: "¿Deseas eliminar el empleado?",
-    text: "No podrás revertir esto",
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#3085d6",
@@ -670,6 +675,32 @@ function eliminarEmpleado(id) {
       }).then(() => {
         // Redirige al controlador de eliminar  cuando cierra el alert 
         window.location.href = "../controllers/eliminar.php?id=" + id;
+      });
+    }
+  });
+}
+</script>
+
+<script>
+function activarUsuario(id) {
+  Swal.fire({
+    title: "¿Deseas activar el empleado?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Sí, Activar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      Swal.fire({
+        title: "Activado!",
+        text: "El empleado ha sido activado exitosamente.",
+        icon: "success",
+        timer: 2000,      // el tiempo que se demora en cerrar el alert 
+        showConfirmButton: false
+      }).then(() => {
+        // Redirige al controlador de eliminar  cuando cierra el alert 
+        window.location.href = "../controllers/activarUsuario.php?id=" + id;
       });
     }
   });

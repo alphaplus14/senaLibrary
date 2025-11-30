@@ -284,7 +284,7 @@ $resultado = $mysql->efectuarConsulta("(SELECT
               <i class="bi bi-columns me-1"></i>Prestamos
             </h3>
             <ol class="breadcrumb position-absolute end-0 top-50 translate-middle-y">
-              <li class="breadcrumb-item"><a href="./usuarios.php">prestamos</a></li>
+              <li class="breadcrumb-item"><a href="./usuarios.php">Prestamos</a></li>
               <li class="breadcrumb-item active" aria-current="page">Lista de prestamos</li>
             </ol>
           </div>
@@ -349,21 +349,20 @@ $resultado = $mysql->efectuarConsulta("(SELECT
                       </td>
                       <td><?= $fila['fecha_reserva'] ?></td>
                       <td><?= $fila['fecha_devolucion_prestamo'] ?></td>
-                      <td class="text-center">
-                        <!-- Botón Ver Detalle -->
-  <div class="botones">
-  <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)">
-    <i class="bi bi-eye"></i>
-  </button>
+                      <td class="justify-content-center d-flex gap-1">
+                        <!-- Boton Ver Detalle -->
+                          <div class="botones">
+                          <button class="btn btn-info btn-sm" onclick="verDetalle(<?= $fila['fk_reserva'] ?>)">
+                            <i class="bi bi-eye"></i>
+                          </button> |
                         <!-- <small> Detalles </small> -->
 
                         <?php if (!empty($fila['id_prestamo'])): ?>
                           <br>
-                          <!-- Botón Renovar Préstamo -->
-     <button class="btn btn-warning btn-sm" onclick="renovarPrestamo(<?= $fila['id_prestamo'] ?>)">
-      <i class="bi bi-arrow-repeat"></i>
-    </button>
-                          </div>
+                          <!-- Boton Renovar Préstamo -->
+                            <button class="btn btn-warning btn-sm" onclick="renovarPrestamo(<?= $fila['id_prestamo'] ?>)">
+                              <i class="bi bi-arrow-repeat"></i>
+                            </button>
                           </div>
                           <!-- <small> Renovar </small> -->
                         <?php endif; ?>
@@ -520,31 +519,49 @@ $resultado = $mysql->efectuarConsulta("(SELECT
   </script>
 
   <!-- funcion para renovar el prestamos cesar!!!! -->
-  <script>
-    function renovarPrestamo(idPrestamo) {
-      Swal.fire({
-        title: "¿Renovar préstamo?",
-        text: "Se extenderá la fecha de devolución una semana.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí, renovar",
-        cancelButtonText: "Cancelar"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          $.ajax({
-            url: '../controllers/renovarPrestamo.php',
-            type: 'POST',
-            data: { id_prestamo: idPrestamo },
-            success: function (res) {
-              let r = JSON.parse(res);
-              if (r.success) {
-                Swal.fire("¡Listo!", r.message, "success").then(() => {
-                  location.reload();
-                });
-              } else {
-                Swal.fire("Error", r.message, "error");
-              }
-            }
+<script>
+function renovarPrestamo(idPrestamo) {
+  Swal.fire({
+    title: "¿Renovar préstamo?",
+    text: "Se extenderá la fecha de devolución una semana.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "Sí, renovar",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: '../controllers/renovarPrestamo.php',
+        type: 'POST',
+        data: { id_prestamo: idPrestamo },
+        dataType: 'json',
+        success: function (res) {
+          if (res.success) {
+            Swal.fire({
+              title: "¡Listo!",
+              text: res.message,
+              icon: "success",
+              confirmButtonText: "OK"
+            }).then(() => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              title: "Error",
+              text: res.message,
+              icon: "error",
+              confirmButtonText: "OK"
+            });
+          }
+        },
+        error: function(xhr, status, error) {
+          Swal.fire({
+            title: "Error",
+            text: "Ocurrió un error al procesar la solicitud",
+            icon: "error",
+            confirmButtonText: "OK"
           });
         }
       });

@@ -18,7 +18,16 @@ $rol= $_SESSION['tipo_usuario'];
 $nombre=$_SESSION['nombre_usuario'];
 
 //consulta para obtener los libros
-$resultadolibros=$mysql->efectuarConsulta("SELECT * FROM libro");
+$resultadoLibros = $mysql->efectuarConsulta("
+    SELECT 
+        libro.*,
+        GROUP_CONCAT(categorias.nombre_categoria SEPARATOR ', ') as categorias
+    FROM libro
+    LEFT JOIN categorias_has_libro ON libro.id_libro = categorias_has_libro.libro_id_libro
+    LEFT JOIN categorias ON categorias_has_libro.categorias_id_categoria = categorias.id_categoria
+    GROUP BY libro.id_libro
+    ORDER BY libro.id_libro DESC
+");
 $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 ?>
 
@@ -554,13 +563,28 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                           </tr>
                       </thead>
                       <tbody>
-                          <?php while($fila = $resultadolibros->fetch_assoc()): ?>
-                              <tr>
+                          <?php while($fila = $resultadoLibros->fetch_assoc()): ?>
+                            <?php if($fila['disponibilidad_libro'] != "Inactivo"): ?>
+                              <tr>                              
                                   <td><?= $fila['id_libro'] ?></td>
                                   <td><?= $fila['titulo_libro'] ?></td>
                                   <td><?= $fila['autor_libro'] ?></td>
                                   <td><?= $fila['ISBN_libro'] ?></td>
-                                  <td><?= $fila['categoria_libro'] ?></td>
+                                  <td>
+                                      <?php 
+                                      // Mostrar categorias como badges
+                                      if (!empty($fila['categorias'])) {
+                                          $categorias = explode(', ', $fila['categorias']);
+                                          foreach($categorias as $categoria): 
+                                      ?>
+                                          <span class="badge bg-info me-1 mb-1"><?php echo htmlspecialchars($categoria); ?></span>
+                                      <?php 
+                                          endforeach;
+                                      } else {
+                                          echo '<span class="badge bg-secondary">Sin categoría</span>';
+                                      }
+                                      ?>
+                                  </td>
                                   <td><?= $fila['cantidad_libro'] ?></td>
                                   <td>
                                       <?php if($fila['cantidad_libro'] == 0): ?>
@@ -569,7 +593,8 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                                           <span class="badge bg-success"><?= $fila['disponibilidad_libro'] ?></span>
                                       <?php endif; ?>
                                   </td>
-                              </tr>
+                                </tr>
+                              <?php endif;?>
                           <?php endwhile; ?>
                       </tbody>
                   </table>
@@ -896,8 +921,15 @@ function abrirCrearReserva() {
 
     didOpen: () => {
       window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
+        const inputFecha = document.getElementById("fechaRecogida");
+        const hoy = new Date();
+        const futuro = new Date();
+        futuro.setDate(futuro.getDate() + 45);
+        
+        inputFecha.min = hoy.toISOString().split("T")[0];
+        inputFecha.max = futuro.toISOString().split("T")[0];
 
-      const observer = new MutationObserver(() => {
+        const observer = new MutationObserver(() => {
         const filas = tbodyModal.querySelectorAll('tr').length;
         const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
         contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
@@ -906,16 +938,15 @@ function abrirCrearReserva() {
       observer.observe(tbodyModal, { childList: true });
     },
 
-    preConfirm: () => {
+   preConfirm: () => {
       return new Promise((resolve, reject) => {
         const libros = [];
         const popup = Swal.getPopup();
 
         popup.querySelectorAll('#tablaLibros tbody tr').forEach(row => {
           const id = parseInt(row.getAttribute('data-id'));
-          const cantidad = parseInt(row.querySelector('.cantidad').value);
-          if (id && cantidad > 0) {
-            libros.push({ id, cantidad });
+          if (id) {
+            libros.push({ id, cantidad: 1 }); // Siempre cantidad 1
           }
         });
 
@@ -1051,11 +1082,6 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
   fila.innerHTML = `
     <td>${titulo}</td>
     <td>${autor}</td>
-    <td>
-      <input type="text" value="1" 
-      class="form-control form-control-sm cantidad">
-      <small class="text-muted">Stock: ${stock}</small>
-    </td>
     <td>${disponibilidad}</td>
     <td><button class="btn btn-danger btn-sm" onclick="this.closest('tr').remove()">Quitar</button></td>
   `;

@@ -27,11 +27,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 //sanitizar y asignar variables
-    $nombre   = htmlspecialchars(trim($_POST['nombre_usuario']), ENT_QUOTES, 'UTF-8');
-    $apellido = htmlspecialchars(trim($_POST['apellido_usuario']), ENT_QUOTES, 'UTF-8');
-    $email    = htmlspecialchars(trim($_POST['email_usuario']), ENT_QUOTES, 'UTF-8');
-    $password = $_POST['password_usuario'];
-    $tipo     = htmlspecialchars(trim($_POST['tipo_usuario']), ENT_QUOTES, 'UTF-8');
+$nombre   = addslashes(htmlspecialchars(trim($_POST['nombre_usuario']), ENT_QUOTES, 'UTF-8'));
+$apellido = addslashes(htmlspecialchars(trim($_POST['apellido_usuario']), ENT_QUOTES, 'UTF-8'));
+$email    = addslashes(htmlspecialchars(trim($_POST['email_usuario']), ENT_QUOTES, 'UTF-8'));
+$password = addslashes($_POST['password_usuario']);
+$tipo     = addslashes(htmlspecialchars(trim($_POST['tipo_usuario']), ENT_QUOTES, 'UTF-8'));
+
 
     // Verificar si el correo ya está registrado
     $consultaExiste = "SELECT id_usuario FROM usuario WHERE email_usuario = '$email'";

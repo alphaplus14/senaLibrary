@@ -175,44 +175,48 @@ $resultado=$mysql->efectuarConsulta("SELECT
           <!--end::Start Navbar Links-->
 
           <!--begin::End Navbar Links-->
-          <ul class="navbar-nav ms-auto">
+                  <ul class="navbar-nav ms-auto">
 
-            <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-  <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
-    <span class="d-none d-md-inline"><<?php echo $nombre; ?></span>
-  </a>
+          <!--begin::User Menu Dropdown-->
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle text-white fw-semibold" data-bs-toggle="dropdown">
+              <span class="d-none d-md-inline"><?php echo $nombre; ?></span>
+            </a>
 
-              <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
-                <!-- Cabecera del usuario -->
-                <li class="bg-primary text-white text-center rounded-top py-3">
-                  <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
-                  <small><?php echo $rol; ?></small>
-                </li>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2" style="min-width: 230px;">
+              <!-- Cabecera del usuario -->
+              <li class="bg-primary text-white text-center rounded-top py-3">
+                <p class="mb-0 fw-bold fs-5"><?php echo $nombre; ?></p>
+                <small><?php echo $rol; ?></small>
+              </li>
 
-                <!-- Separador -->
-                <li><hr class="dropdown-divider m-0"></li>
+              <!-- Separador -->
+              <li>
+                <hr class="dropdown-divider m-0">
+              </li>
 
-                <!-- Opciones del menu -->
-                <li>
-                  <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
-                    <i class="bi bi-person me-2 text-secondary"></i> Perfil
-                  </a>
-                </li>
+              <!-- Opciones del menu -->
+              <li>
+                <a href="./perfilUsuario.php" class="dropdown-item d-flex align-items-center py-2">
+                  <i class="bi bi-person me-2 text-secondary"></i> Perfil
+                </a>
+              </li>
 
-                <!-- Separador -->
-                <li><hr class="dropdown-divider m-0"></li>
+              <!-- Separador -->
+              <li>
+                <hr class="dropdown-divider m-0">
+              </li>
 
-                <!-- Opción de cerrar sesión -->
-                <li>
-                  <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
-                    <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <!--end::User Menu Dropdown-->
-          </ul>
+              <!-- Opción de cerrar sesión -->
+              <li>
+                <a href="../controllers/logout.php" class="dropdown-item d-flex align-items-center text-danger py-2">
+                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar sesión
+                </a>
+              </li>
+            </ul>
+          </li>
+          <!--end::User Menu Dropdown-->
+        </ul>
           <!--end::End Navbar Links-->
         </div>
         <!--end::Container-->
@@ -469,7 +473,7 @@ function verDetalle(idReserva) {
                                 <th>ISBN</th>
                                 <th>Título</th>
                                 <th>Autor</th>
-                                <th>Categoría</th>
+                                <th>Categorías</th>
                                 <th>Fecha Reserva</th>
                             </tr>
                         </thead>
@@ -477,12 +481,26 @@ function verDetalle(idReserva) {
                 `;
 
                 res.detalle.forEach(item => {
+                    // Procesar categorías (puede venir como array o string separado por comas)
+                    let categorias = '';
+                    if (Array.isArray(item.categorias)) {
+                        // Si es un array de objetos o strings
+                        categorias = item.categorias.map(cat => {
+                            return typeof cat === 'object' ? cat.nombre_categoria : cat;
+                        }).join(', ');
+                    } else if (item.categorias) {
+                        // Si es un string separado por comas
+                        categorias = item.categorias;
+                    } else {
+                        categorias = 'Sin categoría';
+                    }
+
                     tabla += `
                         <tr>
                             <td>${item.ISBN_libro}</td>
                             <td>${item.titulo_libro}</td>
                             <td>${item.autor_libro}</td>
-                            <td>${item.categoria_libro}</td>
+                            <td><span class="badge bg-secondary">${categorias.split(', ').join('</span> <span class="badge bg-secondary">')}</span></td>
                             <td>${item.fecha_reserva}</td>
                         </tr>
                     `;
@@ -492,7 +510,8 @@ function verDetalle(idReserva) {
                         </tbody>
                     </table>
                 `;
-                    // Mostrar alerta con detalle
+                
+                // Mostrar alerta con detalle
                 Swal.fire({
                     title: `<i class="bi bi-book"></i> Detalle de la Reserva #${idReserva}`,
                     html: tabla,

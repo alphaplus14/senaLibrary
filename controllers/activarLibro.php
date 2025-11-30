@@ -9,12 +9,12 @@ $mysql->conectar();
  
 
 
-    $estado='Inactivo';
-        $mysql->efectuarConsulta("UPDATE usuario 
+    $estado='Disponible';
+        $mysql->efectuarConsulta("UPDATE libro
             SET 
-                estado='$estado'             WHERE id_usuario='$id'");
+                disponibilidad_libro='$estado'             WHERE id_libro='$id'");
         $mysql->desconectar();
 
-        header('location:../views/usuarios.php');
+        header('location:../views/inventario.php');
         exit();
 ?>
