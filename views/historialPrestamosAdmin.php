@@ -526,54 +526,6 @@ function renovarPrestamo(idPrestamo) {
     text: "Se extenderá la fecha de devolución una semana.",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonText: "Sí, renovar",
-    cancelButtonText: "Cancelar",
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      $.ajax({
-        url: '../controllers/renovarPrestamo.php',
-        type: 'POST',
-        data: { id_prestamo: idPrestamo },
-        dataType: 'json',
-        success: function (res) {
-          if (res.success) {
-            Swal.fire({
-              title: "¡Listo!",
-              text: res.message,
-              icon: "success",
-              confirmButtonText: "OK"
-            }).then(() => {
-              location.reload();
-            });
-          } else {
-            Swal.fire({
-              title: "Error",
-              text: res.message,
-              icon: "error",
-              confirmButtonText: "OK"
-            });
-          }
-        },
-        error: function(xhr, status, error) {
-          Swal.fire({
-            title: "Error",
-            text: "Ocurrió un error al procesar la solicitud",
-            icon: "error",
-            confirmButtonText: "OK"
-          });
-        }
-      });
-    }
-
-
-    function renovarPrestamo(idPrestamo) {
-  Swal.fire({
-    title: "¿Renovar préstamo?",
-    text: "Se extenderá la fecha de devolución una semana.",
-    icon: "warning",
-    showCancelButton: true,
     confirmButtonText: '<i class="bi bi-check-circle"></i> Sí, renovar',
     cancelButtonText: '<i class="bi bi-x-circle"></i> Cancelar',
     confirmButtonColor: '#28a745',
@@ -639,8 +591,3 @@ function renovarPrestamo(idPrestamo) {
   });
 }
   </script>
-  
-</body>
-<!--end::Body-->
-
-</html>
