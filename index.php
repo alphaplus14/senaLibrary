@@ -331,6 +331,51 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
 
 </style>
 
+<!-- style para las graficas -->
+ <style>
+.col-lg-8 .card {
+  min-height: 500px;  
+  max-height: 600px;  
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+
+.col-lg-8 .card-body {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+#graficoTotalLibros {
+  max-height: 450px !important;  
+  width: 100% !important;
+  height: auto !important;
+}
+
+
+.col-lg-4 .card {
+  min-height: 280px;
+  max-height: 320px;
+  padding: 1rem;
+  border-radius: 12px;
+}
+
+#graficoTotalReservas,
+#graficoTotalPrestamos {
+  max-height: 220px !important;
+  width: 100% !important;
+  height: auto !important;
+}
+#graficoTotalPrestamos {
+  max-height: 180px !important;
+  padding: 10px;
+}
+
+</style>
+
 <!-- script de los graficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -572,7 +617,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
               <div class="card" style="min-height: 660px; padding:1rem; border-radius:12px;">
                 <div class="card-body">
                   <h4 class="titulo-seccion">
-                    <i class="fa-solid fa-book"></i> Total de libros registrados
+                    <i class="fa-solid fa-book"></i> Top libros mas solicitados
                   </h4>
                   <canvas id="graficoTotalLibros" width="400" height="410"></canvas>
                 </div>
@@ -583,9 +628,9 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
             <div class="col-lg-4 d-flex flex-column justify-content-between">
               <div class="card mb-3" style="min-height: 320px; padding:1rem; border-radius:12px;">
                 <div class="card-body">
-                  <h4 class="titulo-seccion">
-                    <i class="fa-solid fa-calendar-check"></i> Total de reservas realizadas
-                  </h4>
+<h4 class="titulo-seccion">
+  <i class="fa-solid fa-book-open-reader"></i> Total de Préstamos
+</h4>
                   <canvas id="graficoTotalReservas" width="300" height="100"></canvas>
                 </div>
               </div>
@@ -1048,7 +1093,8 @@ if ([...tbody.querySelectorAll("tr")].some(row => row.dataset.id === id)) {
 }
 
 </script>
-<!-- script que hace que el formulario de documentos abra en nueva pestaña o descargue segun la seleccion -->
+
+
 <script>
 document.querySelectorAll('.form-documentos').forEach(form => {
   form.addEventListener('submit', e => {
@@ -1069,23 +1115,21 @@ document.querySelectorAll('.form-documentos').forEach(form => {
  * @returns {boolean} - true si la validación es exitosa, false si falla.
  */
 function validarRangoFechas(formElement) {
-    // 1. Encontrar los campos de fecha DENTRO de este formulario
-    // Usamos querySelector('[name="nombreDelCampo"]') dentro del formulario
+
     const fechaInicioInput = formElement.querySelector('input[name="fechaInicio"]');
     const fechaFinInput = formElement.querySelector('input[name="fechaFin"]');
 
-    // Comprobar que los campos existen (seguridad)
+
     if (!fechaInicioInput || !fechaFinInput) {
         console.error("No se encontraron los campos 'fechaInicio' o 'fechaFin' en el formulario.");
-        return true; // Permitir el envío por defecto si algo falla en el script
+        return true; 
     }
 
-    // 2. Obtener los valores de las fechas
+
     const fechaInicio = new Date(fechaInicioInput.value);
     const fechaFin = new Date(fechaFinInput.value);
 
-    // 3. Comparar las fechas
-    // Si la Fecha de Inicio es mayor (más avanzada/futura) que la Fecha de Fin.
+
     if (fechaInicio > fechaFin) {
         Swal.fire({
             icon: 'error',
@@ -1095,15 +1139,165 @@ function validarRangoFechas(formElement) {
             confirmButtonColor: '#ff0000ff'
         });
         
-        // Enfoca el campo de inicio para guiar al usuario
+
         fechaInicioInput.focus(); 
         
-        // Detiene el envío del formulario
+     
         return false; 
     }
 
-    // 4. Si la validación es exitosa, permite el envío del formulario
     return true;
+}
+
+function abrirCrearReserva() {
+  Swal.fire({
+    title: 'Reserva',
+    html: `
+      <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
+      <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
+
+      <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
+        <thead class="table-dark">
+          <tr>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="fechaRecogidaContainer" style="display:none; margin-top:10px;">
+        <label class="form-label">Fecha de Recogida</label>
+        <input type="date" id="fechaRecogida" class="swal2-input" style="width:50%;">
+        <small class="text-muted d-block mt-1">Selecciona una fecha entre mañana y los próximos 30 días</small>
+      </div>
+    `,
+    width: 800,
+    showCancelButton: true,
+    confirmButtonText: 'Confirmar Reserva',
+    cancelButtonText: 'Cancelar',
+
+    didOpen: () => {
+      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
+
+      // Configurar límites de fecha
+      const fechaRecogidaInput = Swal.getPopup().querySelector("#fechaRecogida");
+      
+      // Calcular fecha min
+      const hoy = new Date();
+      const manana = new Date(hoy);
+      manana.setDate(manana.getDate() + 1);
+      
+      // Calcular fecha max
+      const maxFecha = new Date(hoy);
+      maxFecha.setDate(maxFecha.getDate() + 30);
+      
+      // Formatear fechas a YYYY-MM-DD
+      const formatoFecha = (fecha) => {
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      
+      // Establecer atributos min y max
+      fechaRecogidaInput.setAttribute('min', formatoFecha(manana));
+      fechaRecogidaInput.setAttribute('max', formatoFecha(maxFecha));
+      
+      fechaRecogidaInput.addEventListener('change', function() {
+        const fechaSeleccionada = new Date(this.value);
+        
+        if (fechaSeleccionada < manana) {
+          Swal.showValidationMessage('La fecha debe ser a partir de mañana');
+          this.value = '';
+        } else if (fechaSeleccionada > maxFecha) {
+          Swal.showValidationMessage('La fecha no puede ser mayor a 30 días');
+          this.value = '';
+        }
+      });
+
+      const observer = new MutationObserver(() => {
+        const filas = tbodyModal.querySelectorAll('tr').length;
+        const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
+        contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
+      });
+
+      observer.observe(tbodyModal, { childList: true });
+    },
+
+    preConfirm: () => {
+      return new Promise((resolve, reject) => {
+        const libros = [];
+        const popup = Swal.getPopup();
+
+        popup.querySelectorAll('#tablaLibros tbody tr').forEach(row => {
+          const id = parseInt(row.getAttribute('data-id'));
+          const cantidad = parseInt(row.querySelector('.cantidad').value);
+          if (id && cantidad > 0) {
+            libros.push({ id, cantidad });
+          }
+        });
+
+        if (libros.length === 0) {
+          reject('Agrega al menos un libro.');
+          return;
+        }
+
+        const fechaRecogida = popup.querySelector('#fechaRecogida').value;
+        if (!fechaRecogida) {
+          reject('Selecciona la fecha de recogida.');
+          return;
+        }
+
+        // Validación final de la fecha
+        const fechaSeleccionada = new Date(fechaRecogida);
+        const hoy = new Date();
+        const manana = new Date(hoy);
+        manana.setDate(manana.getDate() + 1);
+        manana.setHours(0, 0, 0, 0);
+        
+        const maxFecha = new Date(hoy);
+        maxFecha.setDate(maxFecha.getDate() + 30);
+        maxFecha.setHours(23, 59, 59, 999);
+        
+        fechaSeleccionada.setHours(0, 0, 0, 0);
+
+        if (fechaSeleccionada < manana) {
+          reject('La fecha de recogida debe ser a partir de mañana.');
+          return;
+        }
+
+        if (fechaSeleccionada > maxFecha) {
+          reject('La fecha de recogida no puede ser mayor a 30 días desde hoy.');
+          return;
+        }
+
+        $.ajax({
+          url: './controllers/agregarReserva.php',
+          type: 'POST',
+          dataType: 'json',
+          data: { 
+            libros: JSON.stringify(libros),
+            fechaRecogida: fechaRecogida
+          },
+          success: function (res) {
+            if (res.success) resolve(res.message);
+            else reject(res.message);
+          },
+          error: function (xhr) {
+            console.error("Error AJAX:", xhr.responseText);
+            reject('No se pudo agregar la reserva.');
+          }
+        });
+      }).catch(error => Swal.showValidationMessage(error));
+    }
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      Swal.fire('¡Éxito!', result.value, 'success').then(() => location.reload());
+    }
+  });
 }
 </script>
 
