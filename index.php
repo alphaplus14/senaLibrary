@@ -890,6 +890,47 @@ $(document).ready(function() {
 </script>
 
 <script>
+  /**
+ * Valida que la fecha de inicio no sea posterior a la fecha de fin 
+ * dentro de un formulario específico.
+ * @param {HTMLFormElement} formElement - El elemento del formulario que se está enviando.
+ * @returns {boolean} - true si la validación es exitosa, false si falla.
+ */
+function validarRangoFechas(formElement) {
+
+    const fechaInicioInput = formElement.querySelector('input[name="fechaInicio"]');
+    const fechaFinInput = formElement.querySelector('input[name="fechaFin"]');
+
+
+    if (!fechaInicioInput || !fechaFinInput) {
+        console.error("No se encontraron los campos 'fechaInicio' o 'fechaFin' en el formulario.");
+        return true; 
+    }
+
+
+    const fechaInicio = new Date(fechaInicioInput.value);
+    const fechaFin = new Date(fechaFinInput.value);
+
+
+    if (fechaInicio > fechaFin) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Rango de fechas inválido',
+            text: 'La Fecha de Inicio no puede ser posterior a la Fecha de Fin. Por favor, corrígelo.',
+            confirmButtonText: 'Entendido',
+            confirmButtonColor: '#ff0000ff'
+        });
+        
+
+        fechaInicioInput.focus(); 
+        
+     
+        return false; 
+    }
+
+    return true;
+}
+
 function abrirCrearReserva() {
   Swal.fire({
     title: 'Reserva',
@@ -921,15 +962,43 @@ function abrirCrearReserva() {
 
     didOpen: () => {
       window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
-        const inputFecha = document.getElementById("fechaRecogida");
-        const hoy = new Date();
-        const futuro = new Date();
-        futuro.setDate(futuro.getDate() + 45);
+         // Configurar límites de fecha
+      const fechaRecogidaInput = Swal.getPopup().querySelector("#fechaRecogida");
+      
+      // Calcular fecha min
+      const hoy = new Date();
+      const manana = new Date(hoy);
+      manana.setDate(manana.getDate() + 1);
+      
+      // Calcular fecha max
+      const maxFecha = new Date(hoy);
+      maxFecha.setDate(maxFecha.getDate() + 30);
+      
+      // Formatear fechas a YYYY-MM-DD
+      const formatoFecha = (fecha) => {
+        const year = fecha.getFullYear();
+        const month = String(fecha.getMonth() + 1).padStart(2, '0');
+        const day = String(fecha.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      
+      // Establecer atributos min y max
+      fechaRecogidaInput.setAttribute('min', formatoFecha(manana));
+      fechaRecogidaInput.setAttribute('max', formatoFecha(maxFecha));
+      
+      fechaRecogidaInput.addEventListener('change', function() {
+        const fechaSeleccionada = new Date(this.value);
         
-        inputFecha.min = hoy.toISOString().split("T")[0];
-        inputFecha.max = futuro.toISOString().split("T")[0];
+        if (fechaSeleccionada < manana) {
+          Swal.showValidationMessage('La fecha debe ser a partir de mañana');
+          this.value = '';
+        } else if (fechaSeleccionada > maxFecha) {
+          Swal.showValidationMessage('La fecha no puede ser mayor a 30 días');
+          this.value = '';
+        }
+      });
 
-        const observer = new MutationObserver(() => {
+      const observer = new MutationObserver(() => {
         const filas = tbodyModal.querySelectorAll('tr').length;
         const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
         contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
@@ -1106,199 +1175,6 @@ document.querySelectorAll('.form-documentos').forEach(form => {
     }
   });
 });
-</script>
-<script>
-/**
- * Valida que la fecha de inicio no sea posterior a la fecha de fin 
- * dentro de un formulario específico.
- * @param {HTMLFormElement} formElement - El elemento del formulario que se está enviando.
- * @returns {boolean} - true si la validación es exitosa, false si falla.
- */
-function validarRangoFechas(formElement) {
-
-    const fechaInicioInput = formElement.querySelector('input[name="fechaInicio"]');
-    const fechaFinInput = formElement.querySelector('input[name="fechaFin"]');
-
-
-    if (!fechaInicioInput || !fechaFinInput) {
-        console.error("No se encontraron los campos 'fechaInicio' o 'fechaFin' en el formulario.");
-        return true; 
-    }
-
-
-    const fechaInicio = new Date(fechaInicioInput.value);
-    const fechaFin = new Date(fechaFinInput.value);
-
-
-    if (fechaInicio > fechaFin) {
-        Swal.fire({
-            icon: 'error',
-            title: 'Rango de fechas inválido',
-            text: 'La Fecha de Inicio no puede ser posterior a la Fecha de Fin. Por favor, corrígelo.',
-            confirmButtonText: 'Entendido',
-            confirmButtonColor: '#ff0000ff'
-        });
-        
-
-        fechaInicioInput.focus(); 
-        
-     
-        return false; 
-    }
-
-    return true;
-}
-
-function abrirCrearReserva() {
-  Swal.fire({
-    title: 'Reserva',
-    html: `
-      <input type="text" id="busquedaProducto" class="swal2-input" placeholder="Buscar Libro..." onkeyup="buscarLibro(this.value)">
-      <div id="sugerencias" style="text-align:left; max-height:150px; overflow-y:auto;"></div>
-
-      <table class="table table-bordered" id="tablaLibros" style="margin-top:10px; font-size:14px;">
-        <thead class="table-dark">
-          <tr>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Estado</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <div id="fechaRecogidaContainer" style="display:none; margin-top:10px;">
-        <label class="form-label">Fecha de Recogida</label>
-        <input type="date" id="fechaRecogida" class="swal2-input" style="width:50%;">
-        <small class="text-muted d-block mt-1">Selecciona una fecha entre mañana y los próximos 30 días</small>
-      </div>
-    `,
-    width: 800,
-    showCancelButton: true,
-    confirmButtonText: 'Confirmar Reserva',
-    cancelButtonText: 'Cancelar',
-
-    didOpen: () => {
-      window.tbodyModal = Swal.getPopup().querySelector("#tablaLibros tbody");
-
-      // Configurar límites de fecha
-      const fechaRecogidaInput = Swal.getPopup().querySelector("#fechaRecogida");
-      
-      // Calcular fecha min
-      const hoy = new Date();
-      const manana = new Date(hoy);
-      manana.setDate(manana.getDate() + 1);
-      
-      // Calcular fecha max
-      const maxFecha = new Date(hoy);
-      maxFecha.setDate(maxFecha.getDate() + 30);
-      
-      // Formatear fechas a YYYY-MM-DD
-      const formatoFecha = (fecha) => {
-        const year = fecha.getFullYear();
-        const month = String(fecha.getMonth() + 1).padStart(2, '0');
-        const day = String(fecha.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-      
-      // Establecer atributos min y max
-      fechaRecogidaInput.setAttribute('min', formatoFecha(manana));
-      fechaRecogidaInput.setAttribute('max', formatoFecha(maxFecha));
-      
-      fechaRecogidaInput.addEventListener('change', function() {
-        const fechaSeleccionada = new Date(this.value);
-        
-        if (fechaSeleccionada < manana) {
-          Swal.showValidationMessage('La fecha debe ser a partir de mañana');
-          this.value = '';
-        } else if (fechaSeleccionada > maxFecha) {
-          Swal.showValidationMessage('La fecha no puede ser mayor a 30 días');
-          this.value = '';
-        }
-      });
-
-      const observer = new MutationObserver(() => {
-        const filas = tbodyModal.querySelectorAll('tr').length;
-        const contenedorFecha = Swal.getPopup().querySelector("#fechaRecogidaContainer");
-        contenedorFecha.style.display = filas > 0 ? 'block' : 'none';
-      });
-
-      observer.observe(tbodyModal, { childList: true });
-    },
-
-    preConfirm: () => {
-      return new Promise((resolve, reject) => {
-        const libros = [];
-        const popup = Swal.getPopup();
-
-        popup.querySelectorAll('#tablaLibros tbody tr').forEach(row => {
-          const id = parseInt(row.getAttribute('data-id'));
-          const cantidad = parseInt(row.querySelector('.cantidad').value);
-          if (id && cantidad > 0) {
-            libros.push({ id, cantidad });
-          }
-        });
-
-        if (libros.length === 0) {
-          reject('Agrega al menos un libro.');
-          return;
-        }
-
-        const fechaRecogida = popup.querySelector('#fechaRecogida').value;
-        if (!fechaRecogida) {
-          reject('Selecciona la fecha de recogida.');
-          return;
-        }
-
-        // Validación final de la fecha
-        const fechaSeleccionada = new Date(fechaRecogida);
-        const hoy = new Date();
-        const manana = new Date(hoy);
-        manana.setDate(manana.getDate() + 1);
-        manana.setHours(0, 0, 0, 0);
-        
-        const maxFecha = new Date(hoy);
-        maxFecha.setDate(maxFecha.getDate() + 30);
-        maxFecha.setHours(23, 59, 59, 999);
-        
-        fechaSeleccionada.setHours(0, 0, 0, 0);
-
-        if (fechaSeleccionada < manana) {
-          reject('La fecha de recogida debe ser a partir de mañana.');
-          return;
-        }
-
-        if (fechaSeleccionada > maxFecha) {
-          reject('La fecha de recogida no puede ser mayor a 30 días desde hoy.');
-          return;
-        }
-
-        $.ajax({
-          url: './controllers/agregarReserva.php',
-          type: 'POST',
-          dataType: 'json',
-          data: { 
-            libros: JSON.stringify(libros),
-            fechaRecogida: fechaRecogida
-          },
-          success: function (res) {
-            if (res.success) resolve(res.message);
-            else reject(res.message);
-          },
-          error: function (xhr) {
-            console.error("Error AJAX:", xhr.responseText);
-            reject('No se pudo agregar la reserva.');
-          }
-        });
-      }).catch(error => Swal.showValidationMessage(error));
-    }
-  }).then((result) => {
-    if (result.isConfirmed && result.value) {
-      Swal.fire('¡Éxito!', result.value, 'success').then(() => location.reload());
-    }
-  });
-}
 </script>
 
   </body>

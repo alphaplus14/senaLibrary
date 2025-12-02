@@ -434,17 +434,32 @@ function verDetalle(idReserva) {
                         <tbody>
                 `;
 
-                res.detalle.forEach(item => {
+                 res.detalle.forEach(item => {
+                    // Procesar categorias (puede venir como array o string separado por comas)
+                    let categorias = '';
+                    if (Array.isArray(item.categorias)) {
+                        // Si es un array de objetos o strings
+                        categorias = item.categorias.map(cat => {
+                            return typeof cat === 'object' ? cat.nombre_categoria : cat;
+                        }).join(', ');
+                    } else if (item.categorias) {
+                        // Si es un string separado por comas
+                        categorias = item.categorias;
+                    } else {
+                        categorias = 'Sin categoría';
+                    }
+
                     tabla += `
                         <tr>
                             <td>${item.ISBN_libro}</td>
                             <td>${item.titulo_libro}</td>
                             <td>${item.autor_libro}</td>
-                            <td>${item.categoria_libro}</td>
+                            <td><span class="badge bg-secondary">${categorias.split(', ').join('</span> <span class="badge bg-secondary">')}</span></td>
                             <td>${item.fecha_reserva}</td>
                         </tr>
                     `;
                 });
+
 
                 tabla += `
                         </tbody>
