@@ -49,30 +49,15 @@ if (isset($_POST['categoria_libro']) && !empty($_POST['categoria_libro'])) {
         exit;
     }
 
+    $categoria = $categorias[0];
+
     // Insertar libro
-    $estado = "Disponible";
-    $insertLibro = "
-        INSERT INTO libro (titulo_libro, autor_libro, ISBN_libro, cantidad_libro, disponibilidad_libro)
-        VALUES ('$titulo', '$autor', '$isbn', '$cantidad', '$estado')
+    $consultaInsert = "
+        INSERT INTO libro (titulo_libro, autor_libro, ISBN_libro, categoria_libro, cantidad_libro,disponibilidad_libro)
+        VALUES ('$titulo', '$autor', '$iSBN_libro', '$categoria', '$cantidad_libro','$estado')
     ";
 
-    if ($mysql->efectuarConsulta($insertLibro)) {
-
-        // Obtener ID del libro recien insertado
-        $lastIdConsulta = $mysql->efectuarConsulta("SELECT LAST_INSERT_ID() AS id_libro");
-        $lastIdRow = mysqli_fetch_assoc($lastIdConsulta);
-        $idLibro = $lastIdRow['id_libro'];
-
-        // Insertar categorias en la tabla pivote
-        foreach ($categorias as $idCategoria) {
-            $idCategoria = intval($idCategoria);
-
-            $mysql->efectuarConsulta("
-                INSERT INTO categorias_has_libro (categorias_id_categoria, libro_id_libro)
-                VALUES ($idCategoria, $idLibro)
-            ");
-        }
-
+    if ($mysql->efectuarConsulta($consultaInsert)) {
         echo json_encode(['success' => true, 'message' => 'Libro agregado exitosamente.']);
     } else {
         echo json_encode(['success' => false, 'message' => 'Error al agregar el libro.']);
@@ -81,3 +66,4 @@ if (isset($_POST['categoria_libro']) && !empty($_POST['categoria_libro'])) {
     $mysql->desconectar();
 }
 ?>
+

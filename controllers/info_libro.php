@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
             $categorias_nombres[] = $cat['nombre_categoria'];
         }
         
-        echo json_encode([
+          echo json_encode([
             'success' => true,
             'data' => [
                 'id_libro' => $informacion['id_libro'],
