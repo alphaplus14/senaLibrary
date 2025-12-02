@@ -527,7 +527,7 @@ $resultado=$mysql->efectuarConsulta("SELECT * FROM usuario");
                                   <td><?= $fila['ISBN_libro'] ?></td>
                                   <td>
                                       <?php 
-                                      // Mostrar categorias como badges
+                                      // Mostrar categorias como viñetas
                                       if (!empty($fila['categorias'])) {
                                           $categorias = explode(', ', $fila['categorias']);
                                           foreach($categorias as $categoria): 
